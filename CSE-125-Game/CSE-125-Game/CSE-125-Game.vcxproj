@@ -155,12 +155,8 @@
     <None Include="res\models\monke.dae">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="shaders\shader.frag">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="shaders\shader.vert">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <None Include="res\shaders\shader.frag" />
+    <None Include="res\shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

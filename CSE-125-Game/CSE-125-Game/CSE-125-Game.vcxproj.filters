@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{0a6af63a-6555-40fe-815f-33d860e2f181}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{993e41f0-7d94-4bb1-bcb2-379002eb59df}</UniqueIdentifier>
     </Filter>
@@ -42,14 +39,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="shaders\shader.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\shader.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="res\models\monke.dae">
       <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="res\shaders\shader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\shaders\shader.vert">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

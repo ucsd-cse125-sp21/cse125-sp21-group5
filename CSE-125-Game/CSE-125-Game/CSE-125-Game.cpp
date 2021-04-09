@@ -10,6 +10,11 @@
 #include "Camera.h"
 #include "Model.h"
 
+void setup_callbacks(GLFWwindow* window)
+{
+	glfwSetKeyCallback(window, Window::keyCallback);
+}
+
 int main(int argc, char** argv)
 {
 	GLFWwindow* window = Window::create(1280, 960, "CSE 125");
@@ -22,13 +27,21 @@ int main(int argc, char** argv)
 
 	Model monke = Model("res/models/monke.dae");
 
+	// Setup callbacks.
+	setup_callbacks(window);
+
 	while (!Window::shouldClose(window)) {
 
+		// Initialize camera and proj matrix
 		camera.setAzimuth(camera.getAzimuth() + 1.0f);
 		camera.update();
 		glm::mat4 viewProjectionMtx = camera.getViewProjMtx();
 
+		// Draw monkey model to window
 		monke.draw(glm::mat4(1), viewProjectionMtx, shader);
+		//cube.draw(glm::mat4(1), viewProjectionMtx, shader);
+
+		Window::idleCallback();
 
 		Window::swapBuffers(window);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

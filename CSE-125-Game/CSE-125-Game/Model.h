@@ -12,7 +12,7 @@ private:
 	GLuint VBO_positions, VBO_normals, EBO;
 
 	// TODO replace with a Transform class
-	glm::mat4 model; //the local 
+	glm::mat4 model; //the local model transform
 
 	//maybe have a transform object, for parent and world
 
@@ -28,5 +28,6 @@ public:
 
 	void update();
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint shader);
+	void move(glm::vec3& dir, float deltaTime);
 };
 

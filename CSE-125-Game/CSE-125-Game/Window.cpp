@@ -11,6 +11,12 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
+float deltaTime = 0.0f;
+float lastFrame = glfwGetTime();
+
+bool w, s, a, d = false;
+glm::vec3 dir = glm::vec3(0.0f);
+
 GLFWwindow* Window::create(int width, int height, std::string title) {
 
 	if (!glfwInit()) {
@@ -47,6 +53,105 @@ GLFWwindow* Window::create(int width, int height, std::string title) {
 	glEnable(GL_DEPTH_TEST);
 
 	return window;
+}
+
+void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	// Check for a key press.
+	if (action == GLFW_PRESS)
+	{
+		switch (key)
+		{
+		case GLFW_KEY_ESCAPE:
+			// Close the window. This causes the program to also terminate.
+			glfwSetWindowShouldClose(window, GL_TRUE);
+			break;
+			// Controls to move player
+		case GLFW_KEY_W:
+			printf("W");
+			w = true;
+			break;
+		case GLFW_KEY_S:
+			printf("S");
+			s = true;
+			break;
+		case GLFW_KEY_A:
+			printf("A");
+			a = true;
+			break;
+		case GLFW_KEY_D:
+			printf("D");
+			d = true;
+			break;
+		default:
+			break;
+		}
+	}
+	else if (action == GLFW_RELEASE)
+	{
+		switch (key)
+		{
+			// Stop camera movement
+		case GLFW_KEY_W:
+			printf("W");
+			w = false;
+			break;
+		case GLFW_KEY_S:
+			printf("S");
+			s = false;
+			break;
+		case GLFW_KEY_A:
+			printf("A");
+			a = false;
+			break;
+		case GLFW_KEY_D:
+			printf("D");
+			d = false;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Window::idleCallback()
+{
+	/* Movement */
+	// up
+	if (w)
+	{
+		printf("w");
+		dir = glm::vec3(0.0f, 1.0f, 0.0f);
+	}
+	// down
+	else if (s)
+	{
+		printf("s");
+		dir = glm::vec3(0.0f, -1.0f, 0.0f);
+	}
+	// left
+	if (a)
+	{
+		printf("a");
+		dir = glm::vec3(-1.0f, 0.0f, 0.0f);
+	}
+	// right
+	else if (d)
+	{
+		printf("d");
+		dir = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+}
+
+void Window::displayCallback(GLFWwindow* window)
+{
+	// Consistent movement
+	float currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
+	// Gets events, including input such as keyboard and mouse or window resizing
+	glfwPollEvents();
 }
 
 void Window::swapBuffers(GLFWwindow* window) {

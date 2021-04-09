@@ -12,6 +12,9 @@ Model::Model(std::string modelPath)
 	// loads the mesh into into position, normal, and index vectors
 	loadModel(modelPath);
 
+	// Initialize model
+	this->model = glm::mat4(1.0f);
+
 	// Generate a vertex array (VAO) and two vertex buffer objects (VBO).
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO_positions);
@@ -54,6 +57,12 @@ Model::~Model()
 void Model::update()
 {
 }
+
+void Model::move(glm::vec3& dir, float deltaTime)
+{
+	model = glm::translate(model, deltaTime * dir);
+}
+
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint shader)
 {

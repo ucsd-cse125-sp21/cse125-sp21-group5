@@ -12,7 +12,7 @@
 
 int main(int argc, char** argv)
 {
-	GLFWwindow* window = Window::create(1280, 960, "CSE 169 Project 4");
+	GLFWwindow* window = Window::create(1280, 960, "CSE 125");
 	glClearColor(0.1, 0.1, 0.1, 1);
 
 	Camera camera = Camera();

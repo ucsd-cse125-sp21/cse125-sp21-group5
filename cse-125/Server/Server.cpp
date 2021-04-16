@@ -1,20 +1,41 @@
-// Server.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+#include <ctime>
 #include <iostream>
+#include <string>
+#include <boost/asio.hpp>
+
+using boost::asio::ip::tcp;
+
+std::string make_daytime_string()
+{
+    return "Hello world!";
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    try
+    {
+        boost::asio::io_context io_context;
+        boost::asio::ip::address_v4 addrV4(boost::asio::ip::make_address_v4("192.168.1.172"));
+        tcp::acceptor acceptor(io_context, tcp::endpoint(addrV4, 13));
+
+        std::cout << "Starting server on local port 13" << std::endl;
+
+        for (;;)
+        {
+            tcp::socket socket(io_context);
+            acceptor.accept(socket);
+            std::cout << "Accepting new connection from " << socket.remote_endpoint().address().to_string() << std::endl;
+
+            std::string message = make_daytime_string();
+
+            boost::system::error_code ignored_error;
+            boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

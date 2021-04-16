@@ -66,8 +66,7 @@ void Model::move(glm::vec3& dir, float deltaTime)
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint shader)
 {
-
-	// actiavte the shader program 
+	// activate the shader program 
 	glUseProgram(shader);
 
 	// get the locations and send the uniforms to the shader 
@@ -89,7 +88,7 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint
 	glUseProgram(0);
 }
 
-//Using assimp's library
+// Using assimp's library
 void Model::loadModel(std::string modelPath)
 {
 	Assimp::Importer import;

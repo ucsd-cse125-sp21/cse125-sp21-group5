@@ -1,23 +1,36 @@
-#pragma once
+#ifndef _WINDOW_H_
+#define _WINDOW_H_
+#include "main.h"
+#include "Model.h"
+#include "Shader.h"
+#include "Camera.h"
 
+#include "Cube.h"
 #include <string>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include "Model.h"
-
+using namespace std;
 
 class Window
 {
 private:
 
 public:
-	//static Model* monke;
-	static GLFWwindow* create(int width, int height, std::string title);
-	static void swapBuffers(GLFWwindow* window);
-	static bool shouldClose(GLFWwindow* window);
-	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void idleCallback();
-	static void displayCallback(GLFWwindow* window);
+	// Window properties
+	static int width;
+	static int height;
+	static const char* windowTitle;
+
+	// Camera variables (TODO: maybe move)
+	static glm::mat4 projection;
+
+	// Constructor
+	static GLFWwindow* create(int width, int height, string title);
+
+	// Destructors
+	static void cleanUp();
+
+	// Handle resize
+	static void resizeCallback(GLFWwindow* window, int width, int height);
 };
 
+#endif

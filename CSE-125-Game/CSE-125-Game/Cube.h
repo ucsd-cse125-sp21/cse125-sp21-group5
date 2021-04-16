@@ -12,7 +12,7 @@ private:
 
 	glm::mat4 model;
 	glm::vec3 color;
-
+	
 	// Cube Information
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> normals;

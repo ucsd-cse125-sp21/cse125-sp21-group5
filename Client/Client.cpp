@@ -8,7 +8,6 @@ int main(int argc, char* argv[])
 {
     try
     {
-        std::cout << "Starting Client" << std::endl;
         std::string ip = "192.168.56.1";
         unsigned short port = 13;
 
@@ -17,10 +16,8 @@ int main(int argc, char* argv[])
 
         tcp::socket socket(io_context, endpoint.protocol());
         socket.connect(endpoint);
-        std::cout << "Starting Client" << std::endl;
         for (;;)
         {
-            std::cout << "Starting Client" << std::endl;
             boost::array<char, 128> buf;
             boost::system::error_code error;
 
@@ -33,7 +30,6 @@ int main(int argc, char* argv[])
 
             std::cout.write(buf.data(), len);
         }
-        std::cout << "e Client" << std::endl;
     }
     catch (std::exception& e)
     {

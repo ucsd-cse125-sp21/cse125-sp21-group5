@@ -1,17 +1,8 @@
-#include "Shader.h"
-
-#include <stdio.h>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-
-#include <GL/GL.h>
+#include "shader.h"
 
 enum ShaderType { vertex, fragment };
 
-GLuint LoadSingleShader(const char * shaderFilePath, ShaderType type)
+GLuint LoadSingleShader(const char* shaderFilePath, ShaderType type)
 {
 	// Create a shader id.
 	GLuint shaderID = 0;
@@ -44,7 +35,7 @@ GLuint LoadSingleShader(const char * shaderFilePath, ShaderType type)
 
 	// Compile Shader.
 	std::cerr << "Compiling shader: " << shaderFilePath << std::endl;
-	char const * sourcePointer = shaderCode.c_str();
+	char const* sourcePointer = shaderCode.c_str();
 	glShaderSource(shaderID, 1, &sourcePointer, NULL);
 	glCompileShader(shaderID);
 
@@ -70,7 +61,7 @@ GLuint LoadSingleShader(const char * shaderFilePath, ShaderType type)
 	return shaderID;
 }
 
-GLuint LoadShaders(const char * vertexFilePath, const char * fragmentFilePath)
+GLuint LoadShaders(const char* vertexFilePath, const char* fragmentFilePath)
 {
 	// Create the vertex shader and fragment shader.
 	GLuint vertexShaderID = LoadSingleShader(vertexFilePath, vertex);

@@ -1,11 +1,4 @@
-#include <ctime>
-#include <iostream>
-#include <string>
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
-#include "../Shared/Event.h"
-
-using boost::asio::ip::tcp;
+#include "Server.h"
 
 std::string make_daytime_string()
 {
@@ -17,7 +10,7 @@ int main()
     try
     {
         boost::asio::io_context io_context;
-        boost::asio::ip::address_v4 addrV4(boost::asio::ip::make_address_v4("192.168.56.1"));
+        boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
         tcp::acceptor acceptor(io_context, tcp::endpoint(addrV4, 13));
 
         std::cout << "Starting server on local port 13" << std::endl;
@@ -28,23 +21,24 @@ int main()
             acceptor.accept(socket);
             std::cout << "Accepting new connection from " << socket.remote_endpoint().address().to_string() << std::endl;
 
-            boost::array<char, 128> buf;
-            boost::system::error_code error;
+            Header header(0);
 
-            size_t len = socket.read_some(boost::asio::buffer(buf), error);
-            Event* convertedEvent = reinterpret_cast<Event*>(&buf);
+            //Convert from input stream into a string
+            boost::asio::streambuf buf;
+            Sleep(3);
+            size_t lengthRead = boost::asio::read(socket, buf);
+          
+            //Deserialize string into header object
+            std::cout << lengthRead << std::endl;
+            std::istream archive_stream(&buf);
 
-            if (error)
-                throw boost::system::system_error(error); // Some other error.
+            std::cout << "222222" << std::endl;
+            boost::archive::binary_iarchive archive(archive_stream);
+            std::cout << " 3 " << std::endl;
 
-            std::cout.write(convertedEvent->test, len);
+            archive >> header;
 
-            /*
-            std::string message = make_daytime_string();
-
-            boost::system::error_code ignored_error;
-            boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
-            */
+            std::cout << "Length of header from server is: " << header.length << std::endl;
         }
     }
     catch (std::exception& e)

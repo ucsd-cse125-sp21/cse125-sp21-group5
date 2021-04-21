@@ -7,5 +7,5 @@
 class Event
 {
 public:
-	glm::vec3 test = glm::vec3(1, 2, 3);
+	float x = 0.1;
 };

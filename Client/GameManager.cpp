@@ -43,6 +43,11 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize models to render
 	Model* monke = new Model("res/models/untitled.dae");
 	models.push_back(monke);
+	
+	// TODO REmove, testing purposes
+	cube = new Cube(glm::vec3(-10.0f, -0.2f, -10.0f), glm::vec3(10.0f, -0.1f, 10.0f));
+	tile = new Tile("pepepeepoopoo", 9, 10.0f, 10.0f);
+	tile->loadTile();
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -200,9 +205,11 @@ void GameManager::render()
 	// Render the models
 	for (Model* model : models)
 	{
-		model->draw(camera->view, Window::projection, shader);
+		//model->draw(camera->view, Window::projection, shader);
 	}
 
+	tile->draw(camera->view, Window::projection, shader);
+	cube->draw(camera->view, Window::projection, shader);
 	// Swap buffers
 	glfwSwapBuffers(window);
 }

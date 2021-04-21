@@ -8,6 +8,8 @@
 #include "Camera.h"
 #include "Model.h"
 #include "KeyboardInputManager.h"
+#include "Cube.h"
+#include "Tile.h"
 
 using namespace std;
 
@@ -18,6 +20,9 @@ private:
 	Camera* camera;
 	vector<Model*> models;
 
+	//TODO: Remove  testing purposes
+	Cube* cube;
+	Tile* tile;
 	// Not sure how many shaders we'll have
 	// but potentially create shader class?
 	GLuint shader;

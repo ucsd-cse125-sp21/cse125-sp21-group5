@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include "Transform.h"
+
 class Model
 {
 private:
@@ -14,8 +16,12 @@ private:
 	GLuint VBO_positions, VBO_normals, EBO;
 
 	// TODO replace with a Transform class
-	glm::mat4 model; //the local model transform
+	glm::mat4 model = glm::mat4(1.0f); //the local model transform
 	glm::vec3 color;
+
+	Transform localTransform; //will say how much to move/alter the model
+	Transform parentTransform;
+	glm::mat4 parent;
 
 	//maybe have a transform object, for parent and world
 
@@ -36,4 +42,5 @@ public:
 	void update();
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint shader);
 	void move(glm::vec3& dir, float deltaTime);
+	void move(glm::vec3 newPosition);
 };

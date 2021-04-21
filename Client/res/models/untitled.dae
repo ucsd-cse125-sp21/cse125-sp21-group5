@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.90.1 commit date:2020-09-23, commit time:06:43, hash:3e85bb34d0d7</authoring_tool>
     </contributor>
-    <created>2021-04-16T15:36:55</created>
-    <modified>2021-04-16T15:36:55</modified>
+    <created>2021-04-19T14:33:05</created>
+    <modified>2021-04-19T14:33:05</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -78,14 +78,14 @@
   <library_effects>
     <effect id="Material-effect">
       <profile_COMMON>
-        <newparam sid="Bricks056_4K_Color_jpg-surface">
+        <newparam sid="Bricks059_1K_Color_png-surface">
           <surface type="2D">
-            <init_from>Bricks056_4K_Color_jpg</init_from>
+            <init_from>Bricks059_1K_Color_png</init_from>
           </surface>
         </newparam>
-        <newparam sid="Bricks056_4K_Color_jpg-sampler">
+        <newparam sid="Bricks059_1K_Color_png-sampler">
           <sampler2D>
-            <source>Bricks056_4K_Color_jpg-surface</source>
+            <source>Bricks059_1K_Color_png-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -94,7 +94,7 @@
               <color sid="emission">0 0 0 1</color>
             </emission>
             <diffuse>
-              <texture texture="Bricks056_4K_Color_jpg-sampler" texcoord="UVMap"/>
+              <texture texture="Bricks059_1K_Color_png-sampler" texcoord="UVMap"/>
             </diffuse>
             <index_of_refraction>
               <float sid="ior">1.45</float>
@@ -105,8 +105,8 @@
     </effect>
   </library_effects>
   <library_images>
-    <image id="Bricks056_4K_Color_jpg" name="Bricks056_4K_Color_jpg">
-      <init_from>Bricks056_4K_Color.jpg</init_from>
+    <image id="Bricks059_1K_Color_png" name="Bricks059_1K_Color_png">
+      <init_from>Bricks059_1K_Color.png</init_from>
     </image>
   </library_images>
   <library_materials>
@@ -161,15 +161,15 @@
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
       <node id="Camera" name="Camera" type="NODE">
-        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0.7276763 0.3054208 -0.6141704 -6.925791 0 0.8953956 0.4452714 4.958309 0 0 0 1</matrix>
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0 0.8953956 0.4452714 4.958309 -0.7276763 -0.3054208 0.6141704 6.925791 0 0 0 1</matrix>
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Light" name="Light" type="NODE">
-        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
+        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 -0.05518906 0.6045247 0.7946723 5.903862 -0.9551712 0.1998834 -0.2183912 -1.005454 0 0 0 1</matrix>
         <instance_light url="#Light-light"/>
       </node>
       <node id="Cube" name="Cube" type="NODE">
-        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <matrix sid="transform">1 0 0 0 0 0 1 0 0 -1 0 0 0 0 0 1</matrix>
         <instance_geometry url="#Cube-mesh" name="Cube">
           <bind_material>
             <technique_common>

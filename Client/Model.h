@@ -11,7 +11,8 @@ class Model
 {
 private:
 	GLuint VAO;
-	GLuint VBO_positions, VBO_normals, EBO;
+	GLuint VBO_positions, VBO_normals, VBO_texCoords, EBO;
+	GLuint TEX_diffuse;
 
 	// TODO replace with a Transform class
 	glm::mat4 model; //the local model transform
@@ -22,7 +23,7 @@ private:
 	std::vector<glm::vec3>	vertices;	// the vertices, tells position of the points
 	std::vector<glm::vec3>	normals;	// the vertex normals
 	std::vector<glm::uvec3> triangles;  // the triange indices that make up the mesh
-	std::vector<glm::vec3>	 uvCoords;  // the UV coordinates for the textures
+	std::vector<glm::vec2>	texCoords;  // the UV coordinates for the textures
 
 	void loadModel(std::string modelPath); //read in the file, load the model's data
 

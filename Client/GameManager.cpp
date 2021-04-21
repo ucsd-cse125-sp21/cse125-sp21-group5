@@ -41,7 +41,7 @@ GameManager::GameManager(GLFWwindow* window)
 	this->camera = new Camera();
 
 	// Initialize models to render
-	Model* monke = new Model("res/models/untitled.dae");
+	Model* monke = new Model("res/models/tree.dae");
 	models.push_back(monke);
 
 	// Initialize time variables

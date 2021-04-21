@@ -151,6 +151,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +159,7 @@
     <None Include="res\models\monke.dae">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="res\models\tree.dae" />
     <None Include="res\models\untitled.dae">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -179,6 +181,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -25,17 +25,16 @@ int main()
 
             //Convert from input stream into a string
             boost::asio::streambuf buf;
-            Sleep(3);
-            size_t lengthRead = boost::asio::read(socket, buf);
-          
+            std::size_t n = boost::asio::read_until(socket, buf, "\r\n\r\n");
+
+            std::string s{
+                boost::asio::buffers_begin(buf.data()),
+                boost::asio::buffers_begin(buf.data()) + n - 4 }; // -4 for \r\n\r\n
+            buf.consume(n);
+
             //Deserialize string into header object
-            std::cout << lengthRead << std::endl;
-            std::istream archive_stream(&buf);
-
-            std::cout << "222222" << std::endl;
-            boost::archive::binary_iarchive archive(archive_stream);
-            std::cout << " 3 " << std::endl;
-
+            boost::iostreams::stream<boost::iostreams::array_source> source(s.data(), n);
+            boost::archive::text_iarchive archive(source);
             archive >> header;
 
             std::cout << "Length of header from server is: " << header.length << std::endl;

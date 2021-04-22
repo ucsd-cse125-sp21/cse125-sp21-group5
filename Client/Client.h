@@ -5,7 +5,8 @@
 #include <boost/asio.hpp>
 #include "../Shared/Header.h"
 #include <string>
-#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/iostreams/stream.hpp>
 
 using boost::asio::ip::tcp;
 using namespace std;

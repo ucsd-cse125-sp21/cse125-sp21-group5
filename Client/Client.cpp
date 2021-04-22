@@ -1,5 +1,7 @@
 #include "Client.h"
 
+int PACKET_SIZE = 128;
+
 void Client::callServer()
 {
     try
@@ -15,12 +17,20 @@ void Client::callServer()
         {
             Header header(15);
 
-            boost::asio::streambuf buf;
-            std::ostream os(&buf);
-            boost::archive::binary_oarchive ar(os);
-            ar & header;
+            char buf[128];
+            
+            boost::iostreams::basic_array_sink<char> sink(buf, PACKET_SIZE);
+            boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> source(sink);
 
-            boost::asio::write(socket, buf);
+            boost::archive::text_oarchive ar(source);
+            ar << header;
+            source << "\r\n\r\n";
+            source << '\0';
+
+            boost::system::error_code error;
+            boost::asio::write(socket, boost::asio::buffer(buf, strlen(buf)), error);
+
+
             break;
             /*
             boost::array<char, 128> buf;

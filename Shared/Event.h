@@ -7,5 +7,9 @@
 class Event
 {
 public:
-	float x = 0.1;
+	glm::vec3 dir;
+	float speed;
+	glm::vec3 position;
+
+	Event(glm::vec3 dir, float speed, glm::vec3 position);
 };

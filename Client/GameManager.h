@@ -18,10 +18,6 @@ private:
 	Camera* camera;
 	vector<Model*> models;
 
-	// Not sure how many shaders we'll have
-	// but potentially create shader class?
-	GLuint shader;
-
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
 

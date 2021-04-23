@@ -30,25 +30,18 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize KeyboardInputManager
 	//this->keyboardInputManager = new KeyboardInputManager();
 
-	// Load shaders
-	shader = LoadShaders("res/shaders/shader.vert", "res/shaders/shader.frag");
-	if (!shader)
-	{
-		cerr << "Failed to initialize shader program" << endl;
-	}
-
 	// Create camera
 	this->camera = new Camera();
 
 	// Initialize models to render
-	Model* monke = new Model("res/models/untitled.dae");
-	models.push_back(monke);
+	Model* model = new Model("res/models/head2.dae");
+	models.push_back(model);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
 	prevTime = 0.0f;
 	currTime = 0.0f;
-}
+} 
 
 GameManager::~GameManager()
 {
@@ -57,9 +50,6 @@ GameManager::~GameManager()
 	{
 		delete model;
 	}
-
-	// Delete shaders
-	glDeleteProgram(shader);
 }
 
 void GameManager::update()
@@ -200,7 +190,7 @@ void GameManager::render()
 	// Render the models
 	for (Model* model : models)
 	{
-		model->draw(camera->view, Window::projection, shader);
+		model->draw(camera->view, Window::projection);
 	}
 
 	// Swap buffers

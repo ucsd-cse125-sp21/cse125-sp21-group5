@@ -7,6 +7,7 @@ std::string make_daytime_string()
 
 int main()
 {
+
     try
     {
         boost::asio::io_context io_context;
@@ -33,11 +34,29 @@ int main()
             buf.consume(n);
 
             //Deserialize string into header object
-            boost::iostreams::stream<boost::iostreams::array_source> source(s.data(), n);
-            boost::archive::text_iarchive archive(source);
-            archive >> header;
+            boost::iostreams::stream<boost::iostreams::array_source> hSource(s.data(), n);
+            boost::archive::binary_iarchive hAR(hSource);
+            hAR >> header;
 
-            std::cout << "Length of header from server is: " << header.length << std::endl;
+            std::cout << header.length << std::endl;
+
+            //Event
+            Event e;
+            boost::asio::streambuf eBuf(header.length);
+            n = boost::asio::read(socket, eBuf, boost::asio::transfer_exactly(header.length));
+
+
+            s = std::string{
+                boost::asio::buffers_begin(eBuf.data()),
+                boost::asio::buffers_begin(eBuf.data()) + n - 4 }; // -4 for \r\n\r\n
+            eBuf.consume(n);
+
+            boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), n);
+            boost::archive::binary_iarchive eAR(eSource);
+            eAR >> e;
+
+            std::cout << e.dirX << std::endl;
+
         }
     }
     catch (std::exception& e)

@@ -8,12 +8,16 @@
 #include "Camera.h"
 #include "Model.h"
 #include "KeyboardInputManager.h"
+#include "../Shared/Event.h"
+#include "Client.h"
 
 using namespace std;
 
 class GameManager
 {
 private:
+	Client client;
+
 	GLFWwindow* window;
 	Camera* camera;
 	vector<Model*> models;

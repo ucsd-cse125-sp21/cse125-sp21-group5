@@ -53,9 +53,6 @@ void print_versions()
 
 int main(int argc, char** argv)
 {
-	Client c = Client();
-	c.callServer();
-
 	// Create GLFW window
 	GLFWwindow* window = Window::create(1280, 960, "CSE 125 Game");
 	if (window == nullptr)
@@ -90,13 +87,12 @@ int main(int argc, char** argv)
 	unsigned int frameCount = 0;
 	while (!glfwWindowShouldClose(window)) {
 		float end = glfwGetTime();
-		if (end - start >= 1.0f)
+		if (end - start <= (1.0f/60))
 		{
-			cerr << "FPS: " << frameCount << endl;
-			frameCount = 0;
-			start = end;
+			continue;
 		}
-		frameCount++;
+
+		start = glfwGetTime();
 		gameManager->update();
 	}
 

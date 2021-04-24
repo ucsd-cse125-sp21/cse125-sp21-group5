@@ -76,6 +76,12 @@ void GameManager::update()
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
 
+	if (W) {
+		Event e(camera->front, camera->speed, camera->pos);
+		client.callServer(e);
+		std::cout << "W pressed" << std::endl;
+	}
+
 	// Update camera position
 	// TODO: place camera inside of Player class
 	camera->move(W, S, A, D, SPACE, L_CTRL);

@@ -23,7 +23,7 @@ void Client::callServer(Event& e)
     boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
 
 
-    boost::archive::binary_oarchive hAR(hSource);
+    boost::archive::text_oarchive hAR(hSource);
     hAR << header;
     hSource << "\r\n\r\n";
     hSource << '\0';

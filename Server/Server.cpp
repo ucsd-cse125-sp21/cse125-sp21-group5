@@ -35,7 +35,7 @@ int main()
 
             //Deserialize string into header object
             boost::iostreams::stream<boost::iostreams::array_source> hSource(s.data(), n);
-            boost::archive::binary_iarchive hAR(hSource);
+            boost::archive::text_iarchive hAR(hSource);
             hAR >> header;
 
             std::cout << header.length << std::endl;
@@ -52,7 +52,7 @@ int main()
             eBuf.consume(n);
 
             boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), n);
-            boost::archive::binary_iarchive eAR(eSource);
+            boost::archive::text_iarchive eAR(eSource);
             eAR >> e;
 
             std::cout << e.dirX << std::endl;

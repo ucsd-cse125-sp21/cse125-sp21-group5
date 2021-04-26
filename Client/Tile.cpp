@@ -15,7 +15,7 @@ Tile::Tile(std::string modelPath, int numTree, float minPt, float maxPt) {
 
 	// Load trees
 	for (int i = 0; i < numTree; i++) {
-		Model* tree = new Model("res/models/untitled.dae");
+		Model* tree = new Model("res/models/head2.dae");
 		treeList.push_back(tree);
 	}
 }

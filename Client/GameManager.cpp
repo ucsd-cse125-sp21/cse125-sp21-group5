@@ -1,13 +1,5 @@
 #include "GameManager.h"
 
-// Track keyboard movements
-bool GameManager::W = false;
-bool GameManager::S = false;
-bool GameManager::A = false;
-bool GameManager::D = false;
-bool GameManager::SPACE = false;
-bool GameManager::L_CTRL = false;
-
 // TODO: possibly move these as well
 // Track mouse movements
 bool firstMouse = true;
@@ -28,14 +20,17 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize transforms
 	worldT = new Transform();
 	playerT = new Transform();
+	monkeT = new Transform(glm::vec3(0.0f), glm::vec3(0.25f), glm::vec3(25.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
 	Model* playerM = new Model("res/models/head2.dae");
-	Model* playerM1 = new Model("res/models/head2.dae");
+	Model* monkeM = new Model("res/models/head2.dae");
 
 	// Build scene graph
 	worldT->add_child(playerT);
 	playerT->add_child(playerM);
+	playerT->add_child(monkeT);
+	monkeT->add_child(monkeM);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -63,53 +58,54 @@ void GameManager::update()
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
 
+	// Process keyboard input
+	handleKeyboardInput();
+	
+	// Tell server about any movements
+	// TODO: how to wait for response?
+	//Event e = Event(key, camera);
+	//glm::vec3 newCamPos = this->client.callFakeServer();
+
 	// Testing scene graph
-	worldT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-	playerT->translate(glm::vec3(0.0f, 0.01f, 0.0f));
+	playerT->translate(glm::vec3(0.0f, 0.001f, 0.0f));
+	playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+	monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
-	camera->move(W, S, A, D, SPACE, L_CTRL);
+	//camera->move(W, S, A, D, SPACE, L_CTRL);
 	camera->update(deltaTime, offsetX, offsetY);
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 }
 
-// Detect different keyboard inputs
+// Handle Keyboard Input
+void GameManager::handleKeyboardInput()
+{
+	// System Controls
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	// Player Controls
+	if (glfwGetKey(window, GLFW_KEY_W))
+		camera->move(camera->front);
+	else if (glfwGetKey(window, GLFW_KEY_S))
+		camera->move(-camera->front);
+	if (glfwGetKey(window, GLFW_KEY_A))
+		camera->move(-glm::normalize(glm::cross(camera->front, camera->up)));
+	else if (glfwGetKey(window, GLFW_KEY_D))
+		camera->move(glm::normalize(glm::cross(camera->front, camera->up)));
+	if (glfwGetKey(window, GLFW_KEY_SPACE))
+		camera->move(camera->up);
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+		camera->move(-camera->up);
+
+	// Temporary Player 2 Controls
+}
+
+// Use for one-time key presses
 void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	// TODO: Move this to KeyboardInputManager
-	switch (key)
-	{
-	case GLFW_KEY_UNKNOWN:
-		fprintf(stderr, "Unknown keypressed\n");
-		break;
-	case GLFW_KEY_ESCAPE:
-		// Close the window. This causes the program to also terminate.
-		if (action == GLFW_PRESS)
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		break;
-	case GLFW_KEY_W:
-		W = action != GLFW_RELEASE;
-		break;
-	case GLFW_KEY_S:
-		S = action != GLFW_RELEASE;
-		break;
-	case GLFW_KEY_A:
-		A = action != GLFW_RELEASE;
-		break;
-	case GLFW_KEY_D:
-		D = action != GLFW_RELEASE;
-		break;
-	case GLFW_KEY_SPACE:
-		SPACE = action != GLFW_RELEASE;
-		break;
-	case GLFW_KEY_LEFT_CONTROL:
-		L_CTRL = action != GLFW_RELEASE;
-		break;
-	default:
-		break;
-	}
 }
 
 // Detect mouse clicks

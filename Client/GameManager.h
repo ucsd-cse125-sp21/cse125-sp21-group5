@@ -12,19 +12,22 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Transform.h"
+#include "Client.h"
 
 using namespace std;
 
 class GameManager
 {
 private:
-	// Objects in world
+	// Important variables
 	GLFWwindow* window;
 	Camera* camera;
+	//Client client = Client();
 
 	// Root of scene graph
 	Transform* worldT;
 	Transform* playerT;
+	Transform* monkeT;
 
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
@@ -45,6 +48,8 @@ public:
 	void update();
 
 	void render();
+
+	void handleKeyboardInput();
 
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);

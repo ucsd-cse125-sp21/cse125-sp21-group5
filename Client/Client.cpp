@@ -1,5 +1,10 @@
 #include "Client.h"
 
+// Somehow get server to give us unique id
+Client::Client() : id(0) {}
+
+Client::Client(const unsigned int& id) : id(id) {}
+
 void Client::callServer()
 {
     try
@@ -39,4 +44,10 @@ void Client::callServer()
     {
         std::cerr << e.what() << std::endl;
     }
+}
+
+
+void Client::callFakeServer(const Event& e)
+{
+
 }

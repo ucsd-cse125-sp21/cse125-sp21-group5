@@ -17,7 +17,7 @@ Camera::Camera()
 	pitch = 0.0f;
 
 	// Camera position
-	pos = glm::vec3(0.0f, 0.0f, 20.0f);
+	pos = glm::vec3(0.0f, 10.0f, 0.0f);
 	front = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -49,6 +49,12 @@ void Camera::update(float& deltaTime, float& offsetX, float& offsetY)
 	speed = 2.5f * deltaTime;
 }
 
+void Camera::move(const glm::vec3& dir)
+{
+	this->pos += speed * dir;
+}
+
+// TODO: Deprecated
 void Camera::move(bool W, bool S, bool A, bool D, bool SPACE, bool L_CTRL)
 {
 	// Forward or backward

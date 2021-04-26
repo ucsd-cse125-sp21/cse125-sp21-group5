@@ -65,6 +65,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -75,6 +78,9 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="res\models\head2.dae">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="res\models\monke.dae">
       <Filter>Resource Files\Models</Filter>
     </None>
   </ItemGroup>
@@ -128,6 +134,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

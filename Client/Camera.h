@@ -30,6 +30,7 @@ public:
 	void update(float& deltaTime, float& offsetX, float& offsetY);
 	void reset();
 
+	void move(const glm::vec3& vec);
 	void move(bool W, bool S, bool A, bool D, bool SPACE, bool L_CTRL);
 };
 

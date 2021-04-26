@@ -149,18 +149,18 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\models\monke.dae">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="res\models\untitled.dae">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <None Include="res\models\head2.dae" />
     <None Include="res\shaders\shader.frag">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -176,9 +176,15 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="KeyboardInputManager.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

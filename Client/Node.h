@@ -7,5 +7,5 @@
 class Node
 {
 public:
-	virtual void draw(GLuint shader, glm::mat4 parent_transform);
+	virtual void draw(const glm::mat4& parent_transform, const glm::mat4& view) = 0;
 };

@@ -53,9 +53,6 @@ void print_versions()
 
 int main(int argc, char** argv)
 {
-	Client c = Client();
-	c.callServer();
-
 	// Create GLFW window
 	GLFWwindow* window = Window::create(1280, 960, "CSE 125 Game");
 	if (window == nullptr)

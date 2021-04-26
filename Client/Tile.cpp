@@ -25,6 +25,7 @@ Tile::~Tile() {
 }
 
 void Tile::loadTile() {
+	/*
 	float counter = 0;
 	srand((unsigned int)time(NULL));
 	for (int i = 0; i < stratify; i++) {
@@ -36,6 +37,7 @@ void Tile::loadTile() {
 			counter++;
 		}
 	}
+	*/
 }
 
 
@@ -45,7 +47,9 @@ void Tile::update() {
 
 //the worldMtx will probably be the tile's localTransform matrix or something
 void Tile::draw(glm::mat4 worldMtx, glm::mat4& viewProjMtx, GLuint shader) {
+	/*
 	for (int i = 0; i < treeList.size(); i++) {
 		treeList.at(i)->draw(worldMtx, viewProjMtx, shader);
 	}
+	*/
 }

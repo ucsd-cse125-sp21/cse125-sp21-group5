@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 
-#include "Transform.h"
 #include "Model.h"
 
 class Tile
@@ -29,9 +28,6 @@ private:
 	int stratify; 
 
 	std::vector<Model*> treeList;
-	Transform tileTrans;
-
-	
 
 public:
 	Tile(std::string modelPath, int numTree, float minPt, float maxPt); //this number should be squarable

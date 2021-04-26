@@ -7,31 +7,37 @@ using namespace std;
 
 class Transform : public Node
 {
+private:
+	// Track children
+	vector<Node*> children;
+
 public:
 	// Variables for positions
+	/* TODO: maybe not necessary to store these
+	 * Only store original if we want to maintain relativity to original
 	glm::vec3 rotation;
 	glm::vec3 scale;
 	glm::vec3 translation;
+	*/
 	glm::mat4 transform;
-
-	// Keep children
-	vector<Node*> children;
 
 	// Default constructor
 	Transform();
 
 	// Specify everything constructor
-	Transform(glm::vec3 rotation, glm::vec3 scale, glm::vec3 translation);
+	Transform(const glm::vec3& rotation,
+			  const glm::vec3& scale,
+			  const glm::vec3& translation);
 
 	// Copy constructor
-	Transform(Transform& transform);
-
-
+	Transform(const Transform& transform);
 	~Transform();
 
-	void translate(glm::vec3 translation);
-	void rotate(float angle, glm::vec3 axis);
-	void rescale(glm::vec3 scale);
+	void translate(const glm::vec3& translation);
+	void rotate(const float& angle, const glm::vec3& axis);
+	void scale(const glm::vec3& scale);
 	void create_transformation_matrix();
-	void draw(GLuint shader, glm::mat4 parent_transform);
+
+	void draw(const glm::mat4& parent_transform, const glm::mat4& view);
+	void add_child(Node* child);
 };

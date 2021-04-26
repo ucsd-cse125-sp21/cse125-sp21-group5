@@ -1,7 +1,5 @@
 #include "GameManager.h"
 
-#define NUM_KEYS 349
-
 // Track keyboard movements
 bool GameManager::W = false;
 bool GameManager::S = false;
@@ -9,9 +7,6 @@ bool GameManager::A = false;
 bool GameManager::D = false;
 bool GameManager::SPACE = false;
 bool GameManager::L_CTRL = false;
-
-// TODO: overkill?
-//int GameManager::keyStateMap[NUM_KEYS] = { GLFW_RELEASE };
 
 // TODO: possibly move these as well
 // Track mouse movements
@@ -27,44 +22,31 @@ GameManager::GameManager(GLFWwindow* window)
 	// Save pointer to window
 	this->window = window;
 
-	// Initialize KeyboardInputManager
-	//this->keyboardInputManager = new KeyboardInputManager();
-
-	// Load shaders
-	shader = LoadShaders("res/shaders/shader.vert", "res/shaders/shader.frag");
-	if (!shader)
-	{
-		cerr << "Failed to initialize shader program" << endl;
-	}
-
 	// Create camera
 	this->camera = new Camera();
 
+	// Initialize transforms
+	worldT = new Transform();
+	playerT = new Transform();
+
 	// Initialize models to render
-	Model* monke = new Model("res/models/untitled.dae");
-	models.push_back(monke);
-	
-	// TODO REmove, testing purposes
-	cube = new Cube(glm::vec3(-10.0f, -0.2f, -10.0f), glm::vec3(10.0f, -0.1f, 10.0f));
-	tile = new Tile("pepepeepoopoo", 9, 10.0f, 10.0f);
-	tile->loadTile();
+	Model* playerM = new Model("res/models/head2.dae");
+	Model* playerM1 = new Model("res/models/head2.dae");
+
+	// Build scene graph
+	worldT->add_child(playerT);
+	playerT->add_child(playerM);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
 	prevTime = 0.0f;
 	currTime = 0.0f;
-}
+} 
 
 GameManager::~GameManager()
 {
 	// Delete all models
-	for (Model* model : models)
-	{
-		delete model;
-	}
-
-	// Delete shaders
-	glDeleteProgram(shader);
+	delete worldT; // Recursively calls destructor for all nodes... hopefully
 }
 
 void GameManager::update()
@@ -80,6 +62,10 @@ void GameManager::update()
 
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
+
+	// Testing scene graph
+	worldT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+	playerT->translate(glm::vec3(0.0f, 0.01f, 0.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -203,13 +189,10 @@ void GameManager::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Render the models
-	for (Model* model : models)
-	{
-		//model->draw(camera->view, Window::projection, shader);
-	}
+	worldT->draw(camera->view, Window::projection);
 
-	tile->draw(camera->view, Window::projection, shader);
-	cube->draw(camera->view, Window::projection, shader);
+	//tile->draw(camera->view, Window::projection, shader);
+	//cube->draw(camera->view, Window::projection, shader);
 	// Swap buffers
 	glfwSwapBuffers(window);
 }

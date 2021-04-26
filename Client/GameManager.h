@@ -2,29 +2,29 @@
 #define _GAME_MANAGER_H_
 
 // TODO: organize these
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <vector>
+
 #include "Window.h"
 #include "Camera.h"
 #include "Model.h"
-#include "Cube.h"
-#include "Tile.h"
+#include "Transform.h"
 
 using namespace std;
 
 class GameManager
 {
 private:
+	// Objects in world
 	GLFWwindow* window;
 	Camera* camera;
-	vector<Model*> models;
 
-	//TODO: Remove  testing purposes
-	Cube* cube;
-	Tile* tile;
-	// Not sure how many shaders we'll have
-	// but potentially create shader class?
-	GLuint shader;
+	// Root of scene graph
+	Transform* worldT;
+	Transform* playerT;
 
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
@@ -50,8 +50,6 @@ public:
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-
-	
 };
 
 #endif

@@ -6,8 +6,8 @@ Transform::Transform()
 	this->transform = glm::mat4(1.0f);
 }
 
-Transform::Transform(const glm::vec3& rotation,
-					 const glm::vec3& scale,
+Transform::Transform(const glm::vec3& scale,
+					 const glm::vec3& rotation,
 					 const glm::vec3& translation)
 {
 	// Build transformation matrix

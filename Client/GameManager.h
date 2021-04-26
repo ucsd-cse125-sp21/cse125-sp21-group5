@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Tile.h"
 #include "Window.h"
 #include "Camera.h"
 #include "Model.h"

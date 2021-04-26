@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Model.h"
+#include "Transform.h"
 
 class Tile
 {
@@ -27,13 +28,19 @@ private:
 	// How to break up the tile to place the trees randomly
 	int stratify; 
 
-	std::vector<Model*> treeList;
+	
+
+	Transform* floorT;
+	std::vector<Node*> treeList;
 
 public:
+	Transform* tileT;
+
 	Tile(std::string modelPath, int numTree, float minPt, float maxPt); //this number should be squarable
+	Tile(float gridI, float gridJ, float width, float height, int numTrees);
 	~Tile();
 
 	void update(); 
 	void loadTile();
-	void draw(glm::mat4 worldMtx, glm::mat4& viewProjMtx, GLuint shader); //just need to pass the tile's transform down the line to the trees
+	void draw(const glm::mat4& parent_transform, const glm::mat4& view); //just need to pass the tile's transform down the line to the trees
 };

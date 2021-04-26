@@ -20,17 +20,27 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize transforms
 	worldT = new Transform();
 	playerT = new Transform();
-	monkeT = new Transform(glm::vec3(0.0f), glm::vec3(0.25f), glm::vec3(25.0f, 0.0f, 0.0f));
+	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(25.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
 	Model* playerM = new Model("res/models/head2.dae");
 	Model* monkeM = new Model("res/models/head2.dae");
-
+	
 	// Build scene graph
 	worldT->add_child(playerT);
 	playerT->add_child(playerM);
 	playerT->add_child(monkeT);
 	monkeT->add_child(monkeM);
+
+	// Temporary "world"
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			Tile* tile = new Tile(i, j, 5.0f, 5.0f, 5);
+			worldT->add_child(tile->tileT);
+		}
+	}
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -73,7 +83,6 @@ void GameManager::update()
 
 	// Update camera position
 	// TODO: place camera inside of Player class
-	//camera->move(W, S, A, D, SPACE, L_CTRL);
 	camera->update(deltaTime, offsetX, offsetY);
 	offsetX = 0.0f;
 	offsetY = 0.0f;
@@ -153,18 +162,18 @@ void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double
 	// Special case for first mouse
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = (float) xpos;
+		lastY = (float) ypos;
 		firstMouse = false;
 	}
 
 	// Calculate offset from prev frame
-	offsetX = xpos - lastX;
-	offsetY = lastY - ypos;
+	offsetX = (float) xpos - lastX;
+	offsetY = (float) lastY - ypos;
 
 	// Save previous positions
-	lastX = xpos;
-	lastY = ypos;
+	lastX = (float) xpos;
+	lastY = (float) ypos;
 }
 
 // Detect mouse scroll

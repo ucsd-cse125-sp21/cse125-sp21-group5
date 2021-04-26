@@ -25,8 +25,8 @@ public:
 	Transform();
 
 	// Specify everything constructor
-	Transform(const glm::vec3& rotation,
-			  const glm::vec3& scale,
+	Transform(const glm::vec3& scale,
+			  const glm::vec3& rotation,
 			  const glm::vec3& translation);
 
 	// Copy constructor

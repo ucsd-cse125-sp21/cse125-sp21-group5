@@ -1,30 +1,37 @@
 #pragma once
-
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Node.h"
 #include <vector>
 #include <string>
 
-class Transform
+using namespace std;
+
+class Transform : public Node
 {
-private:
-	
-	glm::vec3 translation = glm::vec3(0);	// the vertices, tells position of the points
-	glm::vec3 rotation = glm::vec3(0);	// the vertex normals
-	float scale = 1.0f;  // the triange indices that make up the mesh
-
-	glm::mat4 T = glm::mat4(1.0f); //translation matrix
-	glm::mat4 R = glm::mat4(1.0f); //rotation matrix
-	glm::mat4 S = glm::mat4(1.0f); //scale matrixs
-	
-
 public:
+	// Variables for positions
+	glm::vec3 rotation;
+	glm::vec3 scale;
+	glm::vec3 translation;
+	glm::mat4 transform;
+
+	// Keep children
+	vector<Node*> children;
+
+	// Default constructor
 	Transform();
+
+	// Specify everything constructor
+	Transform(glm::vec3 rotation, glm::vec3 scale, glm::vec3 translation);
+
+	// Copy constructor
+	Transform(Transform& transform);
+
+
 	~Transform();
 
-	glm::mat4 translate(glm::vec3 t);
-	glm::mat4 rotate(glm::vec3 axis, float angle); // in radians
-	glm::mat4 resize(float scaleFactor);
+	void translate(glm::vec3 translation);
+	void rotate(float angle, glm::vec3 axis);
+	void rescale(glm::vec3 scale);
+	void create_transformation_matrix();
+	void draw(GLuint shader, glm::mat4 parent_transform);
 };

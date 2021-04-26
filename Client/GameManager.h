@@ -7,7 +7,6 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Model.h"
-#include "KeyboardInputManager.h"
 #include "Cube.h"
 #include "Tile.h"
 

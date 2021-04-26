@@ -4,7 +4,8 @@
 Tile::Tile(std::string modelPath, int numTree, float minPt, float maxPt) {
 	stratify = sqrt(numTree);
 
-	A = glm::vec3(-minPt, 0, -maxPt); //a representation of a quad
+	// a representation of a quad
+	A = glm::vec3(-minPt, 0, -maxPt); 
 	B = glm::vec3(-minPt, 0, maxPt);
 	C = glm::vec3(minPt, 0, -maxPt);
 	D = glm::vec3(minPt, 0, maxPt);
@@ -12,6 +13,7 @@ Tile::Tile(std::string modelPath, int numTree, float minPt, float maxPt) {
 	AB = B - A;
 	AC = C - A;
 
+	// Load trees
 	for (int i = 0; i < numTree; i++) {
 		Model* tree = new Model("res/models/untitled.dae");
 		treeList.push_back(tree);

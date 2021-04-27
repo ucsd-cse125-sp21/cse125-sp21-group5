@@ -5,7 +5,6 @@ in vec2 texCoord;
 
 uniform sampler2D TEX_diffuse;
 
-// You can output many things. The first vec4 type output determines the color of the fragment
 out vec4 fragColor;
 
 void main()

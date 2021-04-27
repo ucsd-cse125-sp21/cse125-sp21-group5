@@ -34,7 +34,7 @@ GameManager::GameManager(GLFWwindow* window)
 	this->camera = new Camera();
 
 	// Initialize models to render
-	Model* model = new Model("res/models/head2.dae");
+	Model* model = new Model("res/models/untitled.dae");
 	models.push_back(model);
 
 	// Initialize time variables

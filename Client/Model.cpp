@@ -69,8 +69,19 @@ void Model::loadModel(std::string modelPath)
 	// Load materials
 	for (int matidx = 0; matidx < scene->mNumMaterials; matidx++) {
 		aiMaterial* aiMat = scene->mMaterials[matidx];
-		Material* mat = new Material("res/shaders/shader.vert", "res/shaders/shader.frag", aiMat);
-		materials.push_back(mat);
+
+		aiString texturePath;
+		if (AI_SUCCESS == aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath)) {
+			// we found a textured material
+			Material* mat = new TexturedMaterial(aiMat);
+			materials.push_back(mat);
+		}
+		else {
+			// found a diffuse texture
+			Material* mat = new DiffuseMaterial(aiMat);
+			materials.push_back(mat);
+		}
+
 	}
 
 	// Load geometry meshes

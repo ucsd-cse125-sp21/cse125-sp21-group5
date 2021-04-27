@@ -68,13 +68,10 @@
     <None Include="res\shaders\shader.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="res\models\monke.dae">
+    <None Include="res\models\head2.dae">
       <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="res\models\untitled.dae">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-    <None Include="res\models\tree.dae">
+    <None Include="res\models\tileLand.dae">
       <Filter>Resource Files\Models</Filter>
     </None>
   </ItemGroup>

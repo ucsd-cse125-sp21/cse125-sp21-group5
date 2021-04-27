@@ -160,12 +160,10 @@
     <None Include="packages.config" />
     <None Include="res\models\head2.dae" />
     <None Include="res\models\tileLand.dae" />
-    <None Include="res\shaders\shader.frag">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="res\shaders\shader.vert">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <None Include="res\shaders\diffuseShader.frag" />
+    <None Include="res\shaders\diffuseShader.vert" />
+    <None Include="res\shaders\texturedShader.frag" />
+    <None Include="res\shaders\texturedShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Event.h" />

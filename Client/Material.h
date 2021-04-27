@@ -39,6 +39,7 @@ class DiffuseMaterial : public Material
 {
 public:
 	glm::vec3 diffuseColor;
+	GLuint colorLocation;
 
 	void activate();
 	void release();

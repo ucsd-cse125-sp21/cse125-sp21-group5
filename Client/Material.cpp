@@ -1,5 +1,7 @@
 #include "Material.h"
 
+#include <glm/gtx/string_cast.hpp>
+
 #include "Shader.h"
 #include "stb_image.h"
 
@@ -59,9 +61,19 @@ void TexturedMaterial::release()
 	glUseProgram(0);
 }
 
+////// Start diffuse material code //////
+
 DiffuseMaterial::DiffuseMaterial(aiMaterial* aiMat)
 {
-	shader = LoadShaders("res/shaders/texturedShader.vert", "res/shaders/texturedShader.frag");
+	shader = LoadShaders("res/shaders/diffuseShader.vert", "res/shaders/diffuseShader.frag");
+
+	aiColor3D aiColor;
+	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
+	diffuseColor = glm::vec3(aiColor.r, aiColor.g, aiColor.b);
+
+	std::cout << "Loaded diffuse material with color " << glm::to_string(diffuseColor) << std::endl;
+
+	colorLocation = glGetUniformLocation(shader, "aColor");
 }
 
 DiffuseMaterial::~DiffuseMaterial()
@@ -72,6 +84,7 @@ DiffuseMaterial::~DiffuseMaterial()
 void DiffuseMaterial::activate()
 {
 	glUseProgram(shader);
+	glUniform3fv(colorLocation, 1, glm::value_ptr(diffuseColor));
 }
 
 void DiffuseMaterial::release()

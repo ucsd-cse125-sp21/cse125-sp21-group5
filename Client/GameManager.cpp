@@ -19,8 +19,8 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	playerT = new Transform();
-	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(25.0f, 0.0f, 0.0f));
+	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
+	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
 	Model* playerM = new Model("res/models/head2.dae");
@@ -28,19 +28,23 @@ GameManager::GameManager(GLFWwindow* window)
 	
 	// Build scene graph
 	worldT->add_child(playerT);
+	worldT->add_child(monkeT);
 	playerT->add_child(playerM);
-	playerT->add_child(monkeT);
 	monkeT->add_child(monkeM);
 
+	// TODO: Build Quadtree using DFS
+
 	// Temporary "world"
+	/*
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			Tile* tile = new Tile(i, j, 5.0f, 5.0f, 5);
+			Tile* tile = new Tile((float) i, (float) j, 5.0f, 5.0f, 5);
 			worldT->add_child(tile->tileT);
 		}
 	}
+	*/
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -57,7 +61,7 @@ GameManager::~GameManager()
 void GameManager::update()
 {
 	// Calculate deltaTime
-	currTime = glfwGetTime();
+	currTime = (float) glfwGetTime();
 	deltaTime = currTime - prevTime;
 	prevTime = currTime;
 
@@ -77,9 +81,13 @@ void GameManager::update()
 	//glm::vec3 newCamPos = this->client.callFakeServer();
 
 	// Testing scene graph
-	playerT->translate(glm::vec3(0.0f, 0.001f, 0.0f));
-	playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-	monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));
+	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
+	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+
+	playerT->collider->check_collision(monkeT->collider);
+
+	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -168,8 +176,8 @@ void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double
 	}
 
 	// Calculate offset from prev frame
-	offsetX = (float) xpos - lastX;
-	offsetY = (float) lastY - ypos;
+	offsetX = (float) (xpos - lastX);
+	offsetY = (float) (lastY - ypos);
 
 	// Save previous positions
 	lastX = (float) xpos;

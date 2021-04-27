@@ -7,43 +7,34 @@ Client::Client(const unsigned int& id) : id(id) {}
 
 void Client::callServer()
 {
-    try
-    {
-        std::string ip = "192.168.56.1";
-        unsigned short port = 13;
+    /*
+    unsigned short port = 13;
 
-        boost::asio::io_context io_context;
-        tcp::endpoint endpoint(boost::asio::ip::make_address_v4(ip), port);
+    boost::asio::io_context io_context;
+    tcp::endpoint endpoint(boost::asio::ip::address_v4::loopback(), port);
 
-        tcp::socket socket(io_context, endpoint.protocol());
-        socket.connect(endpoint);
-        for (;;)
-        {
-            Event e = Event();
-            string convertedEvent = reinterpret_cast<char*>(&e);
-            boost::system::error_code ignored_error;
+    tcp::socket socket(io_context, endpoint.protocol());
+    socket.connect(endpoint);
 
-            boost::asio::write(socket, boost::asio::buffer(convertedEvent), ignored_error);
+    Header header(sizeof(e));
 
-            /*
-            boost::array<char, 128> buf;
-            boost::system::error_code error;
+    char hBuf[PACKET_SIZE];
+    char eBuf[PACKET_SIZE];
 
-            size_t len = socket.read_some(boost::asio::buffer(buf), error);
+    //Header
+    boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
+    boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
 
-            if (error == boost::asio::error::eof)
-                break; // Connection closed cleanly by peer.
-            else if (error)
-                throw boost::system::system_error(error); // Some other error.
 
-            std::cout.write(buf.data(), len);
-            */
-        }
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
+    boost::archive::text_oarchive hAR(hSource);
+    hAR << header;
+    hSource << "\r\n\r\n";
+    hSource << '\0';
+
+
+    boost::system::error_code error;
+    boost::asio::write(socket, boost::asio::buffer(hBuf, strlen(hBuf)), error);
+    */
 }
 
 

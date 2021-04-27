@@ -1,5 +1,6 @@
 #pragma once
 #include "Node.h"
+#include "Collider.h"
 #include <vector>
 #include <string>
 
@@ -20,6 +21,7 @@ public:
 	glm::vec3 translation;
 	*/
 	glm::mat4 transform;
+	Collider* collider;
 
 	// Default constructor
 	Transform();
@@ -30,7 +32,7 @@ public:
 			  const glm::vec3& translation);
 
 	// Copy constructor
-	Transform(const Transform& transform);
+	Transform(const Transform* transform);
 	~Transform();
 
 	void translate(const glm::vec3& translation);

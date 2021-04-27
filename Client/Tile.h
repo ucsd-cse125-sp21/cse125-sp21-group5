@@ -28,8 +28,6 @@ private:
 	// How to break up the tile to place the trees randomly
 	int stratify; 
 
-	
-
 	Transform* floorT;
 	std::vector<Node*> treeList;
 

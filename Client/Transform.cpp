@@ -6,12 +6,13 @@ Transform::Transform()
 	this->transform = glm::mat4(1.0f);
 
 	// Create collider object
-	this->collider = new Collider(glm::vec3(0.0f), 5.0f);
+	//this->collider = new Collider(glm::vec3(0.0f), 5.0f);
 }
 
 Transform::Transform(const glm::vec3& scale,
 					 const glm::vec3& rotation,
-					 const glm::vec3& translation)
+					 const glm::vec3& translation/*,
+					 const Collider::Type type*/)
 {
 	// Build transformation matrix
 	transform = glm::mat4(1.0f);
@@ -24,7 +25,7 @@ Transform::Transform(const glm::vec3& scale,
 	transform = glm::translate(transform, translation);
 
 	// Create collider object
-	this->collider = new Collider(translation, 5.0f);
+	//this->collider = new Collider(translation, 5.0f);
 }
 
 Transform::Transform(const Transform* transform)
@@ -48,7 +49,7 @@ void Transform::translate(const glm::vec3& translation)
 	//this->translation += translation;
 	//this->create_transformation_matrix();
 	transform = glm::translate(transform, translation);
-	collider->center += translation;
+	//collider->center += translation;
 }
 
 void Transform::rotate(const float& angle, const glm::vec3& axis)
@@ -63,7 +64,7 @@ void Transform::scale(const glm::vec3& scale)
 	//this->scale *= scale;
 	//this->create_transformation_matrix();
 	transform = glm::scale(transform, scale);
-	collider->radius *= scale.x;
+	//collider->radius *= scale.x;
 }
 
 void Transform::create_transformation_matrix()

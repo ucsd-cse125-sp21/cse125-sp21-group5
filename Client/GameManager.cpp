@@ -84,7 +84,7 @@ void GameManager::update()
 	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
-	playerT->collider->check_collision(monkeT->collider);
+	//playerT->collider->check_collision(monkeT->collider);
 
 	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include "../Shared/Header.h"
 #include "../Shared/Event.h"
 #include <string>
 #include <boost/archive/text_oarchive.hpp>

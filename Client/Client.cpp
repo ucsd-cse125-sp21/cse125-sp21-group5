@@ -13,18 +13,14 @@ void Client::callServer(Event& e)
     tcp::socket socket(io_context, endpoint.protocol());
     socket.connect(endpoint);
 
-    Header header(sizeof(e));
-
     char hBuf[PACKET_SIZE];
-    char eBuf[PACKET_SIZE];
 
     //Header
     boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
     boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
 
-
     boost::archive::text_oarchive hAR(hSource);
-    hAR << header;
+    hAR << e;
     hSource << "\r\n\r\n";
     hSource << '\0';
 

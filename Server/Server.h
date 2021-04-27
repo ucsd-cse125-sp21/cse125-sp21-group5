@@ -5,7 +5,6 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#include "../Shared/Header.h"
 #include "../Shared/Event.h"
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>

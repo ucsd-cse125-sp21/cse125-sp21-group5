@@ -1,11 +1,13 @@
 #include "Material.h"
 
+#include <glm/gtx/string_cast.hpp>
+
 #include "Shader.h"
 #include "stb_image.h"
 
-Material::Material(std::string vertShaderPath, std::string fragShaderPath, aiMaterial* aiMat)
+TexturedMaterial::TexturedMaterial(aiMaterial* aiMat)
 {
-	shader = LoadShaders(vertShaderPath.c_str(), fragShaderPath.c_str());
+	shader = LoadShaders("res/shaders/texturedShader.vert", "res/shaders/texturedShader.frag");
 
 	aiString path;
 	aiReturn texFound = aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
@@ -37,12 +39,14 @@ Material::Material(std::string vertShaderPath, std::string fragShaderPath, aiMat
 	}
 }
 
-Material::~Material()
+TexturedMaterial::~TexturedMaterial()
 {
 	glDeleteTextures(1, &tex_diffuse);
+
+	glDeleteProgram(shader);
 }
 
-void Material::activate()
+void TexturedMaterial::activate()
 {
 	// activate the shader
 	glUseProgram(shader);
@@ -51,7 +55,39 @@ void Material::activate()
 	glBindTexture(GL_TEXTURE_2D, tex_diffuse);
 }
 
-void Material::release()
+
+void TexturedMaterial::release()
+{
+	glUseProgram(0);
+}
+
+////// Start diffuse material code //////
+
+DiffuseMaterial::DiffuseMaterial(aiMaterial* aiMat)
+{
+	shader = LoadShaders("res/shaders/diffuseShader.vert", "res/shaders/diffuseShader.frag");
+
+	aiColor3D aiColor;
+	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
+	diffuseColor = glm::vec3(aiColor.r, aiColor.g, aiColor.b);
+
+	std::cout << "Loaded diffuse material with color " << glm::to_string(diffuseColor) << std::endl;
+
+	colorLocation = glGetUniformLocation(shader, "aColor");
+}
+
+DiffuseMaterial::~DiffuseMaterial()
+{
+	glDeleteProgram(shader);
+}
+
+void DiffuseMaterial::activate()
+{
+	glUseProgram(shader);
+	glUniform3fv(colorLocation, 1, glm::value_ptr(diffuseColor));
+}
+
+void DiffuseMaterial::release()
 {
 	glUseProgram(0);
 }

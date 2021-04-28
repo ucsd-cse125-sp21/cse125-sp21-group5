@@ -13,14 +13,39 @@ class Material
 public:
 	GLuint shader;
 
+	// sets this material as the currently active one
+	virtual void activate() = 0;
+
+	// cleans up all bindings
+	virtual void release() = 0;
+
+	//Material(std::string vertShaderPath, std::string fragShaderPath, aiMaterial* aiMat);
+};
+
+
+class TexturedMaterial : public Material
+{
+public:
 	GLuint tex_diffuse;
 
 	// sets this material as the currently active one
 	void activate();
 	void release();
 
-	Material(std::string vertShaderPath, std::string fragShaderPath, aiMaterial* aiMat);
-	~Material();
+	TexturedMaterial(aiMaterial* aiMat);
+	~TexturedMaterial();
 };
 
+class DiffuseMaterial : public Material
+{
+public:
+	glm::vec3 diffuseColor;
+	GLuint colorLocation;
+
+	void activate();
+	void release();
+	
+	DiffuseMaterial(aiMaterial* aiMat);
+	~DiffuseMaterial();
+};
 

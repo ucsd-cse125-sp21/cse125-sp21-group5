@@ -13,10 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Models">
-      <UniqueIdentifier>{bc84bd7e-4c83-45f1-8f7e-6563edbb137a}</UniqueIdentifier>
-      <Extensions>dae</Extensions>
-    </Filter>
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{f7c32a36-ecc7-4700-b5ed-10370943567a}</UniqueIdentifier>
       <Extensions>vert;frag</Extensions>
@@ -74,17 +70,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\shaders\shader.frag">
+    <None Include="res\shaders\diffuseShader.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="res\shaders\shader.vert">
+    <None Include="res\shaders\diffuseShader.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="res\models\head2.dae">
-      <Filter>Resource Files\Models</Filter>
+    <None Include="res\shaders\texturedShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="res\models\monke.dae">
-      <Filter>Resource Files\Models</Filter>
+    <None Include="res\shaders\texturedShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

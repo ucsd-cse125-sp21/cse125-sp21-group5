@@ -5,14 +5,7 @@
 
 void Client::callServer(Event& e)
 {
-    unsigned short port = 13;
-
-    boost::asio::io_context io_context;
-    tcp::endpoint endpoint(boost::asio::ip::address_v4::loopback(), port);
-
-    tcp::socket socket(io_context, endpoint.protocol());
-    socket.connect(endpoint);
-
+    cout << "WRITING TO SERVER" << endl;
     char hBuf[PACKET_SIZE];
 
     //Header
@@ -26,6 +19,6 @@ void Client::callServer(Event& e)
 
 
     boost::system::error_code error;
-    boost::asio::write(socket, boost::asio::buffer(hBuf, strlen(hBuf)), error);
+    boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
 
 }

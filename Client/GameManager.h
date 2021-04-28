@@ -14,6 +14,7 @@
 #include "Model.h"
 #include "Transform.h"
 #include "Client.h"
+#include "Quadtree.h"
 
 using namespace std;
 

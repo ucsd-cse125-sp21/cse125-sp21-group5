@@ -33,7 +33,13 @@ GameManager::GameManager(GLFWwindow* window)
 	monkeT->add_child(monkeM);
 
 	// TODO: Build Quadtree using DFS
+	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 10.0f), 
+		glm::vec3(500.0f, 500.0f, 500.0f));
+	vector<Collider*> objects;
+	Quadtree* world = new Quadtree(worldBox, 4, objects);
 
+	world->insert(playerT->collider);
+	world->insert(monkeT->collider);
 	// Temporary "world"
 	/*
 	for (int i = 0; i < 3; i++)
@@ -83,8 +89,8 @@ void GameManager::update()
 	// Testing scene graph
 	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-
-	//playerT->collider->check_collision(monkeT->collider);
+	
+	playerT->collider->check_collision(monkeT->collider);
 
 	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));

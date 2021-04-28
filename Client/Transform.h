@@ -21,7 +21,8 @@ public:
 	glm::vec3 translation;
 	*/
 	glm::mat4 transform;
-	Collider* collider;
+	//TODO should change according
+	BoxCollider* collider;
 
 	// Default constructor
 	Transform();

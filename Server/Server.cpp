@@ -14,6 +14,7 @@ std::string make_daytime_string()
 
 int main()
 {
+    /*
     try
     {
         boost::asio::io_context io_context;
@@ -39,18 +40,17 @@ int main()
 
             std::cout.write(convertedEvent->test, len);
 
-            /*
             std::string message = make_daytime_string();
 
             boost::system::error_code ignored_error;
             boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
-            */
         }
     }
     catch (std::exception& e)
     {
         std::cerr << e.what() << std::endl;
     }
+    */
 
     return 0;
 }

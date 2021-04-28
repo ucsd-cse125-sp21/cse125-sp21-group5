@@ -36,9 +36,3 @@ void Client::callServer()
     boost::asio::write(socket, boost::asio::buffer(hBuf, strlen(hBuf)), error);
     */
 }
-
-
-void Client::callFakeServer(const Event& e)
-{
-
-}

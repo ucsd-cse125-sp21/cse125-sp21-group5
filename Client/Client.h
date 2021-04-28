@@ -19,7 +19,6 @@ public:
 	~Client();
 
 	void callServer();
-	void callFakeServer(const Event& e);
 };
 
 // TODO: Create fake server class to "handle" requests

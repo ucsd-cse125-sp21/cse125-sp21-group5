@@ -5,25 +5,14 @@
 #include <boost/asio.hpp>
 #include "../Shared/Event.h"
 #include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/iostreams/stream.hpp>
 
 using boost::asio::ip::tcp;
 using namespace std;
 
-class Client
-{
+class Client {
 public:
-	const unsigned int id;
-
-	Client();
-	Client(const unsigned int& id);
-	~Client();
-
-	void callServer();
-	void callFakeServer(const Event& e);
-};
-
-// TODO: Create fake server class to "handle" requests
-class FakeServer
-{
-
+	void callServer(Event& e);
 };

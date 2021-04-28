@@ -1,11 +1,4 @@
-#include <ctime>
-#include <iostream>
-#include <string>
-#include <boost/asio.hpp>
-#include <boost/array.hpp>
-#include "../Shared/Event.h"
-
-using boost::asio::ip::tcp;
+#include "Server.h"
 
 std::string make_daytime_string()
 {
@@ -14,10 +7,11 @@ std::string make_daytime_string()
 
 int main()
 {
+
     try
     {
         boost::asio::io_context io_context;
-        boost::asio::ip::address_v4 addrV4(boost::asio::ip::make_address_v4("192.168.56.1"));
+        boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
         tcp::acceptor acceptor(io_context, tcp::endpoint(addrV4, 13));
 
         std::cout << "Starting server on local port 13" << std::endl;
@@ -28,29 +22,49 @@ int main()
             acceptor.accept(socket);
             std::cout << "Accepting new connection from " << socket.remote_endpoint().address().to_string() << std::endl;
 
-            boost::array<char, 128> buf;
-            boost::system::error_code error;
+            //Header header(0);
 
-            size_t len = socket.read_some(boost::asio::buffer(buf), error);
-            Event* convertedEvent = reinterpret_cast<Event*>(&buf);
+            ////Convert from input stream into a string
+            //boost::asio::streambuf buf;
+            //std::size_t n = boost::asio::read_until(socket, buf, "\r\n\r\n");
 
-            if (error)
-                throw boost::system::system_error(error); // Some other error.
+            //std::string s{
+            //    boost::asio::buffers_begin(buf.data()),
+            //    boost::asio::buffers_begin(buf.data()) + n - 4 }; // -4 for \r\n\r\n
+            //buf.consume(n);
 
-            std::cout.write(convertedEvent->test, len);
+            ////Deserialize string into header object
+            //boost::iostreams::stream<boost::iostreams::array_source> hSource(s.data(), n);
+            //boost::archive::text_iarchive hAR(hSource);
+            //hAR >> header;
 
-            /*
-            std::string message = make_daytime_string();
+            //std::cout << header.length << std::endl;
 
-            boost::system::error_code ignored_error;
-            boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
-            */
+            //Event
+            Event e;
+            boost::asio::streambuf eBuf;
+            size_t n = boost::asio::read_until(socket, eBuf, "\r\n\r\n");
+            
+
+
+            std::string s = std::string{
+                boost::asio::buffers_begin(eBuf.data()),
+                boost::asio::buffers_begin(eBuf.data()) + n - 4 
+            }; // -4 for \r\n\r\n
+            eBuf.consume(n);
+
+            boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), n);
+            boost::archive::text_iarchive eAR(eSource);
+            eAR >> e;
+
+            std::cout << e.dirX << std::endl;
         }
     }
     catch (std::exception& e)
     {
         std::cerr << e.what() << std::endl;
     }
+    */
 
     return 0;
 }

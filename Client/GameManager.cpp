@@ -62,7 +62,7 @@ GameManager::~GameManager()
 	glDeleteProgram(shader);
 }
 
-void GameManager::update()
+void GameManager::update(Client& client)
 {
 	// Calculate deltaTime
 	currTime = glfwGetTime();

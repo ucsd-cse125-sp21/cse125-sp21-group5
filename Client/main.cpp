@@ -83,6 +83,10 @@ int main(int argc, char** argv)
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
 	// Forever game loop
+	boost::asio::io_context ioContext;
+	Client client(ioContext);
+	ioContext.run();
+
 	float start = glfwGetTime();
 	unsigned int frameCount = 0;
 	while (!glfwWindowShouldClose(window)) {
@@ -93,7 +97,7 @@ int main(int argc, char** argv)
 		}
 
 		start = glfwGetTime();
-		gameManager->update();
+		gameManager->update(client);
 	}
 
 	// destroy objects created

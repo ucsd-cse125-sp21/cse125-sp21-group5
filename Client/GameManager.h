@@ -16,8 +16,6 @@ using namespace std;
 class GameManager
 {
 private:
-	Client client;
-
 	GLFWwindow* window;
 	Camera* camera;
 	vector<Model*> models;
@@ -42,7 +40,7 @@ public:
 	GameManager(GLFWwindow * window);
 	~GameManager();
 
-	void update();
+	void update(Client& client);
 
 	void render();
 

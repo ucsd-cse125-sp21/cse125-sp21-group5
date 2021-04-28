@@ -6,6 +6,20 @@
 void Client::callServer(Event& e)
 {
     cout << "WRITING TO SERVER" << endl;
+
+    string port = "13";
+    string host = boost::asio::ip::address_v4::loopback().to_string();
+
+    boost::asio::io_context io_context;
+    boost::asio::ip::tcp::resolver resolver(io_context);
+    boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
+        host,
+        port
+    );
+
+    tcp::socket socket(io_context);
+    boost::asio::connect(socket, endpoints);
+
     char hBuf[PACKET_SIZE];
 
     //Header
@@ -19,7 +33,7 @@ void Client::callServer(Event& e)
 
 
     boost::system::error_code error;
-    boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+    boost::asio::write(socket, boost::asio::buffer(hBuf, strlen(hBuf)), error);
 
 }
 

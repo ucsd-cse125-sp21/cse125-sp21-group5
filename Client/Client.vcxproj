@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Event.h" />
+    <ClInclude Include="..\Shared\Global_variable.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Collider.h" />
@@ -205,10 +206,11 @@
     <Import Project="..\packages\glfw.3.3.4\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.4\build\native\glfw.targets')" />
     <Import Project="..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets" Condition="Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" />
     <Import Project="..\packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" />
-    <Import Project="..\packages\boost.1.75.0.0\build\boost.targets" Condition="Exists('..\packages\boost.1.75.0.0\build\boost.targets')" />
-    <Import Project="..\packages\boost_date_time-vc142.1.75.0.0\build\boost_date_time-vc142.targets" Condition="Exists('..\packages\boost_date_time-vc142.1.75.0.0\build\boost_date_time-vc142.targets')" />
-    <Import Project="..\packages\boost_regex-vc142.1.75.0.0\build\boost_regex-vc142.targets" Condition="Exists('..\packages\boost_regex-vc142.1.75.0.0\build\boost_regex-vc142.targets')" />
     <Import Project="..\packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" />
+    <Import Project="..\packages\boost.1.76.0.0\build\boost.targets" Condition="Exists('..\packages\boost.1.76.0.0\build\boost.targets')" />
+    <Import Project="..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets" Condition="Exists('..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" />
+    <Import Project="..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets" Condition="Exists('..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets')" />
+    <Import Project="..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -221,9 +223,10 @@
     <Error Condition="!Exists('..\packages\glfw.3.3.4\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.4\build\native\glfw.targets'))" />
     <Error Condition="!Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets'))" />
     <Error Condition="!Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
-    <Error Condition="!Exists('..\packages\boost.1.75.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.75.0.0\build\boost.targets'))" />
-    <Error Condition="!Exists('..\packages\boost_date_time-vc142.1.75.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_date_time-vc142.1.75.0.0\build\boost_date_time-vc142.targets'))" />
-    <Error Condition="!Exists('..\packages\boost_regex-vc142.1.75.0.0\build\boost_regex-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_regex-vc142.1.75.0.0\build\boost_regex-vc142.targets'))" />
     <Error Condition="!Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.800\build\native\glm.targets'))" />
+    <Error Condition="!Exists('..\packages\boost.1.76.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.76.0.0\build\boost.targets'))" />
+    <Error Condition="!Exists('..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets'))" />
+    <Error Condition="!Exists('..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets'))" />
+    <Error Condition="!Exists('..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
   </Target>
 </Project>

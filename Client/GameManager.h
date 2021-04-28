@@ -33,11 +33,6 @@ private:
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
 
-	// TODO: overkill?
-	// Detect all keyboard pressed
-	//static int keyStateMap[];
-	static bool W, S, A, D, SPACE, L_CTRL;
-
 	// Mouse variables
 	static float offsetX, offsetY, lastX, lastY;
 	static float fov;

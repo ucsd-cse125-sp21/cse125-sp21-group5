@@ -76,6 +76,24 @@ class Client {
 			boost::asio::connect(connection->getSocket(), endpoints);
 
 			cout << "FINISHED CREATING CLIENT OBJ" << endl;
+
+
+
+			cout << "WRITING TO SERVER" << endl;
+			char hBuf[4096];
+
+			//Header
+			boost::iostreams::basic_array_sink<char> hSink(hBuf, 4096);
+			boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
+
+			boost::archive::text_oarchive hAR(hSource);
+			hAR << Event(glm::vec3(1,2,3), 1, glm::vec3(1,2,3));
+			hSource << "\r\n\r\n";
+			hSource << '\0';
+
+
+			boost::system::error_code error;
+			boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
 		}
 private:
 	boost::asio::streambuf buf;

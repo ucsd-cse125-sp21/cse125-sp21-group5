@@ -45,13 +45,13 @@ int main()
                 boost::archive::text_iarchive eAR(eSource);
                 eAR >> e;
 
-                cout << e.dirX << endl;
+                cout << "GOT FROM CLIENT" << e.dirX << endl;
             }
             else if (error == boost::asio::error::eof) {
                 cout << "EOF READ" << endl;
             }
             else {
-                cout << error << endl;
+                //cout << error << endl;
             }
         }
     }

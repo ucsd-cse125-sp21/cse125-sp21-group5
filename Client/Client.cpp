@@ -22,3 +22,18 @@ void Client::callServer(Event& e)
     boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
 
 }
+
+void Client::processRead(boost::system::error_code error, size_t bytes_read) {
+    Event e;
+    std::string s = std::string{
+        boost::asio::buffers_begin(buf.data()),
+        boost::asio::buffers_begin(buf.data()) + bytes_read - 4
+    }; // -4 for \r\n\r\n
+    buf.consume(bytes_read);
+
+    boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+    boost::archive::text_iarchive eAR(eSource);
+    eAR >> e;
+
+    std::cout << e.dirX << std::endl;
+}

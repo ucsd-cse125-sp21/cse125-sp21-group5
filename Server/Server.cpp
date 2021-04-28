@@ -1,5 +1,7 @@
 #include "Server.h"
 
+using namespace std;
+
 std::string make_daytime_string()
 {
     return "Hello world!";
@@ -10,11 +12,11 @@ int main()
 
     try
     {
-        boost::asio::io_context io_context;
+        boost::asio::io_service io_context;
         boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
         tcp::acceptor acceptor(io_context, tcp::endpoint(addrV4, 13));
 
-        std::cout << "Starting server on local port 13" << std::endl;
+        cout << "Starting server on local port 13" << endl;
 
         tcp::socket socket(io_context);
         acceptor.accept(socket);
@@ -30,7 +32,7 @@ int main()
             size_t n = boost::asio::read_until(socket, eBuf, "\r\n\r\n", error);
 
             if (!error) {
-                std::cout << "READ UNTIL" << std::endl;
+                cout << "READ UNTIL" << endl;
 
 
                 std::string s = std::string{
@@ -43,10 +45,13 @@ int main()
                 boost::archive::text_iarchive eAR(eSource);
                 eAR >> e;
 
-                std::cout << e.dirX << std::endl;
+                cout << e.dirX << endl;
             }
             else if (error == boost::asio::error::eof) {
-                std::cout << "EOF READ" << std::endl;
+                cout << "EOF READ" << endl;
+            }
+            else {
+                cout << error << endl;
             }
         }
     }

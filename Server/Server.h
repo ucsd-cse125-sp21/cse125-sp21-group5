@@ -12,6 +12,7 @@
 
 
 using boost::asio::ip::tcp;
+using namespace std;
 
 class Server {
 

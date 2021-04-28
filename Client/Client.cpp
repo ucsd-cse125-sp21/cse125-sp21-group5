@@ -21,7 +21,6 @@ void Client::callServer(Event& e)
 
     boost::system::error_code error;
     boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
-
 }
 
 void Client::processRead(boost::system::error_code error, size_t bytes_read) {

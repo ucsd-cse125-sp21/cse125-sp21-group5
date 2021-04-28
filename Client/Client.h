@@ -44,7 +44,6 @@ private:
 	}
 
 	tcp::socket socket_;
-	std::string message_;
 };
 
 
@@ -76,8 +75,6 @@ class Client {
 			boost::asio::connect(connection->getSocket(), endpoints);
 
 			cout << "FINISHED CREATING CLIENT OBJ" << endl;
-
-
 
 			cout << "WRITING TO SERVER" << endl;
 			char hBuf[4096];

@@ -153,6 +153,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Quadtree.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
@@ -211,6 +213,7 @@
     <Import Project="..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets" Condition="Exists('..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" />
     <Import Project="..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets" Condition="Exists('..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets')" />
     <Import Project="..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
+    <Import Project="..\packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets" Condition="Exists('..\packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -228,5 +231,6 @@
     <Error Condition="!Exists('..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets'))" />
     <Error Condition="!Exists('..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_regex-vc142.1.76.0.0\build\boost_regex-vc142.targets'))" />
     <Error Condition="!Exists('..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
+    <Error Condition="!Exists('..\packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets'))" />
   </Target>
 </Project>

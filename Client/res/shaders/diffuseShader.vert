@@ -9,11 +9,13 @@ uniform mat4 viewProj;
 uniform mat4 model;
 
 out vec3 fragNormal;
+out vec3 fragPos;
 
 void main()
 {
     // TODO: make sure the model matrix is right for this situation. This wasn't working right for some reason
     //fragNormal = vec3(model * vec4(aNormal, 0));
     fragNormal = aNormal;
+    fragPos = vec3(model * vec4(aPos, 1.0));
     gl_Position = viewProj * model * vec4(aPos, 1.0);
 }

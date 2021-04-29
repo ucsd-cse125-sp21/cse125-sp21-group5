@@ -105,3 +105,13 @@ GLuint LoadShaders(const char* vertexFilePath, const char* fragmentFilePath)
 
 	return programID;
 }
+
+void SetShaderFloat(GLuint shader, std::string name, float value)
+{
+	glUniform1f(glGetUniformLocation(shader, name.c_str()), value);
+}
+
+void SetShader3f(GLuint shader, std::string name, glm::vec3 value)
+{
+	glUniform3fv(glGetUniformLocation(shader, name.c_str()), 1, glm::value_ptr(value));
+}

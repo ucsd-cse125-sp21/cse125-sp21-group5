@@ -1,6 +1,8 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
+#include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "glm/gtx/euler_angles.hpp"

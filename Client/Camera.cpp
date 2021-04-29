@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include "Renderer.h"
+
 /*
  * TODO: This will need to be changed to support 1st person view
  * Starts off facing the 'center' of the screen at (0,0,0) in world coord
@@ -23,6 +25,9 @@ Camera::Camera()
 
 	// World coordinates to camera coordinates
 	view = glm::lookAt(pos, pos + front, up);
+
+	// tell the global renderer about this camera
+	Renderer::get().setCamera(this);
 }
 
 Camera::~Camera()

@@ -4,6 +4,7 @@
 
 #include "Shader.h"
 #include "stb_image.h"
+#include "Renderer.h"
 
 TexturedMaterial::TexturedMaterial(aiMaterial* aiMat)
 {
@@ -85,6 +86,7 @@ void DiffuseMaterial::activate()
 {
 	glUseProgram(shader);
 	glUniform3fv(colorLocation, 1, glm::value_ptr(diffuseColor));
+	Renderer::get().bindToShader(shader);
 }
 
 void DiffuseMaterial::release()

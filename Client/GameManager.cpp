@@ -1,5 +1,7 @@
 #include "GameManager.h"
 
+#include "Renderer.h"
+
 // TODO: possibly move these as well
 // Track mouse movements
 bool firstMouse = true;
@@ -23,14 +25,19 @@ GameManager::GameManager(GLFWwindow* window)
 	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/head2.dae");
-	Model* monkeM = new Model("res/models/head2.dae");
+	Model* playerM = new Model("res/models/unitCube.dae");
+	Model* monkeM = new Model("res/models/unitCube.dae");
 	
 	// Build scene graph
 	worldT->add_child(playerT);
 	worldT->add_child(monkeT);
 	playerT->add_child(playerM);
 	monkeT->add_child(monkeM);
+
+	// Add a test point light
+	PointLight p = PointLight(glm::vec3(0, 2, 0), glm::vec3(1, 0, 0.5));
+	Renderer::get().addLight(p);
+
 
 	// TODO: Build Quadtree using DFS
 	/*
@@ -201,7 +208,7 @@ void GameManager::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Render the models
-	worldT->draw(camera->view, Window::projection);
+	worldT->draw(glm::mat4(1), Window::projection * camera->view);
 
 	//tile->draw(camera->view, Window::projection, shader);
 	//cube->draw(camera->view, Window::projection, shader);

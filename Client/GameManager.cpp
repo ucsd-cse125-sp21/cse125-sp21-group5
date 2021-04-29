@@ -44,9 +44,13 @@ GameManager::GameManager(GLFWwindow* window)
 	allColliders.push_back(monkeT->collider);
 
 	// inserting the collider into the quadtree to ensure fast computation
+	Node* root = worldT;
+	// TODO: node doesn't have necessary functions to perform DFS 
+
 	world->insert(playerT->collider);
 	world->insert(monkeT->collider);
-
+	// std::cerr << typeid(playerM).name() << std::endl;
+	
 	// Temporary "world"
 	/*for (int i = 0; i < 3; i++)
 	{
@@ -105,7 +109,7 @@ void GameManager::update()
 	// quadtree, and then see if it is colliding with any of the 
 	// points in its current surrounding. 
 	for (auto collider : allColliders) {
-		std::cerr << "outer loop" << std::endl;
+		//std::cerr << "outer loop" << std::endl;
 		BoxCollider colliderRange = BoxCollider(collider->center,
 			glm::vec3(collider->length, collider->width, collider->height) * 2.0f);
 		vector<BoxCollider*> nearbyColliders;

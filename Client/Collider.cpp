@@ -85,7 +85,7 @@ bool BoxCollider::intersects(BoxCollider* range) {
 		range->center.x - range->length > this->center.x + this->length ||
 		range->center.x + range->length < this->center.x - this->length
 		);
-	if (xy && yz && zx) std::cerr << "intersected" << std::endl;
+	//if (xy && yz && zx) std::cerr << "intersected" << std::endl;
 	return xy && yz && zx;
 }
 

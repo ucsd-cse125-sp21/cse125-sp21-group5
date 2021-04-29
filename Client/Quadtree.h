@@ -11,7 +11,9 @@ class Quadtree {
 public:
     // variables of the quadtree itself 
     BoxCollider boundary;
-    vector<Collider*> objects;
+
+    // TODO: need to make this generic 
+    vector<BoxCollider*> objects;
     int capacity;
     bool hasDivided;
 
@@ -26,7 +28,7 @@ public:
     Quadtree* eight;
 
     // Constructor for the quadtree/map 
-    Quadtree(BoxCollider boundary, int capacity, vector<Collider*> objects) {
+    Quadtree(BoxCollider boundary, int capacity, vector<BoxCollider*> objects) {
         this->boundary = boundary;
         this->capacity = capacity;
         this->objects = objects;
@@ -42,5 +44,5 @@ public:
     void insert(Collider* p);
     void subdivide();
     // Can query a box? 
-    vector<Collider*> query(BoxCollider* range, vector<Collider*>& found);
+    vector<BoxCollider*> query(BoxCollider* range, vector<BoxCollider*>& found);
 };

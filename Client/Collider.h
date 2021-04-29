@@ -7,6 +7,14 @@
 class Collider
 {
 public:
+	// Variables that colliders should have
+	glm::vec3 center;
+
+	// TODO think of a better way to do this
+	float length;
+	float width;
+	float height;
+
 	enum class Type
 	{
 		sphere,
@@ -18,6 +26,7 @@ public:
 	Collider::Type type;
 
 	/*virtual bool check_collision(Collider* other) = 0*/
+	//virtual bool check_collision(BoxCollider* other) = 0;
 };
 
 // TODO: Is this bad? Should we just move to new files
@@ -46,7 +55,7 @@ class BoxCollider : public Collider
 public:
 	// The eight corners that make up a box
 	glm::vec3 points[8];
-	glm::vec3 center;
+	//glm::vec3 center;
 	float length;
 	float width;
 	float height;

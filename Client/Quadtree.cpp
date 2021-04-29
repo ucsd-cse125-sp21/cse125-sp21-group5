@@ -4,7 +4,7 @@ using namespace std;
 
 // Inserts a new SphereCollider into the tree 
 // Non-Functional
-void Quadtree::insert(SphereCollider* p) {
+/*void Quadtree::insert(SphereCollider* p) {
     // check if the quadtree can house the point, if it can't, don't do anything
     if (!this->boundary.contains(p)) {
         return;
@@ -30,7 +30,7 @@ void Quadtree::insert(SphereCollider* p) {
         this->seven->insert(p);
         this->eight->insert(p);
     }
-}
+}*/
 
 // Inserts a new BoxCollider into the tree 
 void Quadtree::insert(BoxCollider* p) {
@@ -67,7 +67,7 @@ void Quadtree::insert(BoxCollider* p) {
 void Quadtree::subdivide() {
     glm::vec3 c = this->boundary.center;
     BoxCollider b = this->boundary;
-    vector<Collider*> p1, p2, p3, p4, p5, p6, p7, p8;
+    vector<BoxCollider*> p1, p2, p3, p4, p5, p6, p7, p8;
     /*
    +--------+
   /   4  2 /|
@@ -112,7 +112,9 @@ void Quadtree::subdivide() {
     this->eight = new Quadtree(eight, capacity, p8);
 }
 
-vector<Collider*> Quadtree::query(BoxCollider* range, vector<Collider*>& found) {
+
+// TODO: need to make this generic and not just use BoxCollider 
+vector<BoxCollider*> Quadtree::query(BoxCollider* range, vector<BoxCollider*>& found) {
     if (found.empty()) {
 
     }

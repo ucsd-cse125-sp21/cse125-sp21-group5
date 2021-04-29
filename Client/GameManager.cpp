@@ -35,11 +35,18 @@ GameManager::GameManager(GLFWwindow* window)
 	// TODO: Build Quadtree using DFS
 	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 10.0f), 
 		glm::vec3(500.0f, 500.0f, 500.0f));
-	vector<Collider*> objects;
-	Quadtree* world = new Quadtree(worldBox, 4, objects);
+	// TODO: need to make this gneric 
+	vector<BoxCollider*> objects;
+	world = new Quadtree(worldBox, 4, objects);
 
+	// Keeping track of all the colliders in the world
+	allColliders.push_back(playerT->collider);
+	allColliders.push_back(monkeT->collider);
+
+	// inserting the collider into the quadtree to ensure fast computation
 	world->insert(playerT->collider);
 	world->insert(monkeT->collider);
+
 	// Temporary "world"
 	/*for (int i = 0; i < 3; i++)
 	{
@@ -89,7 +96,29 @@ void GameManager::update()
 	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 	
+	// TODO: Change this to be a dynamic check of just all the colliders
+	// currently in the world 
 	playerT->collider->check_collision(monkeT->collider);
+	
+	// This checks ALL current colliders existing in the world, 
+	// then it queries the current collider's surroundings through the 
+	// quadtree, and then see if it is colliding with any of the 
+	// points in its current surrounding. 
+	for (auto collider : allColliders) {
+		std::cerr << "outer loop" << std::endl;
+		BoxCollider colliderRange = BoxCollider(collider->center,
+			glm::vec3(collider->length, collider->width, collider->height) * 2.0f);
+		vector<BoxCollider*> nearbyColliders;
+		nearbyColliders = world->query(&colliderRange, nearbyColliders);
+		for (auto otherCollider : nearbyColliders) {
+			if (collider != otherCollider && collider->check_collision(otherCollider)) {
+				std::cerr << "Collided" << endl;
+			}
+		}
+	}
+
+	// TODO, could put quadtree here to update every frame 
+
 
 	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));

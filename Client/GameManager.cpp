@@ -57,7 +57,7 @@ GameManager::~GameManager()
 	delete worldT; // Recursively calls destructor for all nodes... hopefully
 }
 
-void GameManager::update()
+void GameManager::update(Client& client)
 {
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
@@ -72,7 +72,7 @@ void GameManager::update()
 	glfwPollEvents();
 
 	// Process keyboard input
-	handleKeyboardInput();
+	handleKeyboardInput(client);
 	
 	// Tell server about any movements
 	// TODO: how to wait for response?
@@ -80,8 +80,8 @@ void GameManager::update()
 	//glm::vec3 newCamPos = this->client.callFakeServer();
 
 	// Testing scene graph
-	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
+	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
 	//playerT->collider->check_collision(monkeT->collider);
 
@@ -96,7 +96,7 @@ void GameManager::update()
 }
 
 // Handle Keyboard Input
-void GameManager::handleKeyboardInput()
+void GameManager::handleKeyboardInput(Client& client)
 {
 	// System Controls
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -104,7 +104,10 @@ void GameManager::handleKeyboardInput()
 
 	// Player Controls
 	if (glfwGetKey(window, GLFW_KEY_W))
-		camera->move(camera->front);
+	{
+		Event e(camera->front, camera->speed, camera->pos);
+		client.callServer(e);
+	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 		camera->move(-camera->front);
 	if (glfwGetKey(window, GLFW_KEY_A))

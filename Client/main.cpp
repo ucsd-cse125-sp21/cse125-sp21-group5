@@ -83,17 +83,27 @@ int main(int argc, char** argv)
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
 	// Forever game loop
+	boost::asio::io_context ioContext;
+	Client client(ioContext);
+
+	client.camera = gameManager->camera;
+	boost::thread_group worker_threads;
+	worker_threads.create_thread(                            
+		boost::bind(&boost::asio::io_service::run, &ioContext)
+	);
+
+
 	float start = glfwGetTime();
 	unsigned int frameCount = 0;
 	while (!glfwWindowShouldClose(window)) {
 		float end = glfwGetTime();
-		if (end - start <= (1.0f/60))
+		if (end - start <= (1.0f / 60))
 		{
-			//continue;
+			continue;
 		}
 
 		start = glfwGetTime();
-		gameManager->update();
+		gameManager->update(client);
 	}
 
 	// destroy objects created

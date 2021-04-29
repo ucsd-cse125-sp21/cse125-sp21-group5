@@ -5,13 +5,7 @@
 
 void Client::callServer(Event& e)
 {
-    unsigned short port = 13;
-
-    boost::asio::io_context io_context;
-    tcp::endpoint endpoint(boost::asio::ip::address_v4::loopback(), port);
-
-    tcp::socket socket(io_context, endpoint.protocol());
-    socket.connect(endpoint);
+    cout << "WRITING TO SERVER" << endl;
 
     char hBuf[PACKET_SIZE];
 
@@ -26,6 +20,33 @@ void Client::callServer(Event& e)
 
 
     boost::system::error_code error;
-    boost::asio::write(socket, boost::asio::buffer(hBuf, strlen(hBuf)), error);
+    boost::asio::write(connection->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+}
 
+void Client::do_read() {
+    cout << "DO READ ONCE" << endl;
+
+    boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
+        boost::bind(&Client::handle_read, this,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
+}
+
+void Client::handle_read(boost::system::error_code error, size_t bytes_read) {
+    cout << "RECEIVED FROM SERVER" << endl;
+
+    GameState gs;
+    std::string s = std::string{
+        boost::asio::buffers_begin(buf.data()),
+        boost::asio::buffers_begin(buf.data()) + bytes_read - 4
+    }; // -4 for \r\n\r\n
+    buf.consume(bytes_read);
+
+    boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+    boost::archive::text_iarchive eAR(eSource);
+    eAR >> gs;
+
+    camera->pos = glm::vec3(gs.posX, gs.posY, gs.posZ);
+
+    do_read();
 }

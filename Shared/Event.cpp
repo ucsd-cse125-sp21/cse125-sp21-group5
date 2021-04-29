@@ -1,6 +1,5 @@
 #include "Event.h"
 
-// TODO: possibly just send new position, so server doesn't have to calculate for us
 Event::Event(glm::vec3 dir, float speed, glm::vec3 position) {
 	this->dirX = dir.x;
 	this->dirY = dir.y;
@@ -12,4 +11,12 @@ Event::Event(glm::vec3 dir, float speed, glm::vec3 position) {
 
 }
 
-Event::Event() {}
+Event::Event() {
+	this->dirX = 0;
+	this->dirY = 0;
+	this->dirZ = 0;
+	this->speed = 0;
+	this->posX = 0;
+	this->posY = 0;
+	this->posZ = 0;
+}

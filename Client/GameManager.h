@@ -10,7 +10,7 @@
 
 #include "Tile.h"
 #include "Window.h"
-#include "Camera.h"
+#include "../Shared/Camera.h"
 #include "Model.h"
 #include "Transform.h"
 #include "Client.h"
@@ -22,7 +22,6 @@ class GameManager
 private:
 	// Important variables
 	GLFWwindow* window;
-	Camera* camera;
 	//Client client = Client();
 
 	// Root of scene graph
@@ -38,14 +37,16 @@ private:
 	static float fov;
 
 public:
+	Camera* camera;
+
 	GameManager(GLFWwindow * window);
 	~GameManager();
 
-	void update();
+	void update(Client& client);
 
 	void render();
 
-	void handleKeyboardInput();
+	void handleKeyboardInput(Client& client);
 
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);

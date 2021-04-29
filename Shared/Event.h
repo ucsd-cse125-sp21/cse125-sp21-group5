@@ -24,7 +24,5 @@ public:
 		ar& posX;
 		ar& posY;
 		ar& posZ;
-
-
 	}
 };

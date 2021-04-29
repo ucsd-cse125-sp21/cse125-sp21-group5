@@ -5,7 +5,6 @@
 #include "Shader.h"
 #include "Camera.h"
 
-#include "Cube.h"
 #include <string>
 
 using namespace std;

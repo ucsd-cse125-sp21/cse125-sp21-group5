@@ -59,6 +59,6 @@ void Window::resizeCallback(GLFWwindow* window, int width, int height)
 	Window::width = width;
 	Window::height = height;
 	glViewport(0, 0, width, height);
-	Window::projection = glm::perspective(glm::radians(60.0),
-		(double) width / (double) height, 0.1, 1000.0);
+	Window::projection = 
+		glm::perspective(glm::radians(60.0f), (float) width / (float) height, 0.1f, 1000.0f);
 }

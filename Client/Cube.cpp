@@ -154,6 +154,9 @@ void Cube::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint 
 {
 	// actiavte the shader program 
 	glUseProgram(shader);
+	
+	//TODO REMOVE
+
 
 	// get the locations and send the uniforms to the shader 
 	glUniformMatrix4fv(glGetUniformLocation(shader, "viewProj"), 1, GL_FALSE, glm::value_ptr(viewProjMtx));

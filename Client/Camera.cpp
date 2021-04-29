@@ -8,25 +8,20 @@
 
 Camera::Camera()
 {
-	/*
-	fov = 45.0f;
-	aspect = 1.33f;
-	nearClip = 0.1f;
-	farClip = 100.0f;
-
-	distance = 10.0f;
-	azimuth = 0.0f;
-	incline = 20.0f;
-	*/
-
-	// Camera properties
+	// Camera movement
 	speed = 2.5f;
 	sensitivity = 0.1f;
+
+	// Camera rotation
 	yaw = 0.0f;
 	pitch = 0.0f;
-	pos = glm::vec3(0.0f, 0.0f, 20.0f);
+
+	// Camera position
+	pos = glm::vec3(0.0f, 10.0f, 0.0f);
 	front = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	// World coordinates to camera coordinates
 	view = glm::lookAt(pos, pos + front, up);
 }
 
@@ -36,22 +31,6 @@ Camera::~Camera()
 
 void Camera::update(float& deltaTime, float& offsetX, float& offsetY)
 {
-	/*
-	// Compute camera world matrix
-	glm::mat4 world(1);
-	world[3][2] = distance;
-	world = glm::eulerAngleY(glm::radians(-azimuth)) * glm::eulerAngleX(glm::radians(-incline)) * world;
-
-	// Compute view matrix (inverse of world matrix)
-	glm::mat4 view = glm::inverse(world);
-
-	// Compute perspective projection matrix
-	glm::mat4 project = glm::perspective(glm::radians(fov), aspect, nearClip, farClip);
-
-	// Compute final view-projection matrix
-	viewProjMat = project * view;
-	*/
-
 	// Calculate new pitch and yaw
 	yaw += sensitivity * offsetX;
 	pitch += sensitivity * offsetY;
@@ -70,6 +49,12 @@ void Camera::update(float& deltaTime, float& offsetX, float& offsetY)
 	speed = 2.5f * deltaTime;
 }
 
+void Camera::move(const glm::vec3& dir)
+{
+	this->pos += speed * dir;
+}
+
+// TODO: Deprecated
 void Camera::move(bool W, bool S, bool A, bool D, bool SPACE, bool L_CTRL)
 {
 	// Forward or backward
@@ -83,9 +68,4 @@ void Camera::move(bool W, bool S, bool A, bool D, bool SPACE, bool L_CTRL)
 	// Up or down
 	if (SPACE) pos += speed * up;
 	else if (L_CTRL) pos -= speed * up;
-}
-
-void Camera::reset()
-{
-	
 }

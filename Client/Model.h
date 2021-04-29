@@ -1,39 +1,38 @@
 #pragma once
-
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <vector>
 #include <string>
+#include <iostream>
+#include <cstdio>
 
-class Model
+#include "Node.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "stb_image.h"
+
+class Model : public Node
 {
 private:
-	GLuint VAO;
-	GLuint VBO_positions, VBO_normals, EBO;
+	// Stuff for textures
+	std::vector<Mesh*> meshes;
+	std::vector<Material*> materials;
 
-	// TODO replace with a Transform class
-	glm::mat4 model; //the local model transform
-	glm::vec3 color;
-
-	//maybe have a transform object, for parent and world
-
-	std::vector<glm::vec3>	vertices;	// the vertices, tells position of the points
-	std::vector<glm::vec3>	normals;	// the vertex normals
-	std::vector<glm::uvec3> triangles;  // the triange indices that make up the mesh
-	std::vector<glm::vec3>	 uvCoords;  // the UV coordinates for the textures
-
-	void loadModel(std::string modelPath); //read in the file, load the model's data
+	// Load the model's data from file
+	void loadModel(std::string modelPath);
 
 public:
 	Model(std::string modelPath);
 	~Model();
 
-	glm::mat4 getModel() { return model; }
-	glm::vec3 getColor() { return color; }
-
 	void update();
-	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx, GLuint shader);
-	void move(glm::vec3& dir, float deltaTime);
+	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);
 };

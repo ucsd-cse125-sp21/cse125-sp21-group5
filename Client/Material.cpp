@@ -54,6 +54,8 @@ void TexturedMaterial::activate()
 
 	// activate the texture
 	glBindTexture(GL_TEXTURE_2D, tex_diffuse);
+
+	Renderer::get().bindToShader(shader);
 }
 
 

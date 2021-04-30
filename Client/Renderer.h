@@ -7,7 +7,7 @@
 #include "Camera.h"
 
 
-#define NUM_POINT_LIGHTS 4
+#define NUM_POINT_LIGHTS 32
 
 class PointLight {
 public:
@@ -46,7 +46,7 @@ public:
 
 	void setCamera(Camera* camera);
 
-	void addLight(PointLight light);
+	void addPointLight(PointLight light);
 	void bindToShader(GLuint shader);
 	
 

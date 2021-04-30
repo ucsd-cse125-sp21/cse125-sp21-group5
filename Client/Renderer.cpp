@@ -8,7 +8,7 @@ void Renderer::setCamera(Camera* camera)
 }
 
 
-void Renderer::addLight(PointLight light) 
+void Renderer::addPointLight(PointLight light) 
 {
 	mPointLights.push_back(light);
 }

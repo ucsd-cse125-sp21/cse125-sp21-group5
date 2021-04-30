@@ -21,12 +21,12 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
-	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
+	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 90, 0), glm::vec3(5.0f, 0.0f, 0.0));
+	monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(-5.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/unitCube.dae");
-	Model* monkeM = new Model("res/models/unitCube.dae");
+	Model* playerM = new Model("res/models/head2.dae");
+	Model* monkeM = new Model("res/models/head2.dae");
 	
 	// Build scene graph
 	worldT->add_child(playerT);
@@ -35,8 +35,8 @@ GameManager::GameManager(GLFWwindow* window)
 	monkeT->add_child(monkeM);
 
 	// Add a test point light
-	PointLight p = PointLight(glm::vec3(0, 2, 0), glm::vec3(1, 0, 0.5));
-	Renderer::get().addLight(p);
+	Renderer::get().addPointLight(PointLight(glm::vec3(1, 4, -2), glm::vec3(1, 0, 0.5)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(-1, 4, -2), glm::vec3(0.2, 1, 0)));
 
 
 	// TODO: Build Quadtree using DFS
@@ -87,8 +87,8 @@ void GameManager::update()
 	//glm::vec3 newCamPos = this->client.callFakeServer();
 
 	// Testing scene graph
-	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+	//playerT->translate(glm::vec3(-0.0005f, 0.0f, 0.0f));
+	//monkeT->translate(glm::vec3(0.0005f, 0.0f, 0.0f));
 
 	//playerT->collider->check_collision(monkeT->collider);
 

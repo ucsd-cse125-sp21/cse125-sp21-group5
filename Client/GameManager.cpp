@@ -81,6 +81,26 @@ void GameManager::update(Client& client)
 // Handle Keyboard Input
 void GameManager::handleInput(Client& client)
 {
+	// Get current mouse position
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	// Special case for first mouse
+	if (firstMouse)
+	{
+		lastX = (float)xpos;
+		lastY = (float)ypos;
+		firstMouse = false;
+	}
+
+	// Calculate offset from prev frame
+	offsetX = (float)(xpos - lastX);
+	offsetY = (float)(lastY - ypos);
+
+	// Save previous positions
+	lastX = (float)xpos;
+	lastY = (float)ypos;
+
 	// System Controls
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -169,21 +189,7 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 // Detect mouse position
 void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	// Special case for first mouse
-	if (firstMouse)
-	{
-		lastX = (float) xpos;
-		lastY = (float) ypos;
-		firstMouse = false;
-	}
-
-	// Calculate offset from prev frame
-	offsetX = (float) (xpos - lastX);
-	offsetY = (float) (lastY - ypos);
-
-	// Save previous positions
-	lastX = (float) xpos;
-	lastY = (float) ypos;
+	
 }
 
 // Detect mouse scroll

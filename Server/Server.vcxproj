@@ -141,16 +141,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Shared\Camera.cpp" />
     <ClCompile Include="..\Shared\Event.cpp" />
     <ClCompile Include="..\Shared\GameState.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ServerGameManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shared\Camera.h" />
     <ClInclude Include="..\Shared\Event.h" />
     <ClInclude Include="..\Shared\GameState.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="ServerGameManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

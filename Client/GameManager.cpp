@@ -72,54 +72,54 @@ void GameManager::update(Client& client)
 	glfwPollEvents();
 
 	// Process keyboard input
-	handleKeyboardInput(client);
+	handleInput(client);
 	
-	// Tell server about any movements
-	// TODO: how to wait for response?
-	//Event e = Event(key, camera);
-	//glm::vec3 newCamPos = this->client.callFakeServer();
-
-	// Testing scene graph
-	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-
-	//playerT->collider->check_collision(monkeT->collider);
-
-	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));
-
-	// Update camera position
-	// TODO: place camera inside of Player class
-	camera->update(deltaTime, offsetX, offsetY);
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 }
 
 // Handle Keyboard Input
-void GameManager::handleKeyboardInput(Client& client)
+void GameManager::handleInput(Client& client)
 {
 	// System Controls
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	// Player Controls
+	glm::vec3 toSend = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		Event e(camera->front, camera->speed, camera->pos);
-		client.callServer(e);
+		toSend += camera->front;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
-		camera->move(-camera->front);
-	if (glfwGetKey(window, GLFW_KEY_A))
-		camera->move(-glm::normalize(glm::cross(camera->front, camera->up)));
+	{
+		toSend -= camera->front;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A)) 
+	{
+		toSend += -glm::normalize(glm::cross(camera->front, camera->up));
+	}
 	else if (glfwGetKey(window, GLFW_KEY_D))
-		camera->move(glm::normalize(glm::cross(camera->front, camera->up)));
+	{
+		toSend += glm::normalize(glm::cross(camera->front, camera->up));
+	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
-		camera->move(camera->up);
+	{
+		toSend += camera->up;
+	}
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
-		camera->move(-camera->up);
+	{
+		toSend += -camera->up;
+	}
 
-	// Temporary Player 2 Controls
+	toSend *= camera->speed * deltaTime;
+
+	//Update mouse movements
+	float yaw = camera->sensitivity * offsetX;
+	float pitch = camera->sensitivity * offsetY;
+
+	Event e(toSend, yaw, pitch);
+	client.callServer(e);
 }
 
 // Use for one-time key presses
@@ -204,7 +204,7 @@ void GameManager::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Render the models
-	worldT->draw(camera->view, Window::projection);
+	worldT->draw(glm::mat4(1), Window::projection * camera->view);
 
 	//tile->draw(camera->view, Window::projection, shader);
 	//cube->draw(camera->view, Window::projection, shader);

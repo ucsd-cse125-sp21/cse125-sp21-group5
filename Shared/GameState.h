@@ -7,16 +7,19 @@
 class GameState
 {
 public:
-	float posX, posY, posZ;
+	glm::vec3 pos, front;
 
-	GameState(glm::vec3 pos);
+	GameState(glm::vec3 pos, glm::vec3 front);
 	GameState();
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
-		ar& posX;
-		ar& posY;
-		ar& posZ;
+		ar& pos.x;
+		ar& pos.y;
+		ar& pos.z;
+		ar& front.x;
+		ar& front.y;
+		ar& front.z;
 	}
 };
 

@@ -5,8 +5,6 @@
 
 void Client::callServer(Event& e)
 {
-    cout << "WRITING TO SERVER" << endl;
-
     char hBuf[PACKET_SIZE];
 
     //Header
@@ -24,8 +22,6 @@ void Client::callServer(Event& e)
 }
 
 void Client::do_read() {
-    cout << "DO READ ONCE" << endl;
-
     boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
         boost::bind(&Client::handle_read, this,
             boost::asio::placeholders::error,
@@ -33,8 +29,6 @@ void Client::do_read() {
 }
 
 void Client::handle_read(boost::system::error_code error, size_t bytes_read) {
-    cout << "RECEIVED FROM SERVER" << endl;
-
     GameState gs;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -46,7 +40,9 @@ void Client::handle_read(boost::system::error_code error, size_t bytes_read) {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> gs;
 
-    camera->pos = glm::vec3(gs.posX, gs.posY, gs.posZ);
+    camera->pos = gs.pos;
+    camera->front = gs.front;
+    camera->update(gs.pos, gs.front);
 
     do_read();
 }

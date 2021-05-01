@@ -13,6 +13,8 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/bind.hpp>
 
+#include <glm/gtx/string_cast.hpp>
+
 
 using boost::asio::ip::tcp;
 using namespace std;

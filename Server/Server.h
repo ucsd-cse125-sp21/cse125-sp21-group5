@@ -3,11 +3,11 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <chrono>
+
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#include "../Shared/Event.h"
-#include "../Shared/Camera.h"
-#include "../Shared/GameState.h"
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -15,7 +15,12 @@
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind/bind.hpp>
+#include <boost/thread/thread.hpp>
 
+#include "../Shared/Event.h"
+#include "../Shared/Camera.h"
+#include "../Shared/GameState.h"
+#include "ServerGameManager.h"
 
 using boost::asio::ip::tcp;
 
@@ -58,6 +63,7 @@ class Server{
 public:
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;
+	ServerGameManager gm;
 
 	Server(boost::asio::io_context& ioContext) {
 		boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
@@ -78,9 +84,8 @@ public:
 	}
 
 	void do_read();
-	void handle_read(boost::system::error_code error, size_t bytes_read);
+	void handle_read(int playerId, boost::system::error_code error, size_t bytes_read);
 
 private:
-	Camera player1Cam;
 	boost::asio::streambuf buf;
 };

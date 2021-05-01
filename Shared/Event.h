@@ -8,21 +8,18 @@
 class Event
 {
 public:
-	float dirX, dirY, dirZ;
-	float speed;
-	float posX, posY, posZ;
+	glm::vec3 pos;
+	float yaw, pitch;
 
-	Event(glm::vec3 dir, float speed, glm::vec3 position);
+	Event(glm::vec3 pos, float yaw, float pitch);
 	Event();
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
-		ar& dirX;
-		ar& dirY;
-		ar& dirZ;
-		ar& speed;
-		ar& posX;
-		ar& posY;
-		ar& posZ;
+		ar& pos.x;
+		ar& pos.y;
+		ar& pos.z;
+		ar& yaw;
+		ar& pitch;
 	}
 };

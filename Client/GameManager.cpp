@@ -21,27 +21,29 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 90, 0), glm::vec3(5.0f, 0.0f, 0.0));
-	monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(-5.0f, 0.0f, 0.0f));
+	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
+	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/head2.dae");
-	Model* monkeM = new Model("res/models/head2.dae");
+	Model* playerM = new Model("res/models/shit4.dae");
+	//Model* monkeM = new Model("res/models/head2.dae");
 	
 	// Build scene graph
 	worldT->add_child(playerT);
-	worldT->add_child(monkeT);
+	//worldT->add_child(monkeT);
 	playerT->add_child(playerM);
-	monkeT->add_child(monkeM);
+	//monkeT->add_child(monkeM);
 
 	// Add a test point light
-	Renderer::get().addPointLight(PointLight(glm::vec3(1, 4, -2), glm::vec3(1, 0, 0.5)));
-	Renderer::get().addPointLight(PointLight(glm::vec3(-1, 4, -2), glm::vec3(0.2, 1, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
+
+	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(3)));
 
 
 	// TODO: Build Quadtree using DFS
-	/*
 	// Temporary "world"
+	/*
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)

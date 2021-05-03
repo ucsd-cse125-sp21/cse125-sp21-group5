@@ -21,9 +21,17 @@ struct PointLight {
 #define NUM_POINT_LIGHTS 32
 uniform PointLight pointlights[NUM_POINT_LIGHTS];
 
+struct DirectionalLight {
+    vec3 direction;
+    vec3 color;
+};
+
+uniform DirectionalLight sunLight;
+
 out vec4 fragColor;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 
 void main()
 {
@@ -36,7 +44,10 @@ void main()
         color += CalcPointLight(pointlights[i], fragNormal, fragPos, aViewDir);
     }
 
+    color += CalcDirectionalLight(sunLight, fragNormal, aViewDir);
+
     fragColor = vec4(color, 1);
+    //fragColor = vec4(normalize((fragNormal + 1) / 2), 1);
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -51,6 +62,16 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // combine results
     vec3 diffuse = light.color * diff * vec3(texture(TEX_diffuse, texCoord));
     diffuse *= attenuation;
+    return diffuse;
+} 
+
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = light.direction;
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // combine results
+    vec3 diffuse = light.color * diff * vec3(texture(TEX_diffuse, texCoord));
     return diffuse;
 } 
 	

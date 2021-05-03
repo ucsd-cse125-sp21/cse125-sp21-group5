@@ -11,13 +11,29 @@
 
 class PointLight {
 public:
-	glm::vec3 position;
-	glm::vec3 color;
+	glm::vec3 mPosition;
+	glm::vec3 mColor;
 
 	// attenuation constants
-	float constant, linear, quadratic;
+	float mConstant, mLinear, mQuadratic;
 
 	PointLight(glm::vec3 position, glm::vec3 color);
+};
+
+class DirectionalLight {
+public:
+	glm::vec3 mDirection;
+	glm::vec3 mColor;
+
+	DirectionalLight(glm::vec3 direction, glm::vec3 color) {
+		mDirection = glm::normalize(direction);
+		mColor = color;
+	}
+
+	DirectionalLight() {
+		mDirection = glm::vec3(0, 1, 0);
+		mColor = glm::vec3(0, 0, 0);
+	}
 };
 
 
@@ -44,9 +60,12 @@ public:
 
 	std::vector<PointLight> mPointLights;
 
+	DirectionalLight mDirectionalLight;
+
 	void setCamera(Camera* camera);
 
 	void addPointLight(PointLight light);
+	void addDirectionalLight(DirectionalLight light);
 	void bindToShader(GLuint shader);
 	
 

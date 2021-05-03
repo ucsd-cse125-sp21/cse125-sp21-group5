@@ -47,8 +47,8 @@ void Model::loadModel(std::string modelPath)
 
 	unsigned int importOptions = aiProcess_Triangulate
 		| aiProcess_JoinIdenticalVertices
-		| aiProcess_FlipUVs
-		| aiProcess_PreTransformVertices;
+		| aiProcess_FlipUVs;
+		//| aiProcess_PreTransformVertices;
 
 	const aiScene* scene = import.ReadFile(modelPath, importOptions);
 

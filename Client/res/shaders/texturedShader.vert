@@ -15,8 +15,7 @@ out vec3 fragPos;
 
 void main()
 {
-    //fragNormal = vec3(model * vec4(aNormal, 0));
-    fragNormal = aNormal;
+    fragNormal = vec3(model * vec4(aNormal, 0));
     texCoord = aTexCoord;
     fragPos = vec3(model * vec4(aPos, 1.0));
     gl_Position = viewProj * model * vec4(aPos, 1.0);

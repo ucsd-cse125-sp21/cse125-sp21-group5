@@ -84,6 +84,10 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &VBO_texCoords);
 	glDeleteBuffers(1, &EBO);
 	glDeleteVertexArrays(1, &VAO);
+
+	for (int i = 0; i < boneList.size(); i++) {
+		delete boneList.at(i);
+	}
 }
 
 void Mesh::draw()

@@ -19,6 +19,19 @@
 #include "Material.h"
 #include "stb_image.h"
 
+#include <map>
+#include "Bone.h"
+
+struct BoneInfo
+{
+	/*id is index in finalBoneMatrices*/
+	int id; //we will use the counter for the bone
+
+	/*offset matrix transforms vertex from model space to bone space*/
+	glm::mat4 offset; //binding matrix
+
+};
+
 class Model : public Node
 {
 private:
@@ -26,8 +39,10 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
 
-	// Load the model's data from file
-	void loadModel(std::string modelPath);
+	std::map<std::string, BoneInfo> m_BoneInfoMap; //help sum up all the weights
+	int m_BoneCounter = 0;
+
+	void loadModel(std::string modelPath); //read in the file, load the model's data
 
 public:
 	Model(std::string modelPath);
@@ -35,4 +50,10 @@ public:
 
 	void update();
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);
+};
+
+
+class AnimatedMode : private Model
+{
+
 };

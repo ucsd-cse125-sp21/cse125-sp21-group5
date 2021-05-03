@@ -50,7 +50,24 @@ void Model::loadModel(std::string modelPath)
 		| aiProcess_FlipUVs;
 		//| aiProcess_PreTransformVertices;
 
-	const aiScene* scene = import.ReadFile(modelPath, importOptions);
+	//const aiScene* scene = import.ReadFile(modelPath, importOptions);
+
+	const aiScene* scene = import.ReadFile(modelPath,
+		aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
+		aiProcess_ValidateDataStructure |		// perform a full validation of the loader's output
+		aiProcess_ImproveCacheLocality |		// improve the cache locality of the output vertices
+		aiProcess_RemoveRedundantMaterials |	// remove redundant materials
+		aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
+		aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
+		//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
+		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
+		aiProcess_OptimizeMeshes |				// join small meshes, if possible;
+		//aiProcess_PreTransformVertices |
+		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
+		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
+		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
+		aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
+		aiProcess_SortByPType);
 
 	if (!scene) {
 		std::cerr << "Failed to load model file " << modelPath << std::endl;
@@ -80,5 +97,60 @@ void Model::loadModel(std::string modelPath)
 		aiMesh* aiMesh = scene->mMeshes[meshidx];
 		Mesh* mesh = new Mesh(aiMesh);
 		meshes.push_back(mesh);
+
+		int numBone = aiMesh->mNumBones;
+		printf("nmesh %d\n", meshidx);
+		printf("numBone %d\n", numBone);
+
+		for (int boneIdx = 0; boneIdx < numBone; boneIdx++) {
+			//Each bone has a list of pair (vertexId, weight value). The vertex id
+			//points to the index in the vertice list of the mesh. Th weights affect
+			//that vertex. A bone also has an offest matrix which is the transformation 
+			//from local space to the bone space, the binding matrix. Each bone hasits own shape
+
+			aiBone* aiBone = aiMesh->mBones[boneIdx];
+			std::string aiboneName = aiBone->mName.data;
+
+			Bone* bone = new Bone(aiBone);
+			mesh->boneList.push_back(bone);
+
+			//this part is just storing the unique bone of the model into a map.
+			//The key is the bone name
+			//The value is a BoneInfo obj that contains the binding matrix, and a id (using the amount of bone from 0 - totalBoneNum - 1)
+			int boneID = -1;
+			if (m_BoneInfoMap.find(aiboneName) == m_BoneInfoMap.end())
+			{
+				BoneInfo newBoneInfo; //struct from Model.h
+				newBoneInfo.id = m_BoneCounter;
+				newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(aiBone->mOffsetMatrix);
+
+				m_BoneInfoMap[aiboneName] = newBoneInfo;
+				boneID = m_BoneCounter;
+				m_BoneCounter++;
+			}
+			else
+			{
+				boneID = m_BoneInfoMap[aiboneName].id;
+			}
+			assert(boneID != -1);
+		}
+	}
+
+	//printf("UH %d\n", scene->HasAnimations());
+	//printf("total unique bones %d\n", m_BoneInfoMap.size());
+	printf("total unique bones %d\n", m_BoneCounter);
+	//printf("number of Animation %d\n", scene->mNumAnimations);
+	aiNode* rootNode = scene->mRootNode;
+
+	glm::mat4 globalTrans = AssimpGLMHelpers::ConvertMatrixToGLMFormat(rootNode->mTransformation);
+	glm::mat4 globalInvTrans = inverse(globalTrans);
+
+	//Load animations
+	for (int animIdx = 0; animIdx < scene->mNumAnimations; animIdx++) {
+		aiAnimation* aiAnim = scene->mAnimations[animIdx];
+		printf("numChannels: %d\n", aiAnim->mNumChannels);
+		//printf("duration: %lf\n", aiAnim->mDuration);
+		//printf("meshChannel: %d\n", aiAnim->mNumMeshChannels);
+		
 	}
 }

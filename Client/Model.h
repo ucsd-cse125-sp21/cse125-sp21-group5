@@ -53,7 +53,7 @@ public:
 };
 
 
-class AnimatedMode : private Model
+class AnimatedModel : private Model
 {
 
 };

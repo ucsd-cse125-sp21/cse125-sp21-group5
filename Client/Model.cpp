@@ -148,7 +148,10 @@ void Model::loadModel(std::string modelPath)
 	//Load animations
 	for (int animIdx = 0; animIdx < scene->mNumAnimations; animIdx++) {
 		aiAnimation* aiAnim = scene->mAnimations[animIdx];
-		printf("numChannels: %d\n", aiAnim->mNumChannels);
+
+		Animation* anime = new Animation(aiAnim, rootNode);
+		animationList.push_back(anime);
+		//printf("numChannels: %d\n", aiAnim->mNumChannels);
 		//printf("duration: %lf\n", aiAnim->mDuration);
 		//printf("meshChannel: %d\n", aiAnim->mNumMeshChannels);
 		

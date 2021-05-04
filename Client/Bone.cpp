@@ -7,12 +7,12 @@ Bone::Bone(aiBone* b) {
 	offsetBoneMatrix = AssimpGLMHelpers::ConvertMatrixToGLMFormat(aibone->mOffsetMatrix);
 	aiVertexWeight* aiVertexWeightList = aibone->mWeights;
 
-	std::cout << boneName << std::endl;
+	//std::cout << boneName << std::endl;
 	for (int i = 0; i < aibone->mNumWeights; i++) {
 		int vertexIndex = aiVertexWeightList[i].mVertexId;
 		float weight = aiVertexWeightList[i].mWeight;
 
-		std::cout << "vertexIndex: " << vertexIndex <<  " weight: "<<  weight <<std::endl;
+		//std::cout << "vertexIndex: " << vertexIndex <<  " weight: "<<  weight <<std::endl;
 		//std::cout << weight << std::endl;
 
 		vertexIDList.push_back(vertexIndex);

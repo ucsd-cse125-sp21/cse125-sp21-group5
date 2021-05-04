@@ -21,6 +21,7 @@
 
 #include <map>
 #include "Bone.h"
+#include "Animation.h"
 
 struct BoneInfo
 {
@@ -39,6 +40,7 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
 
+	std::vector<Animation*> animationList;
 	std::map<std::string, BoneInfo> m_BoneInfoMap; //help sum up all the weights
 	int m_BoneCounter = 0;
 
@@ -55,5 +57,7 @@ public:
 
 class AnimatedModel : private Model
 {
+public:
+
 
 };

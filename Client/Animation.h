@@ -21,8 +21,9 @@
 //help pass down parent transforms.
 //Will combine with the bone's own binding matrix offset and parent transform and local transform due to
 //interpolation
-struct AssimpNodeData
+class AssimpNodeData
 {
+public:
 	glm::mat4 nodeTransformation;
 	std::string nodeName; //will match the name of the bone, hopefully
 	int childrenCount;
@@ -41,6 +42,7 @@ struct AssimpNodeData
 		std::cout << "(animation.h 41) Node name: " << nodeName <<  " ParentNode: "<< parentNodeName <<std::endl;
 	}
 };
+
 
 struct KeyPosition
 {
@@ -63,8 +65,9 @@ struct KeyScale
 //each channel will contain the keyframes information of a bone
 //will have to check if the channel has a bone. CHANNEL NAME MUST BE SAME AS BONE
 //IF A BONE DOES NOT EXIST, we have a problem. Something else got moved, extra movement not the bone
-struct Channel
+class Channel
 {
+public:
 	std::string channelName; //can be the name of the bone/rig or something else like the whole mesh itself that was moved
 	bool isAttachedtoBone;
 	aiNodeAnim* ch; //this will contain a list of keyframes
@@ -109,6 +112,29 @@ struct Channel
 			keyFrames_Scale.push_back(ks);
 		}
 	}
+
+	void update(float currentTime);
+
+	glm::mat4 getLocalTransform() {
+		return m_LocalTransform;
+	}
+
+
+private:
+	/* Gets normalized value for Lerp & Slerp*/
+	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
+
+    /* figures out which position keys to interpolate b/w and performs the interpolation 
+    and returns the translation matrix */
+	glm::mat4 InterpolatePosition(float animationTime);
+
+    /* figures out which rotations keys to interpolate b/w and performs the interpolation 
+    and returns the rotation matrix */
+	glm::mat4 InterpolateRotation(float animationTime);
+
+    /* figures out which scaling keys to interpolate b/w and performs the interpolation 
+    and returns the scale matrix */
+	glm::mat4 InterpolateScaling(float animationTime);
 };
 
 class Animation
@@ -128,4 +154,13 @@ public:
 	~Animation();
 
 	void ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData& asspNode); //a set-up fnc
+
+	AssimpNodeData* getRootNode() {
+		return &root;
+	}
+	
+	float getTicksPerSecond();
+	float getDuration();
+
+	Channel* findChannel(std::string nodeName);
 };

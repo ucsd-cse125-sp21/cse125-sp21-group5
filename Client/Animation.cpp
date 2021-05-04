@@ -44,3 +44,30 @@ void Animation::ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData& asspNode)
 		ReadNodeHeirarchy(childNode, childAssimpNodeData); //go thru the children's child list
 	}
 }
+
+Channel* Animation::findChannel(std::string nodeName)
+{
+	for (int i = 0; i < channelList.size(); i++) {
+		Channel* currChannel = &channelList[i];
+
+		if (currChannel->channelName == nodeName) {
+			// todo: remove this print
+			std::cout << "Found matching channel named " << nodeName << std::endl;
+			return currChannel;
+		}
+	}
+
+	return nullptr;
+}
+
+float Animation::getTicksPerSecond() {
+	return anime->mTicksPerSecond;
+}
+
+float Animation::getDuration() { 
+	return anime->mDuration;
+}
+
+void Channel::update(float currentTime)
+{
+}

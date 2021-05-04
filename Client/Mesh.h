@@ -11,6 +11,17 @@
 
 #include "Bone.h"
 
+#define MAX_BONE_INFLUENCE 4
+
+struct Vertex {
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 texCoord;
+	
+	int boneIDs[MAX_BONE_INFLUENCE];
+	float boneWeights[MAX_BONE_INFLUENCE];
+};
+
 /*
  * Handles one geometry mesh for a model
  */
@@ -18,12 +29,16 @@ class Mesh
 {
 public:
 	GLuint VAO;
-	GLuint VBO_positions, VBO_normals, VBO_texCoords, EBO;
+	GLuint VBO, EBO;
 
-	std::vector<glm::vec3>	vertices;	// the vertices, tells position of the points
-	std::vector<glm::vec3>	normals;	// the vertex normals
+
+	std::vector<Vertex> vertices;
+
+	//std::vector<glm::vec3>	oldVertices;	// the vertices, tells position of the points
+	//std::vector<glm::vec3>	normals;	// the vertex normals
+	//std::vector<glm::vec2>	texCoords;  // the UV coordinates for the textures
+
 	std::vector<glm::uvec3> triangles;  // the triangle indices that make up the mesh
-	std::vector<glm::vec2>	texCoords;  // the UV coordinates for the textures
 
 	//each mesh might have an array of bones that affect it. Each bone has a list of the vertices and the weights
 	//associated with that vertices

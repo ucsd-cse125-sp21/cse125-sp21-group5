@@ -52,6 +52,10 @@ public:
 
 	void update();
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);
+
+	std::map<std::string, BoneInfo> getBoneInfoMap() {
+		return m_BoneInfoMap;
+	}
 };
 
 

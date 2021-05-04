@@ -45,29 +45,31 @@ void Model::loadModel(std::string modelPath)
 {
 	Assimp::Importer import;
 
-	unsigned int importOptions = aiProcess_Triangulate
+	// These are the old import options, just to refer back to incase something breaks
+	unsigned int importOptions = 
+		  aiProcess_Triangulate
 		| aiProcess_JoinIdenticalVertices
 		| aiProcess_FlipUVs;
 		//| aiProcess_PreTransformVertices;
 
-	//const aiScene* scene = import.ReadFile(modelPath, importOptions);
+	//unsigned int importOptions = 
+	//	aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
+	//	aiProcess_ValidateDataStructure |		// perform a full validation of the loader's output
+	//	aiProcess_ImproveCacheLocality |		// improve the cache locality of the output vertices
+	//	aiProcess_RemoveRedundantMaterials |	// remove redundant materials
+	//	aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
+	//	aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
+	//	//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
+	//	aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
+	//	aiProcess_OptimizeMeshes |				// join small meshes, if possible;
+	//	//aiProcess_PreTransformVertices |
+	//	aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
+	//	aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
+	//	aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
+	//	aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
+	//	aiProcess_SortByPType;
 
-	const aiScene* scene = import.ReadFile(modelPath,
-		aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
-		aiProcess_ValidateDataStructure |		// perform a full validation of the loader's output
-		aiProcess_ImproveCacheLocality |		// improve the cache locality of the output vertices
-		aiProcess_RemoveRedundantMaterials |	// remove redundant materials
-		aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
-		aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
-		//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
-		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
-		aiProcess_OptimizeMeshes |				// join small meshes, if possible;
-		//aiProcess_PreTransformVertices |
-		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
-		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
-		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
-		aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
-		aiProcess_SortByPType);
+	const aiScene* scene = import.ReadFile(modelPath, importOptions);
 
 	if (!scene) {
 		std::cerr << "Failed to load model file " << modelPath << std::endl;

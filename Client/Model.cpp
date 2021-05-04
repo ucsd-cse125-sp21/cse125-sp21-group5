@@ -1,11 +1,14 @@
 #include "Model.h"
 
+#include "Shader.h"
 #include "stb_image.h"
+#include <GLFW/glfw3.h>
 
 Model::Model(std::string modelPath)
 {
 	// loads the mesh into into position, normal, and index vectors
 	loadModel(modelPath);
+	currTime = glfwGetTime();
 }
 
 Model::~Model()
@@ -17,11 +20,18 @@ Model::~Model()
 	for (Material* m : materials) {
 		delete m;
 	}
+
+//	delete animationPlayer;
 }
 
 void Model::update()
 {
-	
+	currTime = glfwGetTime();
+	float deltaTime = currTime - prevTime;
+	//get the new transform of the bones
+	animationPlayer->update(deltaTime);
+
+	prevTime = currTime;
 }
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
@@ -32,9 +42,18 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 		Material* mat = materials[mesh->materialIdx];
 		mat->activate();
 
+
+		// set global transform matrices
+		auto transforms = animationPlayer->getFinalBoneTransforms();
+
+		for (int i = 0; i < transforms.size(); i++) {
+			SetShaderMat4(mat->shader, "boneMatrices[" + std::to_string(i) + "]", transforms[i]);
+		}
+
+
 		// get the locations and send the uniforms to the shader 
-		glUniformMatrix4fv(glGetUniformLocation(mat->shader, "viewProj"), 1, GL_FALSE, glm::value_ptr(viewProjMtx));
-		glUniformMatrix4fv(glGetUniformLocation(mat->shader, "model"), 1, GL_FALSE, glm::value_ptr(modelMtx));
+		SetShaderMat4(mat->shader, "viewProj", viewProjMtx);
+		SetShaderMat4(mat->shader, "model", modelMtx);
 
 	    mesh->draw();
 		mat->release();
@@ -46,28 +65,28 @@ void Model::loadModel(std::string modelPath)
 	Assimp::Importer import;
 
 	// These are the old import options, just to refer back to incase something breaks
-	unsigned int importOptions = 
-		  aiProcess_Triangulate
-		| aiProcess_JoinIdenticalVertices
-		| aiProcess_FlipUVs;
-		//| aiProcess_PreTransformVertices;
-
 	//unsigned int importOptions = 
-	//	aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
-	//	aiProcess_ValidateDataStructure |		// perform a full validation of the loader's output
-	//	aiProcess_ImproveCacheLocality |		// improve the cache locality of the output vertices
-	//	aiProcess_RemoveRedundantMaterials |	// remove redundant materials
-	//	aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
-	//	aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
-	//	//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
-	//	aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
-	//	aiProcess_OptimizeMeshes |				// join small meshes, if possible;
-	//	//aiProcess_PreTransformVertices |
-	//	aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
-	//	aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
-	//	aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
-	//	aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
-	//	aiProcess_SortByPType;
+	//	  aiProcess_Triangulate
+	//	| aiProcess_JoinIdenticalVertices
+	//	| aiProcess_FlipUVs
+	//	| aiProcess_PreTransformVertices;
+
+	unsigned int importOptions = 
+		aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
+		aiProcess_ValidateDataStructure |		// perform a full validation of the loader's output
+		aiProcess_ImproveCacheLocality |		// improve the cache locality of the output vertices
+		aiProcess_RemoveRedundantMaterials |	// remove redundant materials
+		aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
+		aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
+		//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
+		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
+		aiProcess_OptimizeMeshes |				// join small meshes, if possible;
+		//aiProcess_PreTransformVertices |
+		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
+		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
+		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
+		aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
+		aiProcess_SortByPType;
 
 	const aiScene* scene = import.ReadFile(modelPath, importOptions);
 
@@ -135,7 +154,20 @@ void Model::loadModel(std::string modelPath)
 				boneID = m_BoneInfoMap[aiboneName].id;
 			}
 			assert(boneID != -1);
+
+			aiVertexWeight* weights = aiBone->mWeights;
+			int numWeights = aiBone->mNumWeights;
+
+            for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+            {
+                int vertexId = weights[weightIndex].mVertexId;
+                float weight = weights[weightIndex].mWeight;
+                assert(vertexId <= mesh->vertices.size());
+				mesh->vertices[vertexId].addBone(boneID, weight);
+                //SetVertexBoneData(vertices[vertexId], boneID, weight);
+            }
 		}
+		mesh->setupOpenGL();
 	}
 
 	//printf("UH %d\n", scene->HasAnimations());
@@ -147,6 +179,8 @@ void Model::loadModel(std::string modelPath)
 	glm::mat4 globalTrans = AssimpGLMHelpers::ConvertMatrixToGLMFormat(rootNode->mTransformation);
 	glm::mat4 globalInvTrans = inverse(globalTrans);
 
+	std::vector<Animation*> animationList;
+
 	//Load animations
 	for (int animIdx = 0; animIdx < scene->mNumAnimations; animIdx++) {
 		aiAnimation* aiAnim = scene->mAnimations[animIdx];
@@ -157,5 +191,11 @@ void Model::loadModel(std::string modelPath)
 		//printf("duration: %lf\n", aiAnim->mDuration);
 		//printf("meshChannel: %d\n", aiAnim->mNumMeshChannels);
 		
+	}
+
+	animationPlayer = new AnimationPlayer(animationList, this);
+
+	for (auto m : meshes) {
+		m->setAnimationPlayer(animationPlayer);
 	}
 }

@@ -3,6 +3,8 @@
 in vec3 fragNormal;
 in vec3 fragPos;
 
+in vec3 testColor;
+
 uniform vec3 aColor;
 uniform vec3 aViewPos;
 uniform vec3 aViewDir;
@@ -48,6 +50,7 @@ void main()
     color += CalcDirectionalLight(sunLight, fragNormal, aViewDir);
 
     fragColor = vec4(color, 1);
+    fragColor = vec4(testColor, 1);
 }
 
 

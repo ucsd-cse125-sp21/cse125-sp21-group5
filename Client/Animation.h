@@ -118,11 +118,48 @@ public:
 	glm::mat4 getLocalTransform() {
 		return m_LocalTransform;
 	}
+	//helper function
+	/* Gets the current index on mKeyPositions to interpolate to based on the current 
+	animation time */
+	int GetPositionIndex(float animationTime)
+	{
+		for (int index = 0; index < m_NumPositions - 1; ++index)
+		{
+			if (animationTime < keyFrames_Position[index + 1].timeStamp) {
+				return index;
+			}
+		}
+		assert(0);
+	}
+
+	/* Gets the current index on mKeyRotations to interpolate to based on the current 
+    animation time */
+    int GetRotationIndex(float animationTime)
+    {
+        for (int index = 0; index < m_NumRotations - 1; ++index)
+        {
+            if (animationTime < keyFrames_Rotation[index + 1].timeStamp)
+                return index;
+        }
+        assert(0);
+    }
+
+	/* Gets the current index on mKeyScalings to interpolate to based on the current 
+    animation time */
+    int GetScaleIndex(float animationTime)
+    {
+        for (int index = 0; index < m_NumScalings - 1; ++index)
+        {
+            if (animationTime < keyFrames_Scale[index + 1].timeStamp)
+                return index;
+        }
+        assert(0);
+    }
 
 
 private:
 	/* Gets normalized value for Lerp & Slerp*/
-	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
+	float GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
 
     /* figures out which position keys to interpolate b/w and performs the interpolation 
     and returns the translation matrix */
@@ -148,6 +185,16 @@ private:
 
 	AssimpNodeData root;
 
+	/* Gets normalized value for Lerp & Slerp*/
+    float GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+    {
+        float scaleFactor = 0.0f;
+        float midWayLength = animationTime - lastTimeStamp;
+        float framesDiff = nextTimeStamp - lastTimeStamp;
+        scaleFactor = midWayLength / framesDiff;
+        return scaleFactor;
+    }
+
 public:
 
 	Animation(aiAnimation* anim, aiNode* aiRootNode);
@@ -163,4 +210,5 @@ public:
 	float getDuration();
 
 	Channel* findChannel(std::string nodeName);
+
 };

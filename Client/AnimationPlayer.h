@@ -2,9 +2,12 @@
 
 #include <vector>
 #include "Animation.h"
-#include "Model.h"
 
 #define NO_ANIMATION -1
+
+#define MAX_NUM_BONES 100
+
+class Model;
 
 class AnimationPlayer
 {
@@ -17,7 +20,14 @@ public:
 
 	void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 
+	std::vector<glm::mat4> getFinalBoneTransforms() {
+		return mFinalBoneTransformationMatrices;
+	}
+
 private:
+
+	std::vector<glm::mat4> mFinalBoneTransformationMatrices;
+
 	Model* mModel;
 	int mCurrentAnimationIdx = NO_ANIMATION;
 	float mCurrentTime = 0;

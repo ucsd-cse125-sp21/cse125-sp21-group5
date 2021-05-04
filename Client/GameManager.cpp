@@ -26,7 +26,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize models to render
 	Model* playerM = new Model("res/models/shit5.dae");
-	//Model* monkeM = new Model("res/models/head2.dae");
+	//Model* playerM = new Model("res/models/head2.dae");
 	
 	// Build scene graph
 	worldT->add_child(playerT);

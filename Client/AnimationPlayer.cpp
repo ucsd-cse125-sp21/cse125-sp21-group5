@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Model.h"
+
 AnimationPlayer::AnimationPlayer(std::vector<Animation*> animations, Model* model)
 {
 	mAnimations = animations;
@@ -9,6 +11,11 @@ AnimationPlayer::AnimationPlayer(std::vector<Animation*> animations, Model* mode
 	mCurrentAnimationIdx = 0;
 
 	mModel = model;
+
+	mFinalBoneTransformationMatrices.reserve(MAX_NUM_BONES);
+	for (int i = 0; i < MAX_NUM_BONES; i++) {
+		mFinalBoneTransformationMatrices.push_back(glm::mat4(1));
+	}
 }
 
 void AnimationPlayer::setAnimation(int newAnimationIdx)
@@ -54,10 +61,11 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end()) {
 		int index = boneInfoMap[nodeName].id;
 		glm::mat4 offset = boneInfoMap[nodeName].offset;
+		mFinalBoneTransformationMatrices[index] = globalTransformation * offset;
 
 	}
 
-	//for (int i = 0; i < node->childrenCount; i++) {
-	//	calculateBoneTransform(&node->children[i], globalTransformation);
-	//}
+	for (int i = 0; i < node->childrenCount; i++) {
+		calculateBoneTransform(&node->childrenNodeList[i], globalTransformation);
+	}
 }

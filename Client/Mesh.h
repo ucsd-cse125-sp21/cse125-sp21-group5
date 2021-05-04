@@ -10,16 +10,39 @@
 #include <assimp/anim.h>
 
 #include "Bone.h"
+#include "AnimationPlayer.h"
 
 #define MAX_BONE_INFLUENCE 4
 
-struct Vertex {
+class Vertex {
+public:
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 texCoord;
 	
 	int boneIDs[MAX_BONE_INFLUENCE];
 	float boneWeights[MAX_BONE_INFLUENCE];
+
+	Vertex() {
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+			boneIDs[i] = -1;
+			boneWeights[i] = 0;
+		}
+
+		position = glm::vec3(0);
+		normal = glm::vec3(1, 0, 0);
+		texCoord = glm::vec2(0);
+	}
+
+	void addBone(int index, float weight) {
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+			if (boneIDs[i] < 0) {
+				boneIDs[i] = index;
+				boneWeights[i] = weight;
+				break;
+			}
+		}
+	}
 };
 
 /*
@@ -28,9 +51,11 @@ struct Vertex {
 class Mesh
 {
 public:
+
+	AnimationPlayer* mAnimationPlayer = nullptr;
+
 	GLuint VAO;
 	GLuint VBO, EBO;
-
 
 	std::vector<Vertex> vertices;
 
@@ -53,6 +78,11 @@ public:
 	Mesh(aiMesh* mesh);
 	~Mesh();
 
+	void setupOpenGL();
 	void draw();
+
+	void setAnimationPlayer(AnimationPlayer* ap) {
+		mAnimationPlayer = ap;
+	}
 };
 

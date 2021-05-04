@@ -21,7 +21,7 @@
 
 #include <map>
 #include "Bone.h"
-#include "Animation.h"
+#include "AnimationPlayer.h"
 
 struct BoneInfo
 {
@@ -40,9 +40,13 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<Material*> materials;
 
-	std::vector<Animation*> animationList;
 	std::map<std::string, BoneInfo> m_BoneInfoMap; //help sum up all the weights
 	int m_BoneCounter = 0;
+
+	float currTime = glfwGetTime();
+	float prevTime = 0;
+
+	AnimationPlayer* animationPlayer;
 
 	void loadModel(std::string modelPath); //read in the file, load the model's data
 
@@ -56,12 +60,4 @@ public:
 	std::map<std::string, BoneInfo> getBoneInfoMap() {
 		return m_BoneInfoMap;
 	}
-};
-
-
-class AnimatedModel : private Model
-{
-public:
-
-
 };

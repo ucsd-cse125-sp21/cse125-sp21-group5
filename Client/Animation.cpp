@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include <glm/gtx/quaternion.hpp>
 
 Animation::Animation(aiAnimation* anim, aiNode* aiRootNode) {
 	anime = anim;
@@ -68,6 +69,72 @@ float Animation::getDuration() {
 	return anime->mDuration;
 }
 
+
+///////// BEGIN CHANNEL CODE ///////// 
+
 void Channel::update(float currentTime)
 {
+}
+
+float Channel::GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+{
+	float scaleFactor = 0.0f;
+	float midWayLength = animationTime - lastTimeStamp;
+	float framesDiff = nextTimeStamp - lastTimeStamp;
+	scaleFactor = midWayLength / framesDiff;
+	return scaleFactor;
+}
+
+glm::mat4 Channel::InterpolatePosition(float animationTime)
+{
+    if (1 == m_NumPositions) {
+        return glm::translate(glm::mat4(1.0f), keyFrames_Position[0].position);
+	}
+
+	//to check betweeen two keyframes for interpolation values
+    int p0Index = GetPositionIndex(animationTime);
+    int p1Index = p0Index + 1; 
+
+	float t0 = keyFrames_Position[p0Index].timeStamp;
+	float t1 = keyFrames_Position[p1Index].timeStamp;
+	glm::vec3 p0 = keyFrames_Position[p0Index].position;
+	glm::vec3 p1 = keyFrames_Position[p1Index].position;
+    float slerpFactor = GetSlerpFactor(t0, t1, animationTime);
+    glm::vec3 finalPosition = glm::mix(p0, p1, slerpFactor);
+    return glm::translate(glm::mat4(1.0f), finalPosition);
+}
+
+glm::mat4 Channel::InterpolateRotation(float animationTime)
+{
+	if (1 == m_NumRotations)
+    {
+        auto rotation = glm::normalize(keyFrames_Rotation[0].orientation);
+        return glm::toMat4(rotation);
+    }
+
+	int p0Index = GetRotationIndex(animationTime);
+    int p1Index = p0Index + 1;
+	float t0 = keyFrames_Rotation[p0Index].timeStamp;
+	float t1 = keyFrames_Rotation[p1Index].timeStamp;
+	glm::quat p0 = keyFrames_Rotation[p0Index].orientation;
+	glm::quat p1 = keyFrames_Rotation[p1Index].orientation;
+	float slerpFactor = GetSlerpFactor(t0, t1, animationTime);
+	glm::quat finalRotation = glm::slerp(p0, p1, slerpFactor);
+	return glm::toMat4(finalRotation);
+}
+
+glm::mat4 Channel::InterpolateScaling(float animationTime)
+{
+	if (1 == m_NumScalings) {
+		return glm::scale(glm::mat4(1.0f), keyFrames_Scale[0].scale);
+	}
+	int p0Index = GetScaleIndex(animationTime);
+    int p1Index = p0Index + 1;
+	float t0 = keyFrames_Scale[p0Index].timeStamp;
+	float t1 = keyFrames_Scale[p1Index].timeStamp;
+	glm::vec3 p0 = keyFrames_Scale[p0Index].scale;
+	glm::vec3 p1 = keyFrames_Scale[p1Index].scale;
+	float slerpFactor = GetSlerpFactor(t0, t1, animationTime);
+	glm::vec3 finalScale = glm::mix(p0, p1, slerpFactor);
+	return glm::scale(glm::mat4(1.0f), finalScale);
 }

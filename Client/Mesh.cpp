@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
 #include <iostream>
+#include "Model.h"
 
 Mesh::Mesh(aiMesh* mesh)
 {
@@ -40,7 +41,9 @@ Mesh::Mesh(aiMesh* mesh)
 		);
 		triangles.push_back(triangle); //store the indexes to the vertices array.
 	}
+}
 
+void Mesh::setupOpenGL() {
 	// Generate a vertex array (VAO) and two vertex buffer objects (VBO).
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -79,6 +82,12 @@ Mesh::Mesh(aiMesh* mesh)
 	// vertex texture coords
 	glEnableVertexAttribArray(2);	
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+	// set up bone IDs
+	glEnableVertexAttribArray(3);	
+	glVertexAttribPointer(3, 4, GL_INT,   GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+	// set up bone weights
+	glEnableVertexAttribArray(4);	
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
 
 
 	// Generate EBO, bind the EBO to the bound VAO and send the data

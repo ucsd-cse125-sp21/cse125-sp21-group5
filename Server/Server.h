@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <vector>
 
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
@@ -25,6 +26,7 @@
 using boost::asio::ip::tcp;
 
 using namespace std;
+#define NUM_PLAYERS 4
 
 class tcp_connection
 	: public boost::enable_shared_from_this<tcp_connection>
@@ -62,30 +64,38 @@ private:
 class Server{
 public:
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
-	tcp_connection_ptr connection;
+	vector<tcp_connection_ptr> connections;
 	ServerGameManager gm;
 
-	Server(boost::asio::io_context& ioContext) {
+	Server(boost::asio::io_context& ioContext) : 
+		connections(NUM_PLAYERS), 
+		bufs(NUM_PLAYERS) 
+	{
 		boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
 		tcp::acceptor acceptor(ioContext, tcp::endpoint(addrV4, 13));
 
 		cout << "Starting server on local port 13" << endl;
 
-		connection = tcp_connection::create(ioContext);
-		acceptor.accept(connection->getSocket());
-		cout << "Accepting new connection from " << connection->getSocket().remote_endpoint().address().to_string() << endl;
+		for (int i = 0; i < NUM_PLAYERS; i++) {
+			connections[i] = tcp_connection::create(ioContext);
+			acceptor.accept(connections[i]->getSocket());
+			cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
+
+		}
 
 		// start reading from client
 		start_server();
 	}
 
 	void start_server() {
-		do_read();
+		for (int i = 0; i < NUM_PLAYERS; i++) {
+			do_read(i);
+		}
 	}
 
-	void do_read();
+	void do_read(int playerId);
 	void handle_read(int playerId, boost::system::error_code error, size_t bytes_read);
 
 private:
-	boost::asio::streambuf buf;
+	vector<boost::asio::streambuf> bufs;
 };

@@ -2,6 +2,9 @@
 
 ServerGameManager::ServerGameManager() {
 	players.push_back(Player());
+	players.push_back(Player());
+	players.push_back(Player());
+	players.push_back(Player());
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId) {

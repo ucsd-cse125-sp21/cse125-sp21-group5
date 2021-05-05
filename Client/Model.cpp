@@ -28,6 +28,9 @@ Model::~Model()
 void Model::update(float deltaTime)
 {
 	//get the new transform of the bones
+	if (animationPlayer == nullptr) {
+		std::cout << "ANIMATION PLAYER IS NULL" << std::endl;
+	}
 	animationPlayer->update(deltaTime);
 }
 
@@ -191,6 +194,7 @@ void Model::loadModel(std::string modelPath)
 	}
 
 	animationPlayer = new AnimationPlayer(animationList, this);
+	std::cout << "Trace, hopefully it's not null" << std::endl;
 
 	for (auto m : meshes) {
 		m->setAnimationPlayer(animationPlayer);

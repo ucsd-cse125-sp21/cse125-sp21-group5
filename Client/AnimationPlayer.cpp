@@ -61,11 +61,11 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end()) {
 		int index = boneInfoMap[nodeName].id;
 		glm::mat4 offset = boneInfoMap[nodeName].offset;
+		std::cout << nodeName << " " << glm::to_string(offset) << std::endl;
 		mFinalBoneTransformationMatrices[index] = globalTransformation * offset;
 	}
 
 	for (int i = 0; i < node->childrenNodeList.size(); i++) {
-		std::cout << "updating node " << node->childrenNodeList[i]->nodeName << std::endl;
 		calculateBoneTransform(node->childrenNodeList[i], globalTransformation);
 	}
 }

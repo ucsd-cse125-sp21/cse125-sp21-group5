@@ -25,7 +25,7 @@ GameManager::GameManager(GLFWwindow* window)
 	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/shit5.dae");
+	Model* playerM = new Model("res/models/untitled.dae");
 	//Model* playerM = new Model("res/models/head2.dae");
 	
 	// Build scene graph

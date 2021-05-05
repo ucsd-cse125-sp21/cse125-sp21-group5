@@ -23,21 +23,22 @@ out vec3 testColor;
 void main()
 {
 
-	vec4 totalPosition = vec4(0.0f);
-    vec3 totalNormal = vec3(0);
-    for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
-    {
-        if(boneIds[i] == -1) 
-            continue;
-        vec4 localPosition = boneMatrices[boneIds[i]] * vec4(aPos,1.0f);
-        totalPosition += localPosition * weights[i];
-        vec3 localNormal = mat3(boneMatrices[boneIds[i]]) * aNormal;
-   }
 
+    vec3 v1 = vec3(boneMatrices[boneIds[0]] * vec4(aPos, 1));
+    v1 += vec3(boneMatrices[boneIds[1]] * vec4(aPos, 1));
+
+    vec3 totalPosition = v1;
+
+    testColor = vec3(weights[0] + weights[1]);
+
+    /*
+    for (int i = 0; i < 2; i++) {
+        vec3 localPosition = vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
+        totalPosition += localPosition * weights[i];
+    }
+    */
 
     fragNormal = vec3(model * vec4(aNormal, 0));
-    fragPos = vec3(model * totalPosition);
-    gl_Position = viewProj * model * totalPosition;
-
-    testColor = weights.xyz;
+    fragPos = vec3(model * vec4(totalPosition, 1));
+    gl_Position = viewProj * model * vec4(totalPosition, 1);
 }

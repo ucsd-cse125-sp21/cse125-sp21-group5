@@ -50,7 +50,7 @@ void main()
     color += CalcDirectionalLight(sunLight, fragNormal, aViewDir);
 
     fragColor = vec4(color, 1);
-    fragColor = vec4(testColor, 1);
+    //fragColor = vec4(testColor, 1);
 }
 
 

@@ -29,11 +29,6 @@ void main()
     {
         if(boneIds[i] == -1) 
             continue;
-        if(boneIds[i] >= MAX_BONES) 
-        {
-            totalPosition = vec4(aPos, 1.0f);
-            break;
-        }
         vec4 localPosition = boneMatrices[boneIds[i]] * vec4(aPos,1.0f);
         totalPosition += localPosition * weights[i];
         vec3 localNormal = mat3(boneMatrices[boneIds[i]]) * aNormal;
@@ -41,8 +36,8 @@ void main()
 
 
     fragNormal = vec3(model * vec4(aNormal, 0));
-    fragPos = vec3(model * vec4(aPos, 1.0));
-    gl_Position = viewProj * model * vec4(aPos, 1.0);
+    fragPos = vec3(model * totalPosition);
+    gl_Position = viewProj * model * totalPosition;
 
     testColor = weights.xyz;
 }

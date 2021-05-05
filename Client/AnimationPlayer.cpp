@@ -62,7 +62,6 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 		int index = boneInfoMap[nodeName].id;
 		glm::mat4 offset = boneInfoMap[nodeName].offset;
 		mFinalBoneTransformationMatrices[index] = globalTransformation * offset;
-
 	}
 
 	for (int i = 0; i < node->childrenNodeList.size(); i++) {

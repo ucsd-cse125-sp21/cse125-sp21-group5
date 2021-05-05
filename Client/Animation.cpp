@@ -76,6 +76,10 @@ float Animation::getDuration() {
 
 void Channel::update(float currentTime)
 {
+	glm::mat4 translation = InterpolatePosition(currentTime);
+	glm::mat4 rotation = InterpolateRotation(currentTime);
+	glm::mat4 scale = InterpolateScaling(currentTime);
+	m_LocalTransform = translation * rotation * scale;
 }
 
 float Channel::GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)

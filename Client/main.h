@@ -10,4 +10,6 @@
 #include <iostream>
 #include "Window.h"
 #include "GameManager.h"
+
+#include <boost/thread/thread.hpp>
 #endif

@@ -45,11 +45,14 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// inserting the collider into the quadtree to ensure fast computation
 	Node* root = worldT;
+
+
 	// TODO: node doesn't have necessary functions to perform DFS 
 
 	world->insert(playerT->collider);
-	world->insert(monkeT->collider);
-	// std::cerr << typeid(playerM).name() << std::endl;
+	world->insert(monkeT->collider); 
+	//string pp = typeid(playerM).name();
+	std::cerr << typeid(playerM).name() << std::endl;
 	
 	// Temporary "world"
 	/*for (int i = 0; i < 3; i++)
@@ -68,13 +71,41 @@ GameManager::GameManager(GLFWwindow* window)
 	currTime = 0.0f;
 } 
 
+// TODO: 
+// Idea 1: put collider as part of Model class 
+// Idea 2: Server doesn't have model, but instead of model on server, the server
+//		   just has the collider 
+// 
+// 
+void GameManager::buildQuadtreeDFS(Node* root, Quadtree * qt) {
+	if (!root) return;
+	string objectType = typeid(root).name();
+
+	// Case where it's a model, return, since no collider
+	if (objectType.find("Model") != std::string::npos) {
+		return;
+	}
+
+	// Main for loop
+	for (Node* n : root->children) {
+		// Leaf node
+		if (!n->children) {
+			
+			//TODO node needs collider too
+			qt->insert(n->collider);
+		}
+
+	}
+	
+}
+
 GameManager::~GameManager()
 {
 	// Delete all models
 	delete worldT; // Recursively calls destructor for all nodes... hopefully
 }
 
-void GameManager::update()
+void GameManager::update(Client& client)
 {
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
@@ -89,7 +120,7 @@ void GameManager::update()
 	glfwPollEvents();
 
 	// Process keyboard input
-	handleKeyboardInput();
+	handleInput(client);
 	
 	// Tell server about any movements
 	// TODO: how to wait for response?
@@ -129,33 +160,72 @@ void GameManager::update()
 
 	// Update camera position
 	// TODO: place camera inside of Player class
-	camera->update(deltaTime, offsetX, offsetY);
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 }
 
 // Handle Keyboard Input
-void GameManager::handleKeyboardInput()
+void GameManager::handleInput(Client& client)
 {
+	// Get current mouse position
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	// Special case for first mouse
+	if (firstMouse)
+	{
+		lastX = (float)xpos;
+		lastY = (float)ypos;
+		firstMouse = false;
+	}
+
+	// Calculate offset from prev frame
+	offsetX = (float)(xpos - lastX);
+	offsetY = (float)(lastY - ypos);
+
+	// Save previous positions
+	lastX = (float)xpos;
+	lastY = (float)ypos;
+
 	// System Controls
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	// Player Controls
+	glm::vec3 toSend = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W))
-		camera->move(camera->front);
+	{
+		toSend += camera->front;
+	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
-		camera->move(-camera->front);
-	if (glfwGetKey(window, GLFW_KEY_A))
-		camera->move(-glm::normalize(glm::cross(camera->front, camera->up)));
+	{
+		toSend -= camera->front;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A)) 
+	{
+		toSend += -glm::normalize(glm::cross(camera->front, camera->up));
+	}
 	else if (glfwGetKey(window, GLFW_KEY_D))
-		camera->move(glm::normalize(glm::cross(camera->front, camera->up)));
+	{
+		toSend += glm::normalize(glm::cross(camera->front, camera->up));
+	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
-		camera->move(camera->up);
+	{
+		toSend += camera->up;
+	}
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
-		camera->move(-camera->up);
+	{
+		toSend += -camera->up;
+	}
 
-	// Temporary Player 2 Controls
+	toSend *= camera->speed * deltaTime;
+
+	//Update mouse movements
+	float yaw = camera->sensitivity * offsetX;
+	float pitch = camera->sensitivity * offsetY;
+
+	Event e(toSend, yaw, pitch);
+	client.callServer(e);
 }
 
 // Use for one-time key presses
@@ -205,21 +275,7 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 // Detect mouse position
 void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	// Special case for first mouse
-	if (firstMouse)
-	{
-		lastX = (float) xpos;
-		lastY = (float) ypos;
-		firstMouse = false;
-	}
-
-	// Calculate offset from prev frame
-	offsetX = (float) (xpos - lastX);
-	offsetY = (float) (lastY - ypos);
-
-	// Save previous positions
-	lastX = (float) xpos;
-	lastY = (float) ypos;
+	
 }
 
 // Detect mouse scroll
@@ -240,7 +296,7 @@ void GameManager::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Render the models
-	worldT->draw(camera->view, Window::projection);
+	worldT->draw(glm::mat4(1), Window::projection * camera->view);
 
 	//tile->draw(camera->view, Window::projection, shader);
 	//cube->draw(camera->view, Window::projection, shader);

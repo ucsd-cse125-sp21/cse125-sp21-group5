@@ -29,29 +29,16 @@ Camera::~Camera()
 {
 }
 
-void Camera::update(float& deltaTime, float& offsetX, float& offsetY)
+void Camera::update(glm::vec3 pos, glm::vec3 front)
 {
-	// Calculate new pitch and yaw
-	yaw += sensitivity * offsetX;
-	pitch += sensitivity * offsetY;
-	pitch = glm::clamp(pitch, -89.0f, 89.0f);
-
-	// Calculate new front
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front = glm::normalize(front);
-
 	// Have camera look at front
+	this->pos = pos;
+	this->front = front;
 	view = glm::lookAt(pos, pos + front, up);
-
-	// Ensure consistent movement despite diff fps
-	speed = 2.5f * deltaTime;
 }
 
-void Camera::move(const glm::vec3& dir)
-{
-	this->pos += speed * dir;
+void Camera::move(const glm::vec3& pos) {
+	this->pos = pos;
 }
 
 // TODO: Deprecated

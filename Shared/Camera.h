@@ -27,10 +27,9 @@ public:
 	float yaw;
 	float pitch;
 
-	void update(float& deltaTime, float& offsetX, float& offsetY);
-	void reset();
+	void update(glm::vec3 pos, glm::vec3 front);
 
-	void move(const glm::vec3& vec);
+	void move(const glm::vec3& pos);
 	void move(bool W, bool S, bool A, bool D, bool SPACE, bool L_CTRL);
 };
 

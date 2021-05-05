@@ -11,7 +11,7 @@ Transform::Transform()
 
 Transform::Transform(const glm::vec3& scale,
 					 const glm::vec3& rotation,
-					 const glm::vec3& translation/*
+					 const glm::vec3& translation/*,
 					 const Collider::Type type*/)
 {
 	// Build transformation matrix

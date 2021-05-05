@@ -14,7 +14,6 @@
 #include "Model.h"
 #include "Transform.h"
 #include "Client.h"
-#include "Quadtree.h"
 
 using namespace std;
 
@@ -30,12 +29,6 @@ private:
 	Transform* playerT;
 	Transform* monkeT;
 
-	// To keep track of all the particles/hitboxes 
-	// TODO: need to be able to make this generic 
-	vector<BoxCollider*> allColliders;
-
-	// Quadtree variable 
-	Quadtree* world;
 
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;

@@ -143,14 +143,18 @@
   <ItemGroup>
     <ClCompile Include="..\Shared\Event.cpp" />
     <ClCompile Include="..\Shared\GameState.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerGameManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Event.h" />
     <ClInclude Include="..\Shared\GameState.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Quadtree.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="ServerGameManager.h" />
   </ItemGroup>

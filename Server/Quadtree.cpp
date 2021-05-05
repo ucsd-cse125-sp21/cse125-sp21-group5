@@ -41,10 +41,14 @@ void Quadtree::insert(BoxCollider* p) {
     }
     // if capacity of the quadtree is not full
     if (this->objects.size() < this->capacity) {
+        //std::cout << "Regular insertion" << std::endl;
         this->objects.push_back(p);
+        //std::cout << "lwh of box being inserted at " << p->length << " " <<
+           // p->width << " " << p->height << std::endl;
     }
     // if it is full
     else {
+       // std::cout << "SHOULD NOT COME HERE " << std::endl;
         // check if it has been divided before 
         if (!this->hasDivided) {
             subdivide();
@@ -126,6 +130,8 @@ vector<BoxCollider*> Quadtree::query(BoxCollider* range, vector<BoxCollider*>& f
     else {
         // look for all the points in this quadtree 
         for (auto& point : this->objects) {
+            //std::cout << "lwh of range being queried is " << range->length << " " <<
+                //range->width << " " << range->height << std::endl;
             // checks if the point is within the boundary of the range
             // we're looking for 
             
@@ -136,6 +142,7 @@ vector<BoxCollider*> Quadtree::query(BoxCollider* range, vector<BoxCollider*>& f
         }
         // checks if the quadtree has any child quadtrees 
         if (this->hasDivided) {
+            std::cout << "should not print" << std::endl;
             this->one->query(range, found);
             this->two->query(range, found);
             this->three->query(range, found);

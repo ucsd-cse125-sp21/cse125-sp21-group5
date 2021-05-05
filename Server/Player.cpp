@@ -5,8 +5,19 @@ Player::Player() {
 	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->yaw = 0.0f;
 	this->pitch = 0.0f;
+	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
 }
 
+Player::Player(glm::vec3 initPos) {
+	this->pos = initPos;
+	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
+	this->yaw = 0.0f;
+	this->pitch = 0.0f;
+	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
+}
+
+
+// TODO: pos is supposed to be deltaPos
 void Player::update(glm::vec3 pos, float yaw, float pitch) {
 	// Calculate new pitch and yaw
 	this->yaw += yaw;
@@ -20,4 +31,5 @@ void Player::update(glm::vec3 pos, float yaw, float pitch) {
 	front = glm::normalize(this->front);
 
 	this->pos += pos;
+	this->hitbox->center = this->pos;
 }

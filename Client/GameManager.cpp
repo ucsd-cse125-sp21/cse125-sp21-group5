@@ -32,7 +32,7 @@ GameManager::GameManager(GLFWwindow* window)
 	playerT->add_child(playerM);
 	monkeT->add_child(monkeM);
 
-	// TODO: Build Quadtree using DFS
+	/*// TODO: Build Quadtree using DFS
 	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 10.0f), 
 		glm::vec3(500.0f, 500.0f, 500.0f));
 	// TODO: need to make this gneric 
@@ -52,7 +52,7 @@ GameManager::GameManager(GLFWwindow* window)
 	world->insert(playerT->collider);
 	world->insert(monkeT->collider); 
 	//string pp = typeid(playerM).name();
-	std::cerr << typeid(playerM).name() << std::endl;
+	std::cerr << typeid(playerM).name() << std::endl; */
 	
 	// Temporary "world"
 	/*for (int i = 0; i < 3; i++)
@@ -77,7 +77,7 @@ GameManager::GameManager(GLFWwindow* window)
 //		   just has the collider 
 // 
 // 
-void GameManager::buildQuadtreeDFS(Node* root, Quadtree * qt) {
+/*void GameManager::buildQuadtreeDFS(Node* root, Quadtree * qt) {
 	if (!root) return;
 	string objectType = typeid(root).name();
 
@@ -97,7 +97,7 @@ void GameManager::buildQuadtreeDFS(Node* root, Quadtree * qt) {
 
 	}
 	
-}
+}*/
 
 GameManager::~GameManager()
 {
@@ -133,7 +133,7 @@ void GameManager::update(Client& client)
 	
 	// TODO: Change this to be a dynamic check of just all the colliders
 	// currently in the world 
-	playerT->collider->check_collision(monkeT->collider);
+	/*playerT->collider->check_collision(monkeT->collider);
 	
 	// This checks ALL current colliders existing in the world, 
 	// then it queries the current collider's surroundings through the 
@@ -150,7 +150,7 @@ void GameManager::update(Client& client)
 				std::cerr << "Collided" << endl;
 			}
 		}
-	}
+	}*/
 
 	// TODO, could put quadtree here to update every frame 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Node.h"
-#include "Collider.h"
+//#include "../Server/Collider.h"
 #include <vector>
 #include <string>
 
@@ -22,7 +22,7 @@ public:
 	*/
 	glm::mat4 transform;
 	//TODO should change according
-	BoxCollider* collider;
+	//BoxCollider* collider;
 
 	// Default constructor
 	Transform();

@@ -147,14 +147,12 @@
     <ClCompile Include="..\Shared\Event.cpp" />
     <ClCompile Include="..\Shared\GameState.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -183,7 +181,6 @@
     <ClInclude Include="..\Shared\GameState.h" />
     <ClInclude Include="..\Shared\Global_variable.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Collider.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="KeyboardInputManager.h" />
@@ -192,7 +189,6 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Node.h" />
-    <ClInclude Include="Quadtree.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />

@@ -26,21 +26,23 @@ Animation::Animation(aiAnimation* anim, aiNode* aiRootNode) {
 
 	//std::cout << "root Node name: "<< aiRoot->mName.data << std::endl;
 
-	root = AssimpNodeData();
-	root.setNodeData(aiRoot);
+	root = new AssimpNodeData();
+	root->setNodeData(aiRoot);
 	ReadNodeHeirarchy(aiRoot, root);
+
+	std::cout << "trace" << std::endl;
 }
 
 Animation::~Animation() {
-
+	delete root;
 }
 
-void Animation::ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData& asspNode) {
+void Animation::ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData* asspNode) {
 	for (int i = 0; i < pNode->mNumChildren; i++) {
 		aiNode* childNode = pNode->mChildren[i];
-		AssimpNodeData childAssimpNodeData = AssimpNodeData();
-		childAssimpNodeData.setNodeData(childNode); //set up the childNode data, assume parent already set up first thing
-		asspNode.childrenNodeList.push_back(childAssimpNodeData);
+		AssimpNodeData* childAssimpNodeData = new AssimpNodeData();
+		childAssimpNodeData->setNodeData(childNode); //set up the childNode data, assume parent already set up first thing
+		asspNode->childrenNodeList.push_back(childAssimpNodeData);
 
 		ReadNodeHeirarchy(childNode, childAssimpNodeData); //go thru the children's child list
 	}

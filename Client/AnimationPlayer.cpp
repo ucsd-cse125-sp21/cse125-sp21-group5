@@ -65,7 +65,8 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 
 	}
 
-	for (int i = 0; i < node->childrenCount; i++) {
-		calculateBoneTransform(&node->childrenNodeList[i], globalTransformation);
+	for (int i = 0; i < node->childrenNodeList.size(); i++) {
+		std::cout << "updating node " << node->childrenNodeList[i]->nodeName << std::endl;
+		calculateBoneTransform(node->childrenNodeList[i], globalTransformation);
 	}
 }

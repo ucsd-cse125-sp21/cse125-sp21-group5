@@ -43,7 +43,7 @@ private:
 	std::map<std::string, BoneInfo> m_BoneInfoMap; //help sum up all the weights
 	int m_BoneCounter = 0;
 
-	float currTime = glfwGetTime();
+	float currTime = 0;
 	float prevTime = 0;
 
 	AnimationPlayer* animationPlayer;
@@ -54,7 +54,7 @@ public:
 	Model(std::string modelPath);
 	~Model();
 
-	void update();
+	void update(float deltaTime);
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);
 
 	std::map<std::string, BoneInfo> getBoneInfoMap() {

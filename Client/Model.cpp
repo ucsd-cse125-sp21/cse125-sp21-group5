@@ -9,6 +9,7 @@ Model::Model(std::string modelPath)
 	// loads the mesh into into position, normal, and index vectors
 	loadModel(modelPath);
 	currTime = glfwGetTime();
+	prevTime = glfwGetTime();
 }
 
 Model::~Model()
@@ -24,14 +25,10 @@ Model::~Model()
 //	delete animationPlayer;
 }
 
-void Model::update()
+void Model::update(float deltaTime)
 {
-	currTime = glfwGetTime();
-	float deltaTime = currTime - prevTime;
 	//get the new transform of the bones
 	animationPlayer->update(deltaTime);
-
-	prevTime = currTime;
 }
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)

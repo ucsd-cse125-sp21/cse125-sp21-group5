@@ -73,15 +73,14 @@ void GameManager::update()
 	deltaTime = currTime - prevTime;
 	prevTime = currTime;
 
-	// Rendering of objects is done here. (Draw)
-	// TODO: maybe have separate class in charge of rendering
-	render();
 
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
 
 	// Process keyboard input
 	handleKeyboardInput();
+
+	worldT->update(deltaTime);
 	
 	// Tell server about any movements
 	// TODO: how to wait for response?
@@ -102,6 +101,10 @@ void GameManager::update()
 	camera->update(deltaTime, offsetX, offsetY);
 	offsetX = 0.0f;
 	offsetY = 0.0f;
+
+	// Rendering of objects is done here. (Draw)
+	// TODO: maybe have separate class in charge of rendering
+	render();
 }
 
 // Handle Keyboard Input

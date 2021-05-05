@@ -42,5 +42,6 @@ public:
 	void create_transformation_matrix();
 
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);
+	void update(float deltaTime);
 	void add_child(Node* child);
 };

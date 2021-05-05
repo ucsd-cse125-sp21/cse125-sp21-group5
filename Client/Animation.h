@@ -27,7 +27,7 @@ public:
 	glm::mat4 nodeTransformation;
 	std::string nodeName; //will match the name of the bone, hopefully
 	int childrenCount;
-	std::vector<AssimpNodeData> childrenNodeList;
+	std::vector<AssimpNodeData*> childrenNodeList;
 
 	std::string parentNodeName = "";
 
@@ -40,6 +40,13 @@ public:
 		nodeTransformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(ainode->mTransformation);
 
 		std::cout << "(animation.h 41) Node name: " << nodeName <<  " ParentNode: "<< parentNodeName <<std::endl;
+	}
+
+	~AssimpNodeData() {
+		for (AssimpNodeData* child : childrenNodeList)
+		{
+			delete child;
+		}
 	}
 };
 
@@ -183,7 +190,7 @@ private:
 	aiAnimation* anime;
 	aiNode* aiRoot; //will point to list of other aiNodes. Tell the skeleton of the bones
 
-	AssimpNodeData root;
+	AssimpNodeData* root;
 
 	/* Gets normalized value for Lerp & Slerp*/
     float GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
@@ -200,10 +207,10 @@ public:
 	Animation(aiAnimation* anim, aiNode* aiRootNode);
 	~Animation();
 
-	void ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData& asspNode); //a set-up fnc
+	void ReadNodeHeirarchy(const aiNode* pNode, AssimpNodeData* asspNode); //a set-up fnc
 
 	AssimpNodeData* getRootNode() {
-		return &root;
+		return root;
 	}
 	
 	float getTicksPerSecond();

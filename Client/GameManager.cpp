@@ -30,40 +30,7 @@ GameManager::GameManager(GLFWwindow* window)
 	worldT->add_child(playerT);
 	worldT->add_child(monkeT);
 	playerT->add_child(playerM);
-	monkeT->add_child(monkeM);
-
-	/*// TODO: Build Quadtree using DFS
-	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 10.0f), 
-		glm::vec3(500.0f, 500.0f, 500.0f));
-	// TODO: need to make this gneric 
-	vector<BoxCollider*> objects;
-	world = new Quadtree(worldBox, 4, objects);
-
-	// Keeping track of all the colliders in the world
-	allColliders.push_back(playerT->collider);
-	allColliders.push_back(monkeT->collider);
-
-	// inserting the collider into the quadtree to ensure fast computation
-	Node* root = worldT;
-
-
-	// TODO: node doesn't have necessary functions to perform DFS 
-
-	world->insert(playerT->collider);
-	world->insert(monkeT->collider); 
-	//string pp = typeid(playerM).name();
-	std::cerr << typeid(playerM).name() << std::endl; */
-	
-	// Temporary "world"
-	/*for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			Tile* tile = new Tile((float) i, (float) j, 5.0f, 5.0f, 5);
-			worldT->add_child(tile->tileT);
-		}
-	}
-	*/
+	monkeT->add_child(monkeM); 
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -130,33 +97,6 @@ void GameManager::update(Client& client)
 	// Testing scene graph
 	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-	
-	// TODO: Change this to be a dynamic check of just all the colliders
-	// currently in the world 
-	/*playerT->collider->check_collision(monkeT->collider);
-	
-	// This checks ALL current colliders existing in the world, 
-	// then it queries the current collider's surroundings through the 
-	// quadtree, and then see if it is colliding with any of the 
-	// points in its current surrounding. 
-	for (auto collider : allColliders) {
-		//std::cerr << "outer loop" << std::endl;
-		BoxCollider colliderRange = BoxCollider(collider->center,
-			glm::vec3(collider->length, collider->width, collider->height) * 2.0f);
-		vector<BoxCollider*> nearbyColliders;
-		nearbyColliders = world->query(&colliderRange, nearbyColliders);
-		for (auto otherCollider : nearbyColliders) {
-			if (collider != otherCollider && collider->check_collision(otherCollider)) {
-				std::cerr << "Collided" << endl;
-			}
-		}
-	}*/
-
-	// TODO, could put quadtree here to update every frame 
-
-
-	//playerT->rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-	//monkeT->rotate(-0.1f, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class

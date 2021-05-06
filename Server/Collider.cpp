@@ -95,6 +95,7 @@ bool BoxCollider::contains(SphereCollider* p) {
 	bool furthestX = p->center.x + p->radius;
 	bool furthestY = p->center.y + p->radius;
 	bool furthestZ = p->center.z + p->radius;
+	return false;
 }
 
 bool BoxCollider::contains(Collider* p) {

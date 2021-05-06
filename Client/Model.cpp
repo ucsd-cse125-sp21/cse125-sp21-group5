@@ -34,7 +34,7 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 
 		// get the locations and send the uniforms to the shader 
 		glUniformMatrix4fv(glGetUniformLocation(mat->shader, "viewProj"), 1, GL_FALSE, glm::value_ptr(viewProjMtx));
-		glUniformMatrix4fv(glGetUniformLocation(mat->shader, "model"), 1, GL_FALSE, glm::value_ptr(modelMtx));
+		glUniformMatrix4fv(glGetUniformLocation(mat->shader, "model"), 1, GL_FALSE, glm::value_ptr(model * modelMtx));
 
 	    mesh->draw();
 		mat->release();

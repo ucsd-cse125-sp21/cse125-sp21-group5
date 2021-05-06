@@ -26,7 +26,6 @@ private:
 
 	// Root of scene graph
 	Transform* worldT;
-	Transform* playerT;
 	Transform* monkeT;
 
 
@@ -39,6 +38,7 @@ private:
 
 public:
 	Camera* camera;
+	Transform* playerT;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();
@@ -48,8 +48,6 @@ public:
 	void render();
 
 	void handleInput(Client& client);
-
-	void buildQuadtreeDFS(Node* root);
 	
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);

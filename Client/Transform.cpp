@@ -13,9 +13,13 @@ Transform::Transform(const glm::vec3& scale,
 					 const glm::vec3& rotation,
 					 const glm::vec3& translation)
 {
+	// Copy over variables
+	this->scale = scale;
+	this->rotation = rotation;
+	this->translation = translation;
 
+	// Build transform matrix
 	create_transformation_matrix();
-	
 }
 
 Transform::Transform(const Transform* transform)
@@ -32,12 +36,6 @@ Transform::~Transform()
 	}
 }
 
-void Transform::setTranslate(const glm::vec3& translation)
-{
-	this->translation = translation;
-	create_transformation_matrix();
-}
-
 void Transform::translate(const glm::vec3& translation)
 {
 	//this->create_transformation_matrix();
@@ -45,18 +43,34 @@ void Transform::translate(const glm::vec3& translation)
 	transform = glm::translate(transform, translation);
 }
 
+void Transform::setTranslate(const glm::vec3& translation)
+{
+	this->translation = translation;
+	create_transformation_matrix();
+}
+
 void Transform::rotate(const float& angle, const glm::vec3& axis)
 {
-	//this->rotation += angle * axis;
-	//this->create_transformation_matrix();
+	this->rotation += angle * axis;
 	transform = glm::rotate(transform, glm::radians(angle), axis);
+}
+
+void Transform::setRotate(const glm::vec3& rotation)
+{
+	this->rotation = rotation;
+	create_transformation_matrix();
 }
 
 void Transform::rescale(const glm::vec3& scale)
 {
-	//this->scale *= scale;
-	//this->create_transformation_matrix();
+	this->scale *= scale;
 	transform = glm::scale(transform, scale);
+}
+
+void Transform::setScale(const glm::vec3& scale)
+{
+	this->scale = scale;
+	create_transformation_matrix();
 }
 
 void Transform::create_transformation_matrix()

@@ -12,6 +12,7 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/bind.hpp>
+#include "Transform.h"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -55,6 +56,8 @@ private:
 class Client {
 public:
 	Camera* camera;
+	Transform* playerT;
+
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;
 
@@ -64,27 +67,7 @@ public:
 		size_t bytes_read
 	);
 
-	Client(boost::asio::io_context& ioContext)
-		: io_context_(ioContext)
-	{
-		cout << "CREATING NEW CLIENT OBJ" << endl;
-		string port = "13";
-		string host = boost::asio::ip::address_v4::loopback().to_string();
-
-		boost::asio::ip::tcp::resolver resolver(ioContext);
-		boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
-			host,
-			port
-		);
-
-		connection = tcp_connection::create(ioContext);
-		boost::asio::connect(connection->getSocket(), endpoints);
-
-		start_client();
-
-		cout << "FINISHED CREATING CLIENT OBJ" << endl;
-
-	}
+	Client(boost::asio::io_context& ioContext);
 
 	void start_client() {
 		do_read();

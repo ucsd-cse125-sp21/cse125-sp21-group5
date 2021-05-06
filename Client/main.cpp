@@ -86,7 +86,11 @@ int main(int argc, char** argv)
 	boost::asio::io_context ioContext;
 	Client client(ioContext);
 
+	// TODO: not this
 	client.camera = gameManager->camera;
+	client.playerT = gameManager->playerT;
+
+
 	boost::thread_group worker_threads;
 	worker_threads.create_thread(                            
 		boost::bind(&boost::asio::io_service::run, &ioContext)

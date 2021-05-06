@@ -36,35 +36,7 @@ GameManager::GameManager(GLFWwindow* window)
 	deltaTime = 0.0f;
 	prevTime = 0.0f;
 	currTime = 0.0f;
-} 
-
-// TODO: 
-// Idea 1: put collider as part of Model class 
-// Idea 2: Server doesn't have model, but instead of model on server, the server
-//		   just has the collider 
-// 
-// 
-/*void GameManager::buildQuadtreeDFS(Node* root, Quadtree * qt) {
-	if (!root) return;
-	string objectType = typeid(root).name();
-
-	// Case where it's a model, return, since no collider
-	if (objectType.find("Model") != std::string::npos) {
-		return;
-	}
-
-	// Main for loop
-	for (Node* n : root->children) {
-		// Leaf node
-		if (!n->children) {
-			
-			//TODO node needs collider too
-			qt->insert(n->collider);
-		}
-
-	}
-	
-}*/
+}
 
 GameManager::~GameManager()
 {
@@ -80,7 +52,6 @@ void GameManager::update(Client& client)
 	prevTime = currTime;
 
 	// Rendering of objects is done here. (Draw)
-	// TODO: maybe have separate class in charge of rendering
 	render();
 
 	// Listen for any events (keyboard input, mouse input, etc)
@@ -88,11 +59,6 @@ void GameManager::update(Client& client)
 
 	// Process keyboard input
 	handleInput(client);
-	
-	// Tell server about any movements
-	// TODO: how to wait for response?
-	//Event e = Event(key, camera);
-	//glm::vec3 newCamPos = this->client.callFakeServer();
 
 	// Testing scene graph
 	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
@@ -160,7 +126,7 @@ void GameManager::handleInput(Client& client)
 
 	toSend *= camera->speed * deltaTime;
 
-	//Update mouse movements
+	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 

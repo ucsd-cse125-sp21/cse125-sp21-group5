@@ -35,6 +35,10 @@ public:
 	void rescale(const glm::vec3& scale);
 	void create_transformation_matrix();
 
+	void setTranslate(const glm::vec3& translation);
+	void setRotate(const glm::vec3& rotation);
+	void setScale(const glm::vec3& scale);
+
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);
 	void add_child(Node* child);
 };

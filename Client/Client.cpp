@@ -3,6 +3,28 @@
 //Increase if too large
 #define PACKET_SIZE 4096
 
+Client::Client(boost::asio::io_context& ioContext)
+    : io_context_(ioContext)
+{
+    cout << "CREATING NEW CLIENT OBJ" << endl;
+    string port = "13";
+    string host = boost::asio::ip::address_v4::loopback().to_string();
+
+    boost::asio::ip::tcp::resolver resolver(ioContext);
+    boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
+        host,
+        port
+    );
+
+    connection = tcp_connection::create(ioContext);
+    boost::asio::connect(connection->getSocket(), endpoints);
+
+    start_client();
+
+    cout << "FINISHED CREATING CLIENT OBJ" << endl;
+
+}
+
 void Client::callServer(Event& e)
 {
     char hBuf[PACKET_SIZE];
@@ -43,6 +65,8 @@ void Client::handle_read(boost::system::error_code error, size_t bytes_read) {
     camera->pos = gs.pos;
     camera->front = gs.front;
     camera->update(gs.pos, gs.front);
+
+    playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
 
     do_read();
 }

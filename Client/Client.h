@@ -6,6 +6,7 @@
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/Camera.h"
+#include "../Shared/MapState.h"
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -73,6 +74,7 @@ public:
 		do_read();
 	}
 
+	void acquireGameInfo();
 	void do_read();
 	void handle_read(boost::system::error_code error, size_t bytes_read);
 

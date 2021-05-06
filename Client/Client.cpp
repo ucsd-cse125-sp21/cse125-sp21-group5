@@ -19,6 +19,7 @@ Client::Client(boost::asio::io_context& ioContext)
     connection = tcp_connection::create(ioContext);
     boost::asio::connect(connection->getSocket(), endpoints);
 
+    acquireGameInfo();
     start_client();
 
     cout << "FINISHED CREATING CLIENT OBJ" << endl;
@@ -69,4 +70,21 @@ void Client::handle_read(boost::system::error_code error, size_t bytes_read) {
     playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
 
     do_read();
+}
+
+void Client::acquireGameInfo() {
+    MapState ms;
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
+    std::string s = std::string{
+        boost::asio::buffers_begin(buf.data()),
+        boost::asio::buffers_begin(buf.data()) + bytes_read - 4
+    }; // -4 for \r\n\r\n
+    buf.consume(bytes_read);
+
+    boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+    boost::archive::text_iarchive eAR(eSource);
+    eAR >> ms;
+
+    
+
 }

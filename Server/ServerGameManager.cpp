@@ -1,5 +1,6 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
+
 ServerGameManager::ServerGameManager() {
 	// Creates box collider for the world and inits quadtree 
 	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 0.0f),
@@ -31,6 +32,17 @@ ServerGameManager::ServerGameManager() {
 		allColliders.push_back(p.hitbox);
 	}
 	buildQuadtree();
+}
+
+void ServerGameManager::generateMap() {
+	MapState ms;
+	for (Collider* c : allColliders) {
+		glm::mat4 transform = glm::mat4(1);
+		transform = glm::scale(transform, glm::vec3(c->length, c->width, c->height));
+		transform = glm::translate(transform, c->center);
+		
+		ms.add(transform);
+	}
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId) {

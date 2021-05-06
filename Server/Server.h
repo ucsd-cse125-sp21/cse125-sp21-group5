@@ -21,12 +21,15 @@
 #include "../Shared/Event.h"
 #include "../Shared/Camera.h"
 #include "../Shared/GameState.h"
+#include "../Shared/MapState.h"
 #include "ServerGameManager.h"
 
 using boost::asio::ip::tcp;
 
 using namespace std;
 #define NUM_PLAYERS 2
+#define PACKET_SIZE 4096
+
 
 class tcp_connection
 	: public boost::enable_shared_from_this<tcp_connection>
@@ -80,7 +83,6 @@ public:
 			connections[i] = tcp_connection::create(ioContext);
 			acceptor.accept(connections[i]->getSocket());
 			cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
-
 		}
 
 		// start reading from client
@@ -88,6 +90,23 @@ public:
 	}
 
 	void start_server() {
+		MapState ms = gm.generateMap();
+
+		char hBuf[PACKET_SIZE];
+		boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
+		boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
+
+		boost::archive::text_oarchive hAR(hSource);
+		hAR << ms;
+		hSource << "\r\n\r\n";
+		hSource << '\0';
+
+		//Need to send out map info before async reads
+		boost::system::error_code error;
+		for (int i = 0; i < NUM_PLAYERS; i++) {
+			boost::asio::write(connections[i]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+		}
+
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			do_read(i);
 		}

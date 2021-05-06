@@ -2,8 +2,6 @@
 
 using namespace std;
 
-#define PACKET_SIZE 4096
-
 void Server::do_read(int playerId) {
     boost::asio::async_read_until(connections[playerId]->getSocket(), bufs[playerId], "\r\n\r\n",
         boost::bind(&Server::handle_read,

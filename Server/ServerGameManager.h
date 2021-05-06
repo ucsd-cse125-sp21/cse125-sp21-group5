@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
+#include "../Shared/MapState.h"
 #include "Quadtree.h"
 
 using namespace std;
@@ -22,5 +23,6 @@ public:
 	void handleEvent(Event& e, int playerId);
 	void buildQuadtree();
 	GameState getGameState(int playerId);
+	void generateMap();
 };
 

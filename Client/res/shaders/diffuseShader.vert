@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 // NOTE: Do NOT use any version older than 330! Bad things will happen!
 
 layout (location = 0) in vec3 aPos;
@@ -22,14 +22,22 @@ out vec3 testColor;
 
 void main()
 {
+    vec3 totalPosition = vec3(0);
+    vec3 totalNormal = vec3(0);
 
+    testColor = vec3(0);
 
-    vec3 v1 = vec3(boneMatrices[boneIds[0]] * vec4(aPos, 1));
-    v1 += vec3(boneMatrices[boneIds[1]] * vec4(aPos, 1));
+    for (int i = 0; i < 4; i++) {
+        if (boneIds[i] < 0) {
+			testColor = vec3(1, 1, 0);
+            continue;
+        }
 
-    vec3 totalPosition = v1;
+        totalPosition += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
+        totalNormal += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aNormal, 0));
+    }
 
-    testColor = vec3(weights[0] + weights[1]);
+    //vec4 v1 = boneMatrices[1] * vec4(aPos, 1);
 
     /*
     for (int i = 0; i < 2; i++) {
@@ -38,7 +46,13 @@ void main()
     }
     */
 
+    /*
     fragNormal = vec3(model * vec4(aNormal, 0));
+    fragPos = vec3(model * vec4(totalPosition, 1));
+    gl_Position = viewProj * model * vec4(totalPosition, 1);
+    */
+
+    fragNormal = vec3(model * vec4(totalNormal, 0));
     fragPos = vec3(model * vec4(totalPosition, 1));
     gl_Position = viewProj * model * vec4(totalPosition, 1);
 }

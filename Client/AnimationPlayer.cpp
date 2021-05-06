@@ -38,7 +38,7 @@ void AnimationPlayer::update(float deltaTime)
 
 }
 
-void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform)
 {
 	std::string nodeName = node->nodeName;
 	glm::mat4 nodeTransform = node->nodeTransformation;
@@ -53,6 +53,7 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform; //pass along the tranform from the scene
 
+
 	//for the bones, apply the binding matrix to it, to get into proper bone space
 	//TO DO
 	
@@ -61,8 +62,9 @@ void AnimationPlayer::calculateBoneTransform(const AssimpNodeData* node, glm::ma
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end()) {
 		int index = boneInfoMap[nodeName].id;
 		glm::mat4 offset = boneInfoMap[nodeName].offset;
-		std::cout << nodeName << " " << glm::to_string(offset) << std::endl;
 		mFinalBoneTransformationMatrices[index] = globalTransformation * offset;
+		if (index == 1)
+			std::cout << glm::to_string(mFinalBoneTransformationMatrices[index]) << std::endl;
 	}
 
 	for (int i = 0; i < node->childrenNodeList.size(); i++) {

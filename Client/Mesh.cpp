@@ -84,7 +84,7 @@ void Mesh::setupOpenGL() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 	// set up bone IDs
 	glEnableVertexAttribArray(3);	
-	glVertexAttribPointer(3, 4, GL_INT,   GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
 	// set up bone weights
 	glEnableVertexAttribArray(4);	
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));

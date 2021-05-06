@@ -1,6 +1,8 @@
 #include "Animation.h"
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 Animation::Animation(aiAnimation* anim, aiNode* aiRootNode) {
 	anime = anim;
@@ -76,7 +78,7 @@ void Channel::update(float currentTime)
 	glm::mat4 translation = InterpolatePosition(currentTime);
 	glm::mat4 rotation = InterpolateRotation(currentTime);
 	glm::mat4 scale = InterpolateScaling(currentTime);
-	m_LocalTransform = rotation * translation * scale;
+	m_LocalTransform = translation * rotation * scale;
 }
 
 float Channel::GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
@@ -123,9 +125,6 @@ glm::mat4 Channel::InterpolateRotation(float animationTime)
 	glm::quat p1 = keyFrames_Rotation[p1Index].orientation;
 	float slerpFactor = GetSlerpFactor(t0, t1, animationTime);
 	glm::quat finalRotation = glm::slerp(p0, p1, slerpFactor);
-
-	//if (channelName == "headBone")
-	//	std::cout << glm::to_string(finalRotation) << std::endl;
 
 	return glm::toMat4(finalRotation);
 }

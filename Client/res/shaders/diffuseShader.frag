@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 in vec3 fragNormal;
 in vec3 fragPos;
@@ -49,7 +49,7 @@ void main()
 
     color += CalcDirectionalLight(sunLight, fragNormal, aViewDir);
 
-    fragColor = vec4(color, 1);
+    fragColor = vec4(color + 0.1, 1);
     //fragColor = vec4(testColor, 1);
 }
 

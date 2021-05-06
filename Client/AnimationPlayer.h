@@ -18,7 +18,7 @@ public:
 
 	void update(float deltaTime);
 
-	void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+	void calculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform);
 
 	std::vector<glm::mat4> getFinalBoneTransforms() {
 		return mFinalBoneTransformationMatrices;

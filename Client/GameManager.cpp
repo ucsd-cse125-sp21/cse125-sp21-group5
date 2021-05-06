@@ -25,7 +25,7 @@ GameManager::GameManager(GLFWwindow* window)
 	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/untitled.dae");
+	Model* playerM = new Model("res/models/shit6.dae");
 	//Model* playerM = new Model("res/models/head2.dae");
 	
 	// Build scene graph
@@ -38,7 +38,7 @@ GameManager::GameManager(GLFWwindow* window)
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
 
-	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(3)));
+	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(2)));
 
 
 	// TODO: Build Quadtree using DFS

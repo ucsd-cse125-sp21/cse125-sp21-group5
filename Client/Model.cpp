@@ -48,6 +48,7 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 
 		for (int i = 0; i < transforms.size(); i++) {
 			SetShaderMat4(mat->shader, "boneMatrices[" + std::to_string(i) + "]", transforms[i]);
+			//SetShaderMat4(mat->shader, "boneMatrices[" + std::to_string(i) + "]", glm::mat4(1));
 		}
 
 
@@ -69,7 +70,7 @@ void Model::loadModel(std::string modelPath)
 	//	  aiProcess_Triangulate
 	//	| aiProcess_JoinIdenticalVertices
 	//	| aiProcess_FlipUVs
-	//	| aiProcess_PreTransformVertices;
+	//	| aiProcess_LimitBoneWeights;
 
 	unsigned int importOptions = 
 		aiProcess_JoinIdenticalVertices |		// join identical vertices/ optimize indexing
@@ -78,14 +79,13 @@ void Model::loadModel(std::string modelPath)
 		aiProcess_RemoveRedundantMaterials |	// remove redundant materials
 		aiProcess_GenUVCoords |					// convert spherical, cylindrical, box and planar mapping to proper UVs
 		aiProcess_TransformUVCoords |			// pre-process UV transformations (scaling, translation ...)
-		//aiProcess_FindInstances |				// search for instanced meshes and remove them by references to one master
 		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
-		aiProcess_OptimizeMeshes |				// join small meshes, if possible;
+		//aiProcess_OptimizeMeshes |				// join small meshes, if possible;
 		//aiProcess_PreTransformVertices |
 		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
 		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
 		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges
-		aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
+		//aiProcess_ConvertToLeftHanded |			// convert everything to D3D left handed space
 		aiProcess_SortByPType;
 
 	const aiScene* scene = import.ReadFile(modelPath, importOptions);
@@ -194,7 +194,6 @@ void Model::loadModel(std::string modelPath)
 	}
 
 	animationPlayer = new AnimationPlayer(animationList, this);
-	std::cout << "Trace, hopefully it's not null" << std::endl;
 
 	for (auto m : meshes) {
 		m->setAnimationPlayer(animationPlayer);

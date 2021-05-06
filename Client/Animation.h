@@ -187,10 +187,12 @@ private:
 
 	std::vector<Channel> channelList; //maybe only add the channels attached to a bone
 
-	aiAnimation* anime;
 	aiNode* aiRoot; //will point to list of other aiNodes. Tell the skeleton of the bones
 
 	AssimpNodeData* root;
+
+	float mTicksPerSecond;
+	float mDuration;
 
 	/* Gets normalized value for Lerp & Slerp*/
     float GetSlerpFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)

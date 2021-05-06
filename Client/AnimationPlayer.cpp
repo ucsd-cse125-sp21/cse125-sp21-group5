@@ -28,7 +28,7 @@ void AnimationPlayer::update(float deltaTime)
 {
 	mDeltaTime = deltaTime;
 
-	if (mCurrentAnimationIdx != NO_ANIMATION) {
+	if (mAnimations.size() > 0 && mCurrentAnimationIdx != NO_ANIMATION) {
 		Animation* currAnimation = mAnimations[mCurrentAnimationIdx];
 		mCurrentTime += currAnimation->getTicksPerSecond() * deltaTime;
 		mCurrentTime = fmod(mCurrentTime, currAnimation->getDuration());

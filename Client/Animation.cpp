@@ -5,13 +5,16 @@
 #include <glm/gtx/transform.hpp>
 
 Animation::Animation(aiAnimation* anim, aiNode* aiRootNode) {
-	anime = anim;
+
+	mTicksPerSecond = anim->mTicksPerSecond;
+	mDuration = anim->mDuration;
+
 	aiRoot = aiRootNode;
 
 	//Set up the channels
-	std::cout << "total channels: "<< anime->mNumChannels << std::endl;
-	for (int chIdx = 0; chIdx < anime->mNumChannels; chIdx++) {
-		aiNodeAnim* aiChannel = anime->mChannels[chIdx];
+	std::cout << "total channels: "<< anim->mNumChannels << std::endl;
+	for (int chIdx = 0; chIdx < anim->mNumChannels; chIdx++) {
+		aiNodeAnim* aiChannel = anim->mChannels[chIdx];
 		std::cout << aiChannel->mNodeName.data << std::endl;
 
 		Channel channel = Channel();
@@ -63,11 +66,11 @@ Channel* Animation::findChannel(std::string nodeName)
 }
 
 float Animation::getTicksPerSecond() {
-	return anime->mTicksPerSecond;
+	return mTicksPerSecond;
 }
 
 float Animation::getDuration() { 
-	return anime->mDuration;
+	return mDuration;
 }
 
 

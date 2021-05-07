@@ -85,6 +85,13 @@ void Client::acquireGameInfo() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> ms;
 
-    
+    // Create and move objects in scene graph accordingly
+    for (vector<float>& t : ms.transforms)
+    {
+        Transform* cubeT = new Transform(t);
+        Model* cubeM = new Model("res/models/unitCube.dae");
+        cubeT->add_child(cubeM);
+        worldT->add_child(cubeT);
+    }
 
 }

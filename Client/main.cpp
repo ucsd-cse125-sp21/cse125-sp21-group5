@@ -89,13 +89,12 @@ int main(int argc, char** argv)
 	// TODO: not this
 	client.camera = gameManager->camera;
 	client.playerT = gameManager->playerT;
-
+	client.worldT = gameManager->worldT;
 
 	boost::thread_group worker_threads;
 	worker_threads.create_thread(                            
 		boost::bind(&boost::asio::io_service::run, &ioContext)
 	);
-
 
 	float start = glfwGetTime();
 	unsigned int frameCount = 0;

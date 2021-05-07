@@ -163,6 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\models\head2.dae" />
+    <None Include="res\models\unitCube.dae" />
     <None Include="res\shaders\diffuseShader.frag">
       <DeploymentContent>true</DeploymentContent>
     </None>

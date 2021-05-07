@@ -14,6 +14,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/bind.hpp>
 #include "Transform.h"
+#include "Model.h"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -58,6 +59,7 @@ class Client {
 public:
 	Camera* camera;
 	Transform* playerT;
+	Transform* worldT;
 
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;

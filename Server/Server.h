@@ -27,7 +27,7 @@
 using boost::asio::ip::tcp;
 
 using namespace std;
-#define NUM_PLAYERS 2
+#define NUM_PLAYERS 1
 #define PACKET_SIZE 4096
 
 

@@ -7,7 +7,8 @@ using namespace std;
 class MapState
 {
 public:
-	vector<float[16]> transforms;
+	// TODO: how to send floats?
+	vector<vector<float>> transforms;
 
 	MapState();
 

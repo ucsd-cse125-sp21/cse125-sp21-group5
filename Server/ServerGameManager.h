@@ -23,6 +23,6 @@ public:
 	void handleEvent(Event& e, int playerId);
 	void buildQuadtree();
 	GameState getGameState(int playerId);
-	void generateMap();
+	MapState generateMap();
 };
 

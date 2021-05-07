@@ -22,10 +22,11 @@ class GameManager
 private:
 	// Important variables
 	GLFWwindow* window;
+
 	//Client client = Client();
 
 	// Root of scene graph
-	Transform* worldT;
+	
 	Transform* monkeT;
 
 
@@ -37,7 +38,11 @@ private:
 	static float fov;
 
 public:
+	// Important variables
 	Camera* camera;
+
+	// TODO: not supposed to be public scene graph vars
+	Transform* worldT;
 	Transform* playerT;
 
 	GameManager(GLFWwindow * window);

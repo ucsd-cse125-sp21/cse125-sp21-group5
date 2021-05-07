@@ -17,6 +17,9 @@
       <UniqueIdentifier>{f7c32a36-ecc7-4700-b5ed-10370943567a}</UniqueIdentifier>
       <Extensions>vert;frag</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{b091da20-cd52-4e7e-bde1-6836c6fb76f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp">
@@ -84,6 +87,12 @@
     </None>
     <None Include="res\shaders\texturedShader.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\models\head2.dae">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="res\models\unitCube.dae">
+      <Filter>Resource Files\Models</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

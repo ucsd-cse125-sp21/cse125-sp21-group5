@@ -28,6 +28,10 @@ public:
 
 	// Copy constructor
 	Transform(const Transform* transform);
+
+	// Weird constructor
+	Transform(const vector<float>& transform);
+
 	~Transform();
 
 	void translate(const glm::vec3& translation);

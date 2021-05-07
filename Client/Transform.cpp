@@ -28,6 +28,24 @@ Transform::Transform(const Transform* transform)
 	this->transform = transform->transform;
 }
 
+Transform::Transform(const vector<float>& transform)
+{
+	// TODO: how do i set scale, rotation, transform?
+	// Build transformation matrix
+	this->transform = glm::mat4(1.0f);
+	this->scale = glm::vec3(1.0f);
+	this->translation = glm::vec3(0.0f);
+	this->rotation = glm::vec3(0.0f);
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			this->transform[i][j] = transform[i + j];
+		}
+	}
+}
+
 Transform::~Transform()
 {
 	for (Node* child : children)

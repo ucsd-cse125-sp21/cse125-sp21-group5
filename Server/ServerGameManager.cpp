@@ -8,21 +8,6 @@ ServerGameManager::ServerGameManager() {
 	vector<BoxCollider*> objects;
 	qt = new Quadtree(worldBox, 4, objects);
 
-	/*// Test add four colliders 
-	BoxCollider* test1 = new BoxCollider(glm::vec3(5.0f, 0.0f, 0.0f),
-		glm::vec3(3.0f, 3.0f, 3.0f));
-	qt->insert(test1);
-	BoxCollider* test2 = new BoxCollider(glm::vec3(5.0f, 0.0f, 0.0f),
-		glm::vec3(3.0f, 3.0f, 3.0f));
-	qt->insert(test1);
-	BoxCollider* test3 = new BoxCollider(glm::vec3(5.0f, 0.0f, 0.0f),
-		glm::vec3(3.0f, 3.0f, 3.0f));
-	qt->insert(test1);
-
-	//allColliders.push_back(test1);
-	//allColliders.push_back(test2);
-	//allColliders.push_back(test3);*/
-
 	// TODO: remove, hardcoded initPos
 	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
 	players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
@@ -34,7 +19,12 @@ ServerGameManager::ServerGameManager() {
 	buildQuadtree();
 }
 
-void ServerGameManager::generateMap() {
+MapState ServerGameManager::generateMap() {
+
+	// Add one new box object into world
+	allColliders.push_back(new BoxCollider(glm::vec3(0.0f), glm::vec3(1.0f)));
+
+	// Add all colliders to MapState
 	MapState ms;
 	for (Collider* c : allColliders) {
 		glm::mat4 transform = glm::mat4(1);
@@ -43,6 +33,7 @@ void ServerGameManager::generateMap() {
 		
 		ms.add(transform);
 	}
+	return ms;
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId) {

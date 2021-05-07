@@ -1,6 +1,5 @@
 #pragma once
 #include "Node.h"
-#include "Collider.h"
 #include <vector>
 #include <string>
 
@@ -14,14 +13,10 @@ private:
 
 public:
 	// Variables for positions
-	/* TODO: maybe not necessary to store these
-	 * Only store original if we want to maintain relativity to original
 	glm::vec3 rotation;
 	glm::vec3 scale;
 	glm::vec3 translation;
-	*/
 	glm::mat4 transform;
-	Collider* collider;
 
 	// Default constructor
 	Transform();
@@ -29,17 +24,24 @@ public:
 	// Specify everything constructor
 	Transform(const glm::vec3& scale,
 			  const glm::vec3& rotation,
-			  const glm::vec3& translation/*,
-			  const Collider::Type type*/);
+			  const glm::vec3& translation);
 
 	// Copy constructor
 	Transform(const Transform* transform);
+
+	// Weird constructor
+	Transform(const vector<float>& transform);
+
 	~Transform();
 
 	void translate(const glm::vec3& translation);
 	void rotate(const float& angle, const glm::vec3& axis);
-	void scale(const glm::vec3& scale);
+	void rescale(const glm::vec3& scale);
 	void create_transformation_matrix();
+
+	void setTranslate(const glm::vec3& translation);
+	void setRotate(const glm::vec3& rotation);
+	void setScale(const glm::vec3& scale);
 
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);
 	void add_child(Node* child);

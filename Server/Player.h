@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include "glm/glm.hpp"
 #include <iostream>
+#include "Collider.h"
 
 class Player
 {
@@ -11,7 +12,10 @@ public:
 	glm::vec3 front;
 	float yaw, pitch;
 
+	BoxCollider* hitbox; 
+
 	Player();
+	Player(glm::vec3 initPos);
 	void update(glm::vec3 pos, float yaw, float pitch);
 };
 

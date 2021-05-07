@@ -17,6 +17,9 @@
       <UniqueIdentifier>{f7c32a36-ecc7-4700-b5ed-10370943567a}</UniqueIdentifier>
       <Extensions>vert;frag</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{b091da20-cd52-4e7e-bde1-6836c6fb76f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp">
@@ -61,13 +64,13 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\MapState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +87,12 @@
     </None>
     <None Include="res\shaders\texturedShader.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\models\head2.dae">
+      <Filter>Resource Files\Models</Filter>
+    </None>
+    <None Include="res\models\unitCube.dae">
+      <Filter>Resource Files\Models</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +144,6 @@
     <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared\Global_variable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -148,6 +154,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\MapState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

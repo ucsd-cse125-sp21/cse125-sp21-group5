@@ -3,6 +3,29 @@
 //Increase if too large
 #define PACKET_SIZE 4096
 
+Client::Client(boost::asio::io_context& ioContext)
+    : io_context_(ioContext)
+{
+    cout << "CREATING NEW CLIENT OBJ" << endl;
+    string port = "13";
+    string host = boost::asio::ip::address_v4::loopback().to_string();
+
+    boost::asio::ip::tcp::resolver resolver(ioContext);
+    boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
+        host,
+        port
+    );
+
+    connection = tcp_connection::create(ioContext);
+    boost::asio::connect(connection->getSocket(), endpoints);
+
+    acquireGameInfo();
+    start_client();
+
+    cout << "FINISHED CREATING CLIENT OBJ" << endl;
+
+}
+
 void Client::callServer(Event& e)
 {
     char hBuf[PACKET_SIZE];
@@ -146,5 +169,31 @@ void Client::handle_read_game_state(boost::system::error_code error, size_t byte
     camera->front = gs.front;
     camera->update(gs.pos, gs.front);
 
-    do_read_header();
+    playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
+
+    do_read();
+}
+
+void Client::acquireGameInfo() {
+    MapState ms;
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
+    std::string s = std::string{
+        boost::asio::buffers_begin(buf.data()),
+        boost::asio::buffers_begin(buf.data()) + bytes_read - 4
+    }; // -4 for \r\n\r\n
+    buf.consume(bytes_read);
+
+    boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+    boost::archive::text_iarchive eAR(eSource);
+    eAR >> ms;
+
+    // Create and move objects in scene graph accordingly
+    for (vector<float>& t : ms.transforms)
+    {
+        Transform* cubeT = new Transform(t);
+        Model* cubeM = new Model("res/models/unitCube.dae");
+        cubeT->add_child(cubeM);
+        worldT->add_child(cubeT);
+    }
+
 }

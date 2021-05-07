@@ -22,12 +22,13 @@ class GameManager
 private:
 	// Important variables
 	GLFWwindow* window;
+
 	//Client client = Client();
 
 	// Root of scene graph
-	Transform* worldT;
-	Transform* playerT;
+	
 	Transform* monkeT;
+
 
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
@@ -37,7 +38,12 @@ private:
 	static float fov;
 
 public:
+	// Important variables
 	Camera* camera;
+
+	// TODO: not supposed to be public scene graph vars
+	Transform* worldT;
+	Transform* playerT;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();
@@ -47,7 +53,7 @@ public:
 	void render();
 
 	void handleInput(Client& client);
-
+	
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);

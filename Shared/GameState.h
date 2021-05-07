@@ -22,4 +22,3 @@ public:
 		ar& front.z;
 	}
 };
-

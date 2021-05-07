@@ -30,26 +30,13 @@ GameManager::GameManager(GLFWwindow* window)
 	worldT->add_child(playerT);
 	worldT->add_child(monkeT);
 	playerT->add_child(playerM);
-	monkeT->add_child(monkeM);
-
-	// TODO: Build Quadtree using DFS
-	/*
-	// Temporary "world"
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			Tile* tile = new Tile((float) i, (float) j, 5.0f, 5.0f, 5);
-			worldT->add_child(tile->tileT);
-		}
-	}
-	*/
+	monkeT->add_child(monkeM); 
 
 	// Initialize time variables
 	deltaTime = 0.0f;
 	prevTime = 0.0f;
 	currTime = 0.0f;
-} 
+}
 
 GameManager::~GameManager()
 {
@@ -65,7 +52,6 @@ void GameManager::update(Client& client)
 	prevTime = currTime;
 
 	// Rendering of objects is done here. (Draw)
-	// TODO: maybe have separate class in charge of rendering
 	render();
 
 	// Listen for any events (keyboard input, mouse input, etc)
@@ -73,7 +59,13 @@ void GameManager::update(Client& client)
 
 	// Process keyboard input
 	handleInput(client);
-	
+
+	// Testing scene graph
+	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
+	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+
+	// Update camera position
+	// TODO: place camera inside of Player class
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 }
@@ -134,7 +126,7 @@ void GameManager::handleInput(Client& client)
 
 	toSend *= camera->speed * deltaTime;
 
-	//Update mouse movements
+	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 

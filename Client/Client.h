@@ -7,6 +7,7 @@
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/Camera.h"
+#include "../Shared/MapState.h"
 #include "../Shared/Header.h"
 #include "../Shared/NetworkEvents.h"
 #include <string>
@@ -15,6 +16,8 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/bind.hpp>
+#include "Transform.h"
+#include "Model.h"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -58,6 +61,9 @@ private:
 class Client {
 public:
 	Camera* camera;
+	Transform* playerT;
+	Transform* worldT;
+
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;
 	int clientId;
@@ -116,6 +122,7 @@ public:
 	}
 
 	void do_read_header();
+	void acquireGameInfo();
 	void do_read();
 	void handle_read_header(boost::system::error_code error, size_t bytes_read);
 	void handle_read_clientID(boost::system::error_code error, size_t bytes_read);

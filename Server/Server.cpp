@@ -36,6 +36,80 @@ void Server::handle_read(int playerId, boost::system::error_code error, size_t b
     do_read(playerId);
 }
 
+void Server::handle_accept(int playerId, boost::system::error_code error) {
+    if (error) {
+        cout << error.message() << endl;
+    }
+    else {
+        cout << "Accepting new connection from " << connections[playerId]->getSocket().remote_endpoint().address().to_string() << endl;
+
+        Header head(HeaderType::NewClientID);
+        char headBuf[PACKET_SIZE];
+        boost::iostreams::basic_array_sink<char> headSink(headBuf, PACKET_SIZE);
+        boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> headSource(headSink);
+
+        boost::archive::text_oarchive headAR(headSource);
+        headAR << head;
+        headSource << "\r\n\r\n";
+        headSource << '\0';
+
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
+
+        ClientIDEvent id(playerId);
+        char hBuf[PACKET_SIZE];
+        boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
+        boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
+
+        boost::archive::text_oarchive hAR(hSource);
+        hAR << id;
+        hSource << "\r\n\r\n";
+        hSource << '\0';
+
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+
+        vector<int> ids;
+
+        for (int i = 0; i < connections.size(); i++) {
+            ids.push_back(i);
+        }
+
+        ClientConnectEvent ev(ids);
+
+        broadcast_send(ev);
+    }
+}
+
+void Server::broadcast_send(ClientConnectEvent ev, int ignore_clientID) {
+    boost::system::error_code error;
+
+    Header head(HeaderType::ClientConnectUpdate);
+    char headBuf[PACKET_SIZE];
+    boost::iostreams::basic_array_sink<char> headSink(headBuf, PACKET_SIZE);
+    boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> headSource(headSink);
+
+    boost::archive::text_oarchive headAR(headSource);
+    headAR << head;
+    headSource << "\r\n\r\n";
+    headSource << '\0';
+
+    char hBuf[PACKET_SIZE];
+    boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
+    boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
+
+    boost::archive::text_oarchive hAR(hSource);
+    hAR << ev;
+    hSource << "\r\n\r\n";
+    hSource << '\0';
+
+    for (int playerId = 0; playerId < connections.size(); playerId++) {
+        if (playerId == ignore_clientID) {
+            continue;
+        }
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+    }
+}
+
 int main()
 {
     boost::asio::io_context ioContext;
@@ -63,6 +137,19 @@ int main()
 
         //Send to client
         for (int i = 0; i < NUM_PLAYERS; i++) {
+
+            Header head(HeaderType::GameStateUpdate);
+            char headBuf[PACKET_SIZE];
+            boost::iostreams::basic_array_sink<char> headSink(headBuf, PACKET_SIZE);
+            boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> headSource(headSink);
+
+            boost::archive::text_oarchive headAR(headSource);
+            headAR << head;
+            headSource << "\r\n\r\n";
+            headSource << '\0';
+
+            boost::asio::write(server.connections[i]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
+
             char hBuf[PACKET_SIZE];
             boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
             boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);

@@ -3,36 +3,29 @@
 #ifndef SERIALIZATION_STOCK_HPP
 #define SERIALIZATION_STOCK_HPP
 
+enum HeaderType : int {
+	NewClientID,
+	ClientConnectUpdate,
+	GameStateUpdate,
+	MapStateUpdate
+};
+
+//template <typename Archive>
+//void serialize(Archive& ar, HeaderType & h, const unsigned int version) {
+//	ar& h.msgType;
+//}
+
 class Header {
 public:
-	int length = 0;
-	float dirX, dirY, dirZ;
-	float speed;
-	float posX, posY, posZ;
-
-	Header(int l) {
-		length = l;
-		dirX = 15;
-		dirY = 15;
-		dirZ = 15;
-		speed = 1;
-		posX = 15;
-		posY = 15;
-		posZ = 15;
+	HeaderType msgType;
+	Header() {}
+	Header(HeaderType msgType) {	
+		this->msgType = msgType;
 	}
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
-		ar& length;
-
-		ar& dirX;
-		ar& dirY;
-		ar& dirZ;
-		ar& speed;
-		ar& posX;
-		ar& posY;
-		ar& posZ;
-
+		ar& msgType;
 	}
 };
 

@@ -21,6 +21,8 @@
 #include "../Shared/Event.h"
 #include "../Shared/Camera.h"
 #include "../Shared/GameState.h"
+#include "../Shared/Header.h"
+#include "../Shared/NetworkEvents.h"
 #include "ServerGameManager.h"
 
 using boost::asio::ip::tcp;
@@ -61,26 +63,28 @@ private:
 };
 
 
-class Server{
+class Server
+{
 public:
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	vector<tcp_connection_ptr> connections;
 	ServerGameManager gm;
+	std::shared_ptr<tcp::acceptor> acceptor;
+	void handle_accept(int playerId, boost::system::error_code error);
 
 	Server(boost::asio::io_context& ioContext) : 
 		connections(NUM_PLAYERS), 
 		bufs(NUM_PLAYERS) 
 	{
 		boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
-		tcp::acceptor acceptor(ioContext, tcp::endpoint(addrV4, 13));
+		acceptor = std::make_shared< tcp::acceptor>(ioContext, tcp::endpoint(addrV4, 13));
 
 		cout << "Starting server on local port 13" << endl;
 
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			connections[i] = tcp_connection::create(ioContext);
-			acceptor.accept(connections[i]->getSocket());
-			cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
-
+			acceptor->async_accept(connections[i]->getSocket(), boost::bind(&Server::handle_accept, this, i, boost::asio::placeholders::error));
+			//cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
 		}
 
 		// start reading from client
@@ -95,6 +99,8 @@ public:
 
 	void do_read(int playerId);
 	void handle_read(int playerId, boost::system::error_code error, size_t bytes_read);
+
+	void broadcast_send(ClientConnectEvent ev, int ignore_clientID = -1);
 
 private:
 	vector<boost::asio::streambuf> bufs;

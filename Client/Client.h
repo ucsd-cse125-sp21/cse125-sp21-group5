@@ -1,11 +1,14 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/Camera.h"
+#include "../Shared/Header.h"
+#include "../Shared/NetworkEvents.h"
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -57,6 +60,8 @@ public:
 	Camera* camera;
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;
+	int clientId;
+	vector<int> existing_IDs;
 
 	void callServer(Event& e);
 	void processRead(
@@ -80,18 +85,42 @@ public:
 		connection = tcp_connection::create(ioContext);
 		boost::asio::connect(connection->getSocket(), endpoints);
 
-		start_client();
+		//size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
+
+		//std::string s = std::string{
+		//boost::asio::buffers_begin(buf.data()),
+		//boost::asio::buffers_begin(buf.data()) + bytes_read - 4
+		//}; // -4 for \r\n\r\n
+
+		//buf.consume(bytes_read);
+		//
+		//boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+		//boost::archive::text_iarchive eAR(eSource);
+		//eAR >> clientId;
+
+		//cout << "\t\tReceived client Id from server is " << clientId << endl;
+
+		try {
+			start_client();
+		}
+		catch (exception e) {
+			cout << e.what() << endl;
+		}
 
 		cout << "FINISHED CREATING CLIENT OBJ" << endl;
 
 	}
 
 	void start_client() {
-		do_read();
+		do_read_header();
 	}
 
+	void do_read_header();
 	void do_read();
-	void handle_read(boost::system::error_code error, size_t bytes_read);
+	void handle_read_header(boost::system::error_code error, size_t bytes_read);
+	void handle_read_clientID(boost::system::error_code error, size_t bytes_read);
+	void handle_read_client_connect_update(boost::system::error_code error, size_t bytes_read);
+	void handle_read_game_state(boost::system::error_code error, size_t bytes_read);
 
 private:
 	boost::asio::streambuf buf;

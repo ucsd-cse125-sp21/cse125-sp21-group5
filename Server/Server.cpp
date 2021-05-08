@@ -1,6 +1,31 @@
 #include "Server.h"
+#include "glm/gtx/string_cast.hpp"
 
 using namespace std;
+
+Server::Server(boost::asio::io_context& ioContext) :
+    connections(NUM_PLAYERS),
+    bufs(NUM_PLAYERS)
+{
+    boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
+    acceptor = std::make_shared< tcp::acceptor>(ioContext, tcp::endpoint(addrV4, 13));
+
+    cout << "Starting server on local port 13" << endl;
+
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        connections[i] = tcp_connection::create(ioContext);
+        acceptor->async_accept(connections[i]->getSocket(), boost::bind(&Server::handle_accept, this, i, boost::asio::placeholders::error));
+        //cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
+    }
+
+    // start reading from client
+    start_server();
+}
+
+void Server::start_server() {
+    // Generate Map
+    this->ms = gm.generateMap();
+}
 
 void Server::do_read(int playerId) {
     boost::asio::async_read_until(connections[playerId]->getSocket(), bufs[playerId], "\r\n\r\n",
@@ -28,8 +53,11 @@ void Server::handle_read(int playerId, boost::system::error_code error, size_t b
     boost::archive::text_iarchive eAR(eSource);
     eAR >> e;
     
-    //Update camera position and create a game state to send back
+    // Update camera position and create a game state to send back
     gm.handleEvent(e, playerId);
+    cerr << "pos: " << to_string(e.pos) << endl;
+    cerr << "pitch: " << to_string(e.pitch) << endl;
+    cerr << "yaw: " << to_string(e.yaw) << endl;
 
     do_read(playerId);
 }
@@ -41,6 +69,7 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
     else {
         cout << "Accepting new connection from " << connections[playerId]->getSocket().remote_endpoint().address().to_string() << endl;
 
+        /* Sending Client ID */
         Header head(HeaderType::NewClientID);
         char headBuf[PACKET_SIZE];
         boost::iostreams::basic_array_sink<char> headSink(headBuf, PACKET_SIZE);
@@ -65,6 +94,30 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
 
         boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
 
+        /* Sending Map State */
+        Header msHead(HeaderType::MapStateUpdate);
+        char msHeadBuf[PACKET_SIZE];
+        boost::iostreams::basic_array_sink<char> msHeadSink(msHeadBuf, PACKET_SIZE);
+        boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> msHeadSource(msHeadSink);
+
+        boost::archive::text_oarchive msHeadAR(msHeadSource);
+        msHeadAR << msHead;
+        msHeadSource << "\r\n\r\n";
+        msHeadSource << '\0';
+
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(msHeadBuf, strlen(msHeadBuf)), error);
+
+        char mshBuf[PACKET_SIZE];
+        boost::iostreams::basic_array_sink<char> mshSink(mshBuf, PACKET_SIZE);
+        boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> mshSource(mshSink);
+
+        boost::archive::text_oarchive mshAR(mshSource);
+        mshAR << this->ms;
+        mshSource << "\r\n\r\n";
+        mshSource << '\0';
+
+        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(mshBuf, strlen(mshBuf)), error);
+
         vector<int> ids;
 
         for (int i = 0; i < connections.size(); i++) {
@@ -74,7 +127,11 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         ClientConnectEvent ev(ids);
 
         broadcast_send(ev);
+
+        do_read(playerId);
     }
+
+    
 }
 
 void Server::broadcast_send(ClientConnectEvent ev, int ignore_clientID) {

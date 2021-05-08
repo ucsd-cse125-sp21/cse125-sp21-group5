@@ -75,59 +75,19 @@ public:
 		size_t bytes_read
 	);
 
-	Client(boost::asio::io_context& ioContext)
-		: io_context_(ioContext)
-	{
-		cout << "CREATING NEW CLIENT OBJ" << endl;
-		string port = "13";
-		string host = boost::asio::ip::address_v4::loopback().to_string();
-
-		boost::asio::ip::tcp::resolver resolver(ioContext);
-		boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
-			host,
-			port
-		);
-
-		connection = tcp_connection::create(ioContext);
-		boost::asio::connect(connection->getSocket(), endpoints);
-
-		//size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
-
-		//std::string s = std::string{
-		//boost::asio::buffers_begin(buf.data()),
-		//boost::asio::buffers_begin(buf.data()) + bytes_read - 4
-		//}; // -4 for \r\n\r\n
-
-		//buf.consume(bytes_read);
-		//
-		//boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
-		//boost::archive::text_iarchive eAR(eSource);
-		//eAR >> clientId;
-
-		//cout << "\t\tReceived client Id from server is " << clientId << endl;
-
-		try {
-			start_client();
-		}
-		catch (exception e) {
-			cout << e.what() << endl;
-		}
-
-		cout << "FINISHED CREATING CLIENT OBJ" << endl;
-
-	}
+	Client(boost::asio::io_context& ioContext);
 
 	void start_client() {
 		do_read_header();
 	}
 
 	void do_read_header();
-	void acquireGameInfo();
-	void do_read();
+	void acquireGameInfo( MapState& ms);
 	void handle_read_header(boost::system::error_code error, size_t bytes_read);
 	void handle_read_clientID(boost::system::error_code error, size_t bytes_read);
 	void handle_read_client_connect_update(boost::system::error_code error, size_t bytes_read);
 	void handle_read_game_state(boost::system::error_code error, size_t bytes_read);
+	void handle_read_map_state_update(boost::system::error_code error, size_t bytes_read);
 
 private:
 	boost::asio::streambuf buf;

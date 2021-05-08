@@ -41,7 +41,7 @@ Transform::Transform(const vector<float>& transform)
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			this->transform[i][j] = transform[i + j];
+			this->transform[i][j] = transform[4 * i + j];
 		}
 	}
 }

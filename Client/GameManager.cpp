@@ -19,18 +19,23 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
+	cubeT = new Transform();
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
 	Model* playerM = new Model("res/models/head2.dae");
 	Model* monkeM = new Model("res/models/head2.dae");
+	Model* cube = new Model("res/models/unitCube.dae");
 	
 	// Build scene graph
 	worldT->add_child(playerT);
 	worldT->add_child(monkeT);
 	playerT->add_child(playerM);
-	monkeT->add_child(monkeM); 
+	monkeT->add_child(monkeM);
+	//cubeT->add_child(cube);
+	//worldT->add_child(cubeT);
+
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -61,8 +66,12 @@ void GameManager::update(Client& client)
 	handleInput(client);
 
 	// Testing scene graph
-	playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
+	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
+
+	cubeT->setTranslate(camera->pos + 5.0f * camera->front);
+
+	
 
 	// Update camera position
 	// TODO: place camera inside of Player class

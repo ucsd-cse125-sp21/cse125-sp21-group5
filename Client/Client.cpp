@@ -19,7 +19,6 @@ Client::Client(boost::asio::io_context& ioContext)
     connection = tcp_connection::create(ioContext);
     boost::asio::connect(connection->getSocket(), endpoints);
 
-    acquireGameInfo();
     start_client();
 
     cout << "FINISHED CREATING CLIENT OBJ" << endl;
@@ -52,6 +51,7 @@ void Client::do_read_header() {
 }
 
 void Client::handle_read_header(boost::system::error_code error, size_t bytes_read) {
+    cerr << "asdfasdf" << endl;
     if (error) {
         cout << error.message() << endl;
     }
@@ -83,9 +83,16 @@ void Client::handle_read_header(boost::system::error_code error, size_t bytes_re
                 boost::asio::placeholders::bytes_transferred));
         break;
     case HeaderType::GameStateUpdate:
-        //cout << "Received GameStateUpdate header" << endl;
+        cout << "Received GameStateUpdate header" << endl;
         boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
             boost::bind(&Client::handle_read_game_state, this,
+                boost::asio::placeholders::error,
+                boost::asio::placeholders::bytes_transferred));
+        break;
+    case HeaderType::MapStateUpdate:
+        cout << "Received MapStateUpdate header" << endl;
+        boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
+            boost::bind(&Client::handle_read_map_state_update, this,
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred));
         break;
@@ -165,18 +172,17 @@ void Client::handle_read_game_state(boost::system::error_code error, size_t byte
     boost::archive::text_iarchive eAR(eSource);
     eAR >> gs;
 
-    camera->pos = gs.pos;
-    camera->front = gs.front;
+    //camera->pos = gs.pos;
+    //camera->front = gs.front;
     camera->update(gs.pos, gs.front);
-
     playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
 
-    do_read();
+    do_read_header();
 }
 
-void Client::acquireGameInfo() {
+void Client::handle_read_map_state_update(boost::system::error_code error, size_t bytes_read)
+{
     MapState ms;
-    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
         boost::asio::buffers_begin(buf.data()) + bytes_read - 4
@@ -187,13 +193,21 @@ void Client::acquireGameInfo() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> ms;
 
+    acquireGameInfo(ms);
+    do_read_header();
+}
+
+void Client::acquireGameInfo(MapState& ms) {
+    
     // Create and move objects in scene graph accordingly
     for (vector<float>& t : ms.transforms)
     {
+        cerr << t.data() << endl;
         Transform* cubeT = new Transform(t);
-        Model* cubeM = new Model("res/models/unitCube.dae");
+        Model* cubeM = new Model("res/models/hed2.dae");
         cubeT->add_child(cubeM);
-        worldT->add_child(cubeT);
+        cubeT->draw(glm::mat4(1.0f), camera->view);
+        worldT->add_child(cubeM);
     }
-
+    
 }

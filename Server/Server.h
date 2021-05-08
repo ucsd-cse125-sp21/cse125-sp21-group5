@@ -72,54 +72,15 @@ public:
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	vector<tcp_connection_ptr> connections;
 	ServerGameManager gm;
+	MapState ms;
 	std::shared_ptr<tcp::acceptor> acceptor;
-	void handle_accept(int playerId, boost::system::error_code error);
 
-	Server(boost::asio::io_context& ioContext) : 
-		connections(NUM_PLAYERS), 
-		bufs(NUM_PLAYERS) 
-	{
-		boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
-		acceptor = std::make_shared< tcp::acceptor>(ioContext, tcp::endpoint(addrV4, 13));
+	Server(boost::asio::io_context& ioContext);
 
-		cout << "Starting server on local port 13" << endl;
-
-		for (int i = 0; i < NUM_PLAYERS; i++) {
-			connections[i] = tcp_connection::create(ioContext);
-			acceptor->async_accept(connections[i]->getSocket(), boost::bind(&Server::handle_accept, this, i, boost::asio::placeholders::error));
-			//cout << "Accepting new connection from " << connections[i]->getSocket().remote_endpoint().address().to_string() << endl;
-		}
-
-		// start reading from client
-		start_server();
-	}
-
-	void start_server() {
-		MapState ms = gm.generateMap();
-
-		char hBuf[PACKET_SIZE];
-		boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
-		boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> hSource(hSink);
-
-		boost::archive::text_oarchive hAR(hSource);
-		hAR << ms;
-		hSource << "\r\n\r\n";
-		hSource << '\0';
-
-		//Need to send out map info before async reads
-		boost::system::error_code error;
-		for (int i = 0; i < NUM_PLAYERS; i++) {
-			boost::asio::write(connections[i]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
-		}
-
-		for (int i = 0; i < NUM_PLAYERS; i++) {
-			do_read(i);
-		}
-	}
-
+	void start_server();
 	void do_read(int playerId);
+	void handle_accept(int playerId, boost::system::error_code error);
 	void handle_read(int playerId, boost::system::error_code error, size_t bytes_read);
-
 	void broadcast_send(ClientConnectEvent ev, int ignore_clientID = -1);
 
 private:

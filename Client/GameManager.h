@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <vector>
 
@@ -44,6 +45,7 @@ public:
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
 	Transform* playerT;
+	Transform* cubeT;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();

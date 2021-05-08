@@ -27,14 +27,20 @@ void main()
 
     testColor = vec3(0);
 
-    for (int i = 0; i < 4; i++) {
-        if (boneIds[i] < 0) {
-			testColor = vec3(1, 1, 0);
-            continue;
-        }
+    if (boneIds[0] < 0) {
+		totalPosition = aPos;
+		totalNormal = aNormal;
+    }
+    else {
+		for (int i = 0; i < 4; i++) {
+			if (boneIds[i] < 0) {
+				testColor = vec3(1, 1, 0);
+				continue;
+			}
 
-        totalPosition += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
-        totalNormal += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aNormal, 0));
+			totalPosition += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
+			totalNormal += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aNormal, 0));
+		}
     }
 
     //vec4 v1 = boneMatrices[1] * vec4(aPos, 1);

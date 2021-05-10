@@ -84,10 +84,10 @@ public:
 	void do_read_header();
 	void acquireGameInfo( MapState& ms);
 	void handle_read_header(boost::system::error_code error, size_t bytes_read);
-	void handle_read_clientID(boost::system::error_code error, size_t bytes_read);
-	void handle_read_client_connect_update(boost::system::error_code error, size_t bytes_read);
-	void handle_read_game_state(boost::system::error_code error, size_t bytes_read);
-	void handle_read_map_state_update(boost::system::error_code error, size_t bytes_read);
+	void handle_read_clientID();
+	void handle_read_client_connect_update();
+	void handle_read_game_state();
+	void handle_read_map_state_update();
 
 private:
 	boost::asio::streambuf buf;

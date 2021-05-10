@@ -69,42 +69,28 @@ void Client::handle_read_header(boost::system::error_code error, size_t bytes_re
     switch (head.msgType) {
     case HeaderType::NewClientID:
         cout << "Received NewClientID header" << endl;
-        boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
-            boost::bind(&Client::handle_read_clientID, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+        handle_read_clientID();
         break;
     case HeaderType::ClientConnectUpdate:
         cout << "Received ClientConnectUpdate header" << endl;
-        boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
-            boost::bind(&Client::handle_read_client_connect_update, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+        handle_read_client_connect_update();
         break;
     case HeaderType::GameStateUpdate:
-        //cout << "Received GameStateUpdate header" << endl;
-        boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
-            boost::bind(&Client::handle_read_game_state, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+        cout << "Received GameStateUpdate header" << endl;
+        handle_read_game_state();
         break;
     case HeaderType::MapStateUpdate:
         cout << "Received MapStateUpdate header" << endl;
-        boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
-            boost::bind(&Client::handle_read_map_state_update, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+        handle_read_map_state_update();
         break;
     default:
         cout << "Cannot parse Header of Type: " << int(head.msgType) << endl;
     }
 }
 
-void Client::handle_read_clientID(boost::system::error_code error, size_t bytes_read) {
+void Client::handle_read_clientID() {
     cout << "Inside handle_read_clientID" << endl;
-    if (error) {
-        cout << error.message() << std::endl;
-    }
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     ClientIDEvent id;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -122,11 +108,9 @@ void Client::handle_read_clientID(boost::system::error_code error, size_t bytes_
     do_read_header();
 }
 
-void Client::handle_read_client_connect_update(boost::system::error_code error, size_t bytes_read) {
+void Client::handle_read_client_connect_update() {
     cout << "Inside handle_read_client_connect_update" << endl;
-    if (error) {
-        cout << error.message() << std::endl;
-    }
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     ClientConnectEvent ev;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -155,11 +139,9 @@ void Client::handle_read_client_connect_update(boost::system::error_code error, 
     do_read_header();
 }
 
-void Client::handle_read_game_state(boost::system::error_code error, size_t bytes_read) {
+void Client::handle_read_game_state() {
     //cout << "Inside handle_read_game_state" << endl;
-    if (error) {
-        cout << error.message() << std::endl;
-    }
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     GameState gs;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -179,11 +161,9 @@ void Client::handle_read_game_state(boost::system::error_code error, size_t byte
     do_read_header();
 }
 
-void Client::handle_read_map_state_update(boost::system::error_code error, size_t bytes_read)
+void Client::handle_read_map_state_update()
 {
-    if (error) {
-        cout << error.message() << std::endl;
-    }
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     MapState ms;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -201,12 +181,12 @@ void Client::handle_read_map_state_update(boost::system::error_code error, size_
 
 void Client::acquireGameInfo(MapState& ms) {
     // Create and move objects in scene graph accordingly
-    /*
-    for (vector<float>& t : ms.transforms)
+
+    for (float t : ms.transform1)
     {
-        cerr << "CLIENT MAP STATE TRANSFORM" << endl;
-        cerr << t[0] << endl;
-        cerr << t[1] << endl;
+        //cerr << "CLIENT MAP STATE TRANSFORM" << endl;
+        cerr << t << endl;
+        /*cerr << t[1] << endl;
         cerr << t[2] << endl;
         cerr << t[3] << endl;
         cerr << t[4] << endl;
@@ -220,11 +200,15 @@ void Client::acquireGameInfo(MapState& ms) {
         cerr << t[12] << endl;
         cerr << t[13] << endl;
         cerr << t[14] << endl;
-        cerr << t[15] << endl;
-
-        
+        cerr << t[15] << endl;*/ 
     }
-    */
+    for (float t : ms.transform2)
+    {
+        cerr << t << endl;
+    }    for (float t : ms.transform3)
+    {
+        cerr << t << endl;
+    }
 
     Transform* cubeT1 = new Transform(ms.transform1);
     Transform* cubeT2 = new Transform(ms.transform2);

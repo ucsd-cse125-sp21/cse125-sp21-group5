@@ -49,7 +49,7 @@ GameManager::~GameManager()
 	delete worldT; // Recursively calls destructor for all nodes... hopefully
 }
 
-void GameManager::update(Client& client)
+Event GameManager::update()
 {
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
@@ -57,13 +57,13 @@ void GameManager::update(Client& client)
 	prevTime = currTime;
 
 	// Rendering of objects is done here. (Draw)
-	render();
+	//render();
 
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
 
 	// Process keyboard input
-	handleInput(client);
+	Event e = handleInput();
 
 	// Testing scene graph
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
@@ -77,10 +77,11 @@ void GameManager::update(Client& client)
 	// TODO: place camera inside of Player class
 	offsetX = 0.0f;
 	offsetY = 0.0f;
+	return e;
 }
 
 // Handle Keyboard Input
-void GameManager::handleInput(Client& client)
+Event GameManager::handleInput()
 {
 	// Get current mouse position
 	double xpos, ypos;
@@ -139,8 +140,7 @@ void GameManager::handleInput(Client& client)
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 
-	Event e(toSend, yaw, pitch);
-	client.callServer(e);
+	return Event(toSend, yaw, pitch);
 }
 
 // Use for one-time key presses
@@ -217,4 +217,49 @@ void GameManager::render()
 	//cube->draw(camera->view, Window::projection, shader);
 	// Swap buffers
 	glfwSwapBuffers(window);
+}
+
+void GameManager::updateMap(MapState& ms) {
+
+	for (float t : ms.transform1)
+	{
+		//cerr << "CLIENT MAP STATE TRANSFORM" << endl;
+		cerr << t << endl;
+		/*cerr << t[1] << endl;
+		cerr << t[2] << endl;
+		cerr << t[3] << endl;
+		cerr << t[4] << endl;
+		cerr << t[5] << endl;
+		cerr << t[6] << endl;
+		cerr << t[7] << endl;
+		cerr << t[8] << endl;
+		cerr << t[9] << endl;
+		cerr << t[10] << endl;
+		cerr << t[11] << endl;
+		cerr << t[12] << endl;
+		cerr << t[13] << endl;
+		cerr << t[14] << endl;
+		cerr << t[15] << endl;*/
+	}
+	for (float t : ms.transform2)
+	{
+		cerr << t << endl;
+	}    for (float t : ms.transform3)
+	{
+		cerr << t << endl;
+	}
+
+	Transform* cubeT1 = new Transform(ms.transform1);
+	Transform* cubeT2 = new Transform(ms.transform2);
+	Transform* cubeT3 = new Transform(ms.transform3);
+
+	Model* cubeM = new Model("res/models/head2.dae");
+
+	cubeT1->add_child(cubeM);
+	cubeT2->add_child(cubeM);
+	cubeT3->add_child(cubeM);
+
+	worldT->add_child(cubeT1);
+	worldT->add_child(cubeT2);
+	worldT->add_child(cubeT3);
 }

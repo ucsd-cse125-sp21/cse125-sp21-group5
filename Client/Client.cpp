@@ -1,10 +1,10 @@
 #include "Client.h"
 
 //Increase if too large
-#define PACKET_SIZE 4096
+#define PACKET_SIZE 1024
 
-Client::Client(boost::asio::io_context& ioContext)
-    : io_context_(ioContext)
+Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window)
+    : io_context_(ioContext) , gm(window)
 {
     cout << "CREATING NEW CLIENT OBJ" << endl;
     string port = "13";
@@ -25,9 +25,11 @@ Client::Client(boost::asio::io_context& ioContext)
 
 }
 
-void Client::callServer(Event& e)
+void Client::callServer()
 {
     char hBuf[PACKET_SIZE];
+
+    Event e = gm.update();
 
     //Header
     boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
@@ -181,46 +183,5 @@ void Client::handle_read_map_state_update()
 
 void Client::acquireGameInfo(MapState& ms) {
     // Create and move objects in scene graph accordingly
-
-    for (float t : ms.transform1)
-    {
-        //cerr << "CLIENT MAP STATE TRANSFORM" << endl;
-        cerr << t << endl;
-        /*cerr << t[1] << endl;
-        cerr << t[2] << endl;
-        cerr << t[3] << endl;
-        cerr << t[4] << endl;
-        cerr << t[5] << endl;
-        cerr << t[6] << endl;
-        cerr << t[7] << endl;
-        cerr << t[8] << endl;
-        cerr << t[9] << endl;
-        cerr << t[10] << endl;
-        cerr << t[11] << endl;
-        cerr << t[12] << endl;
-        cerr << t[13] << endl;
-        cerr << t[14] << endl;
-        cerr << t[15] << endl;*/ 
-    }
-    for (float t : ms.transform2)
-    {
-        cerr << t << endl;
-    }    for (float t : ms.transform3)
-    {
-        cerr << t << endl;
-    }
-
-    Transform* cubeT1 = new Transform(ms.transform1);
-    Transform* cubeT2 = new Transform(ms.transform2);
-    Transform* cubeT3 = new Transform(ms.transform3);
-
-    Model* cubeM = new Model("res/models/head2.dae");
-
-    cubeT1->add_child(cubeM);
-    cubeT2->add_child(cubeM);
-    cubeT3->add_child(cubeM);
-
-    worldT->add_child(cubeT1);
-    worldT->add_child(cubeT2);
-    worldT->add_child(cubeT3);
+    gm.updateMap(ms);
 }

@@ -3,9 +3,14 @@
 #include <iostream>
 #include "Model.h"
 
-Mesh::Mesh(aiMesh* mesh)
+Mesh::Mesh(aiMesh* mesh, Model* parentModel)
 {
 	materialIdx = mesh->mMaterialIndex;
+	this->parentModel = parentModel;
+
+	VAO = 0;
+	VBO = 0;
+	EBO = 0;
 
 	for (int vertidx = 0; vertidx < mesh->mNumVertices; vertidx++) {
 		glm::vec3 position = glm::vec3(

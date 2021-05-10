@@ -56,6 +56,7 @@ public:
 
 	void update(float deltaTime);
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);
+	AnimationPlayer* getAnimationPlayer() { return animationPlayer; }
 
 	std::map<std::string, BoneInfo> getBoneInfoMap() {
 		return m_BoneInfoMap;

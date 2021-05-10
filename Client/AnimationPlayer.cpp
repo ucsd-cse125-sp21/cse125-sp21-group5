@@ -6,8 +6,10 @@
 
 AnimationPlayer::AnimationPlayer(std::vector<Animation*> animations, Model* model)
 {
-	mAnimations = animations;
+    mAnimations = animations;
 	mCurrentTime = glfwGetTime();
+
+	//std::cout << "Found " << mAnimations.size() << " animations" << std::endl;
 	mCurrentAnimationIdx = 0;
 
 	mModel = model;

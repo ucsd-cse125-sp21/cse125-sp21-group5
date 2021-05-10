@@ -22,7 +22,7 @@ Model::~Model()
 		delete m;
 	}
 
-//	delete animationPlayer;
+	delete animationPlayer;
 }
 
 void Model::update(float deltaTime)
@@ -42,15 +42,12 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 		Material* mat = materials[mesh->materialIdx];
 		mat->activate();
 
-
 		// set global transform matrices
 		auto transforms = animationPlayer->getFinalBoneTransforms();
 
 		for (int i = 0; i < transforms.size(); i++) {
 			SetShaderMat4(mat->shader, "boneMatrices[" + std::to_string(i) + "]", transforms[i]);
-			//SetShaderMat4(mat->shader, "boneMatrices[" + std::to_string(i) + "]", glm::mat4(1));
 		}
-
 
 		// get the locations and send the uniforms to the shader 
 		SetShaderMat4(mat->shader, "viewProj", viewProjMtx);
@@ -116,7 +113,7 @@ void Model::loadModel(std::string modelPath)
 	// Load geometry meshes
 	for (int meshidx = 0; meshidx < scene->mNumMeshes; meshidx++) {
 		aiMesh* aiMesh = scene->mMeshes[meshidx];
-		Mesh* mesh = new Mesh(aiMesh);
+		Mesh* mesh = new Mesh(aiMesh, this);
 		meshes.push_back(mesh);
 
 		int numBone = aiMesh->mNumBones;
@@ -194,8 +191,4 @@ void Model::loadModel(std::string modelPath)
 	}
 
 	animationPlayer = new AnimationPlayer(animationList, this);
-
-	for (auto m : meshes) {
-		m->setAnimationPlayer(animationPlayer);
-	}
 }

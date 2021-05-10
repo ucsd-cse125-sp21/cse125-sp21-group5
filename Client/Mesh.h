@@ -52,7 +52,7 @@ class Mesh
 {
 public:
 
-	AnimationPlayer* mAnimationPlayer = nullptr;
+	Model* parentModel;
 
 	GLuint VAO;
 	GLuint VBO, EBO;
@@ -75,14 +75,10 @@ public:
 
 	int materialIdx;
 
-	Mesh(aiMesh* mesh);
+	Mesh(aiMesh* mesh, Model* parentModel);
 	~Mesh();
 
 	void setupOpenGL();
 	void draw();
-
-	void setAnimationPlayer(AnimationPlayer* ap) {
-		mAnimationPlayer = ap;
-	}
 };
 

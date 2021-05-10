@@ -1,11 +1,10 @@
 #version 430 core
-// NOTE: Do NOT use any version older than 330! Bad things will happen!
 
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 tex;
-layout (location = 3) in ivec4 boneIds; 
-layout (location = 4) in vec4 weights;
+layout (location = 0) in vec3  aPos;
+layout (location = 1) in vec3  aNormal;
+layout (location = 2) in vec2  aTexCoord; // unused by diffuse shader
+layout (location = 3) in ivec4 aBoneIds; 
+layout (location = 4) in vec4  aWeights;
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -18,6 +17,7 @@ uniform mat4 model;
 out vec3 fragNormal;
 out vec3 fragPos;
 
+//TODO: remove testColor
 out vec3 testColor;
 
 void main()
@@ -27,36 +27,22 @@ void main()
 
     testColor = vec3(0);
 
-    if (boneIds[0] < 0) {
+    if (aBoneIds[0] < 0) {
+		// if the first index is -1, we know that this vertex must have no bone weights
 		totalPosition = aPos;
 		totalNormal = aNormal;
     }
     else {
 		for (int i = 0; i < 4; i++) {
-			if (boneIds[i] < 0) {
+			if (aBoneIds[i] < 0) {
 				testColor = vec3(1, 1, 0);
 				continue;
 			}
 
-			totalPosition += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
-			totalNormal += weights[i] * vec3(boneMatrices[boneIds[i]] * vec4(aNormal, 0));
+			totalPosition += aWeights[i] * vec3(boneMatrices[aBoneIds[i]] * vec4(aPos, 1));
+			totalNormal += aWeights[i] * vec3(boneMatrices[aBoneIds[i]] * vec4(aNormal, 0));
 		}
     }
-
-    //vec4 v1 = boneMatrices[1] * vec4(aPos, 1);
-
-    /*
-    for (int i = 0; i < 2; i++) {
-        vec3 localPosition = vec3(boneMatrices[boneIds[i]] * vec4(aPos, 1));
-        totalPosition += localPosition * weights[i];
-    }
-    */
-
-    /*
-    fragNormal = vec3(model * vec4(aNormal, 0));
-    fragPos = vec3(model * vec4(totalPosition, 1));
-    gl_Position = viewProj * model * vec4(totalPosition, 1);
-    */
 
     fragNormal = vec3(model * vec4(totalNormal, 0));
     fragPos = vec3(model * vec4(totalPosition, 1));

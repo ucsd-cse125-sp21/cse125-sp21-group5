@@ -25,7 +25,7 @@ GameManager::GameManager(GLFWwindow* window)
 	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 
 	// Initialize models to render
-	Model* playerM = new Model("res/models/unitCube.dae");
+	Model* playerM = new Model("res/models/cubeSnake2.dae");
 	//Model* playerM = new Model("res/models/head2.dae");
 	
 	// Build scene graph
@@ -56,8 +56,8 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize time variables
 	deltaTime = 0.0f;
-	prevTime = 0.0f;
-	currTime = 0.0f;
+	prevTime = (float) glfwGetTime();
+	currTime = (float) glfwGetTime();
 } 
 
 GameManager::~GameManager()

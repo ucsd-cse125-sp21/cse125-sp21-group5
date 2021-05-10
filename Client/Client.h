@@ -62,9 +62,6 @@ private:
 class Client {
 public:
 	GameManager gm;
-	Camera* camera;
-	Transform* playerT;
-	Transform* worldT;
 
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;

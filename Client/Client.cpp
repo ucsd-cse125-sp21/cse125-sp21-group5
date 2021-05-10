@@ -155,10 +155,9 @@ void Client::handle_read_game_state() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> gs;
 
-    //camera->pos = gs.pos;
-    //camera->front = gs.front;
-    camera->update(gs.pos, gs.front);
-    playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
+    // TODO: move to game manager
+    gm.camera->update(gs.pos, gs.front);
+    gm.playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
 
     do_read_header();
 }

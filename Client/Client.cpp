@@ -51,7 +51,6 @@ void Client::do_read_header() {
 }
 
 void Client::handle_read_header(boost::system::error_code error, size_t bytes_read) {
-    cerr << "asdfasdf" << endl;
     if (error) {
         cout << error.message() << endl;
     }
@@ -83,7 +82,7 @@ void Client::handle_read_header(boost::system::error_code error, size_t bytes_re
                 boost::asio::placeholders::bytes_transferred));
         break;
     case HeaderType::GameStateUpdate:
-        cout << "Received GameStateUpdate header" << endl;
+        //cout << "Received GameStateUpdate header" << endl;
         boost::asio::async_read_until(connection->getSocket(), buf, "\r\n\r\n",
             boost::bind(&Client::handle_read_game_state, this,
                 boost::asio::placeholders::error,
@@ -182,6 +181,9 @@ void Client::handle_read_game_state(boost::system::error_code error, size_t byte
 
 void Client::handle_read_map_state_update(boost::system::error_code error, size_t bytes_read)
 {
+    if (error) {
+        cout << error.message() << std::endl;
+    }
     MapState ms;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -198,16 +200,43 @@ void Client::handle_read_map_state_update(boost::system::error_code error, size_
 }
 
 void Client::acquireGameInfo(MapState& ms) {
-    
     // Create and move objects in scene graph accordingly
+    /*
     for (vector<float>& t : ms.transforms)
     {
-        cerr << t.data() << endl;
-        Transform* cubeT = new Transform(t);
-        Model* cubeM = new Model("res/models/hed2.dae");
-        cubeT->add_child(cubeM);
-        cubeT->draw(glm::mat4(1.0f), camera->view);
-        worldT->add_child(cubeM);
+        cerr << "CLIENT MAP STATE TRANSFORM" << endl;
+        cerr << t[0] << endl;
+        cerr << t[1] << endl;
+        cerr << t[2] << endl;
+        cerr << t[3] << endl;
+        cerr << t[4] << endl;
+        cerr << t[5] << endl;
+        cerr << t[6] << endl;
+        cerr << t[7] << endl;
+        cerr << t[8] << endl;
+        cerr << t[9] << endl;
+        cerr << t[10] << endl;
+        cerr << t[11] << endl;
+        cerr << t[12] << endl;
+        cerr << t[13] << endl;
+        cerr << t[14] << endl;
+        cerr << t[15] << endl;
+
+        
     }
-    
+    */
+
+    Transform* cubeT1 = new Transform(ms.transform1);
+    Transform* cubeT2 = new Transform(ms.transform2);
+    Transform* cubeT3 = new Transform(ms.transform3);
+
+    Model* cubeM = new Model("res/models/head2.dae");
+
+    cubeT1->add_child(cubeM);
+    cubeT2->add_child(cubeM);
+    cubeT3->add_child(cubeM);
+
+    worldT->add_child(cubeT1);
+    worldT->add_child(cubeT2);
+    worldT->add_child(cubeT3);
 }

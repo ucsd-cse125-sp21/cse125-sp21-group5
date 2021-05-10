@@ -28,7 +28,7 @@ Transform::Transform(const Transform* transform)
 	this->transform = transform->transform;
 }
 
-Transform::Transform(const vector<float>& transform)
+Transform::Transform(const vector<float> transform)
 {
 	// TODO: how do i set scale, rotation, transform?
 	// Build transformation matrix

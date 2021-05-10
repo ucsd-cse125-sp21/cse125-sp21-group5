@@ -55,9 +55,6 @@ void Server::handle_read(int playerId, boost::system::error_code error, size_t b
     
     // Update camera position and create a game state to send back
     gm.handleEvent(e, playerId);
-    cerr << "pos: " << to_string(e.pos) << endl;
-    cerr << "pitch: " << to_string(e.pitch) << endl;
-    cerr << "yaw: " << to_string(e.yaw) << endl;
 
     do_read(playerId);
 }
@@ -110,6 +107,29 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         char mshBuf[PACKET_SIZE];
         boost::iostreams::basic_array_sink<char> mshSink(mshBuf, PACKET_SIZE);
         boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> mshSource(mshSink);
+
+        /*
+        cerr << "this state MAP STATE TRANSFORM" << endl;
+        for (vector<float> t : this->ms.transforms)
+        {
+            cerr << t[0] << endl;
+            cerr << t[1] << endl;
+            cerr << t[2] << endl;
+            cerr << t[3] << endl;
+            cerr << t[4] << endl;
+            cerr << t[5] << endl;
+            cerr << t[6] << endl;
+            cerr << t[7] << endl;
+            cerr << t[8] << endl;
+            cerr << t[9] << endl;
+            cerr << t[10] << endl;
+            cerr << t[11] << endl;
+            cerr << t[12] << endl;
+            cerr << t[13] << endl;
+            cerr << t[14] << endl;
+            cerr << t[15] << endl;
+        }
+        */
 
         boost::archive::text_oarchive mshAR(mshSource);
         mshAR << this->ms;

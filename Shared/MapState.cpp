@@ -16,5 +16,5 @@ void MapState::add(glm::mat4 transform) {
 		}
 	}
 
-	transforms.push_back(transformArray);
+	//transforms.push_back(transformArray);
 }

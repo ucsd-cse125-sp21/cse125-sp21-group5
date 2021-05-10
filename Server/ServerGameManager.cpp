@@ -26,6 +26,52 @@ MapState ServerGameManager::generateMap() {
 
 	// Add all colliders to MapState
 	MapState ms;
+
+	Collider* c = allColliders[0];
+	glm::mat4 transform1 = glm::mat4(1);
+	transform1 = glm::scale(transform1, glm::vec3(c->length, c->width, c->height));
+	transform1 = glm::translate(transform1, c->center);
+
+	c = allColliders[1];
+	glm::mat4 transform2 = glm::mat4(1);
+	transform2 = glm::scale(transform2, glm::vec3(c->length, c->width, c->height));
+	transform2 = glm::translate(transform2, c->center);
+
+	c = allColliders[2];
+	glm::mat4 transform3 = glm::mat4(1);
+	transform3 = glm::scale(transform3, glm::vec3(c->length, c->width, c->height));
+	transform3 = glm::translate(transform3, c->center);
+
+	vector<float> t1;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			t1.push_back(transform1[i][j]);
+		}
+	}
+	vector<float> t2;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			t2.push_back(transform1[i][j]);
+		}
+	}
+	vector<float> t3;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			t3.push_back(transform1[i][j]);
+		}
+	}
+
+	ms.transform1 = t1;
+	ms.transform2 = t2;
+	ms.transform3 = t3;
+
+	/*
 	for (Collider* c : allColliders) {
 		glm::mat4 transform = glm::mat4(1);
 		transform = glm::scale(transform, glm::vec3(c->length, c->width, c->height));
@@ -33,6 +79,7 @@ MapState ServerGameManager::generateMap() {
 		
 		ms.add(transform);
 	}
+	*/
 	return ms;
 }
 

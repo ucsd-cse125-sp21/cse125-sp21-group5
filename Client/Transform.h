@@ -30,7 +30,7 @@ public:
 	Transform(const Transform* transform);
 
 	// Weird constructor
-	Transform(const vector<float>& transform);
+	Transform(const vector<float> transform);
 
 	~Transform();
 

@@ -29,10 +29,10 @@ GameManager::GameManager(GLFWwindow* window)
 	Model* cube = new Model("res/models/unitCube.dae");
 	
 	// Build scene graph
-	worldT->add_child(playerT);
-	worldT->add_child(monkeT);
-	playerT->add_child(playerM);
-	monkeT->add_child(monkeM);
+	//worldT->add_child(playerT);
+	//worldT->add_child(monkeT);
+	//playerT->add_child(playerM);
+	//monkeT->add_child(monkeM);
 	//cubeT->add_child(cube);
 	//worldT->add_child(cubeT);
 

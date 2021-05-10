@@ -30,7 +30,7 @@ using boost::asio::ip::tcp;
 
 using namespace std;
 #define NUM_PLAYERS 1
-#define PACKET_SIZE 4096
+#define PACKET_SIZE 1024
 
 
 class tcp_connection

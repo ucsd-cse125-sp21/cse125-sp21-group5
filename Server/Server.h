@@ -19,7 +19,6 @@
 #include <boost/thread/thread.hpp>
 
 #include "../Shared/Event.h"
-#include "../Shared/Camera.h"
 #include "../Shared/GameState.h"
 #include "../Shared/MapState.h"
 #include "../Shared/Header.h"

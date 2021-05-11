@@ -112,6 +112,14 @@ void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 	}
 }
 
+void Transform::update(float deltaTime) 
+{
+	for (Node* child : this->children) 
+	{
+		child->update(deltaTime);
+	}
+}
+
 void Transform::add_child(Node* child)
 {
 	children.push_back(child);

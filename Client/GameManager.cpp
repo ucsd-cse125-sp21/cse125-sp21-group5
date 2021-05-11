@@ -1,5 +1,7 @@
 #include "GameManager.h"
 
+#include "Renderer.h"
+
 // TODO: possibly move these as well
 // Track mouse movements
 bool firstMouse = true;
@@ -19,14 +21,23 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	cubeT = new Transform();
+	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
+	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
-	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
 
-	// Initialize models to render
-	Model* playerM = new Model("res/models/head2.dae");
-	Model* monkeM = new Model("res/models/head2.dae");
 	Model* cube = new Model("res/models/unitCube.dae");
+
+	cubeT1 = new Transform();
+	cubeT2 = new Transform();
+	cubeT3 = new Transform();
+
+	cubeT1->add_child(cube);
+	cubeT2->add_child(cube);
+	cubeT3->add_child(cube);
+
+	worldT->add_child(cubeT1);
+	worldT->add_child(cubeT2);
+	worldT->add_child(cubeT3);
 	
 	// Build scene graph
 	//worldT->add_child(playerT);
@@ -36,12 +47,17 @@ GameManager::GameManager(GLFWwindow* window)
 	//cubeT->add_child(cube);
 	//worldT->add_child(cubeT);
 
+	// Add a test point light
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
+
+	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(2)));
 
 	// Initialize time variables
 	deltaTime = 0.0f;
-	prevTime = 0.0f;
-	currTime = 0.0f;
-}
+	prevTime = (float) glfwGetTime();
+	currTime = (float) glfwGetTime();
+} 
 
 GameManager::~GameManager()
 {
@@ -56,8 +72,10 @@ Event GameManager::update()
 	deltaTime = currTime - prevTime;
 	prevTime = currTime;
 
+	worldT->update(deltaTime);
+
 	// Rendering of objects is done here. (Draw)
-	//render();
+	render();
 
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
@@ -65,13 +83,9 @@ Event GameManager::update()
 	// Process keyboard input
 	Event e = handleInput();
 
-	// Testing scene graph
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-
-	cubeT->setTranslate(camera->pos + 5.0f * camera->front);
-
-	
+	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -249,17 +263,21 @@ void GameManager::updateMap(MapState& ms) {
 		cerr << t << endl;
 	}
 
-	Transform* cubeT1 = new Transform(ms.transform1);
-	Transform* cubeT2 = new Transform(ms.transform2);
-	Transform* cubeT3 = new Transform(ms.transform3);
+	Transform* newTrans = new Transform(ms.transform1);
 
-	Model* cubeM = new Model("res/models/head2.dae");
+	cubeT1->translation = newTrans->translation;
+	cubeT2->translation = newTrans->translation;
+	cubeT3->translation = newTrans->translation;
 
-	cubeT1->add_child(cubeM);
-	cubeT2->add_child(cubeM);
-	cubeT3->add_child(cubeM);
+	std::cout << glm::to_string(newTrans->transform) << std::endl;
 
-	worldT->add_child(cubeT1);
-	worldT->add_child(cubeT2);
-	worldT->add_child(cubeT3);
+	cubeT1->rotation = newTrans->rotation;
+	cubeT2->rotation = newTrans->rotation;
+	cubeT3->rotation = newTrans->rotation;
+
+	cubeT1->scale = newTrans->scale;
+	cubeT2->scale = newTrans->scale;
+	cubeT3->scale = newTrans->scale;
+
+	delete newTrans;
 }

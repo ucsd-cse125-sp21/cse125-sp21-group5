@@ -6,11 +6,11 @@
 #include <boost/asio.hpp>
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
-#include "../Shared/Camera.h"
 #include "../Shared/MapState.h"
 #include "../Shared/Header.h"
 #include "../Shared/NetworkEvents.h"
 #include "GameManager.h"
+#include "Camera.h"
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>

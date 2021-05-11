@@ -11,7 +11,7 @@
 
 #include "Tile.h"
 #include "Window.h"
-#include "../Shared/Camera.h"
+#include "Camera.h"
 #include "../Shared/Event.h"
 #include "../Shared/MapState.h"
 #include "Model.h"
@@ -46,7 +46,9 @@ public:
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
 	Transform* playerT;
-	Transform* cubeT;
+	Transform* cubeT1;
+	Transform* cubeT2;
+	Transform* cubeT3;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();

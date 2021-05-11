@@ -78,7 +78,7 @@ void Client::handle_read_header(boost::system::error_code error, size_t bytes_re
         handle_read_client_connect_update();
         break;
     case HeaderType::GameStateUpdate:
-        cout << "Received GameStateUpdate header" << endl;
+        //cout << "Received GameStateUpdate header" << endl;
         handle_read_game_state();
         break;
     case HeaderType::MapStateUpdate:

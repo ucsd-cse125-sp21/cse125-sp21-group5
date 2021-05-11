@@ -1,6 +1,12 @@
 #include "GameManager.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include "Renderer.h"
+
+
 
 // TODO: possibly move these as well
 // Track mouse movements
@@ -22,7 +28,6 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize transforms
 	worldT = new Transform();
 	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
-	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
 	Model* cube = new Model("res/models/unitCube.dae");
@@ -41,9 +46,7 @@ GameManager::GameManager(GLFWwindow* window)
 	
 	// Build scene graph
 	//worldT->add_child(playerT);
-	//worldT->add_child(monkeT);
 	//playerT->add_child(playerM);
-	//monkeT->add_child(monkeM);
 	//cubeT->add_child(cube);
 	//worldT->add_child(cubeT);
 
@@ -84,8 +87,6 @@ Event GameManager::update()
 	Event e = handleInput();
 
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -224,11 +225,22 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Make a new imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	// show demo window
+	bool showWindow = true;
+	ImGui::ShowDemoWindow(&showWindow);
+
 	// Render the models
 	worldT->draw(glm::mat4(1), Window::projection * camera->view);
 
-	//tile->draw(camera->view, Window::projection, shader);
-	//cube->draw(camera->view, Window::projection, shader);
+	// call ImGUI render to actually render the ui to opengl
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	// Swap buffers
 	glfwSwapBuffers(window);
 }

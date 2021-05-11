@@ -27,11 +27,6 @@ private:
 
 	//Client client = Client();
 
-	// Root of scene graph
-	
-	Transform* monkeT;
-
-
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
 

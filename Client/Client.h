@@ -6,10 +6,11 @@
 #include <boost/asio.hpp>
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
-#include "../Shared/Camera.h"
 #include "../Shared/MapState.h"
 #include "../Shared/Header.h"
 #include "../Shared/NetworkEvents.h"
+#include "GameManager.h"
+#include "Camera.h"
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -60,29 +61,23 @@ private:
 
 class Client {
 public:
-	Camera* camera;
-	Transform* playerT;
-	Transform* worldT;
+	GameManager gm;
 
 	typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 	tcp_connection_ptr connection;
 	int clientId;
 	vector<int> existing_IDs;
 
-	void callServer(Event& e);
-	void processRead(
-		boost::system::error_code error,
-		size_t bytes_read
-	);
+	void callServer();
 
-	Client(boost::asio::io_context& ioContext);
+	Client(boost::asio::io_context& ioContext, GLFWwindow* window);
 
 	void start_client() {
 		do_read_header();
 	}
 
 	void do_read_header();
-	void acquireGameInfo( MapState& ms);
+	void acquireGameInfo(MapState& ms);
 	void handle_read_header(boost::system::error_code error, size_t bytes_read);
 	void handle_read_clientID();
 	void handle_read_client_connect_update();

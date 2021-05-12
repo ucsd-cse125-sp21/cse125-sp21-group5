@@ -11,10 +11,11 @@
 
 #include "Tile.h"
 #include "Window.h"
-#include "../Shared/Camera.h"
+#include "Camera.h"
+#include "../Shared/Event.h"
+#include "../Shared/MapState.h"
 #include "Model.h"
 #include "Transform.h"
-#include "Client.h"
 
 using namespace std;
 
@@ -45,21 +46,26 @@ public:
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
 	Transform* playerT;
-	Transform* cubeT;
+	Transform* cubeT1;
+	Transform* cubeT2;
+	Transform* cubeT3;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();
 
-	void update(Client& client);
+	Event update();
 
 	void render();
 
-	void handleInput(Client& client);
+	Event handleInput();
 	
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
 	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	void updateMap(MapState& map);
+
 };
+
 
 #endif

@@ -60,15 +60,6 @@ int main(int argc, char** argv)
 		fprintf(stderr, "Window could not be created\n");
 	}
 
-	// Create GameManager
-	// TODO: maybe just put window inside of GameManager?
-	GameManager* gameManager = new GameManager(window);
-	if (gameManager == nullptr)
-	{
-		fprintf(stderr, "GameManager could not be created\n");
-		return -1;
-	}
-
 	// Print OpenGL and GLSL versions.
 	print_versions();
 
@@ -84,12 +75,7 @@ int main(int argc, char** argv)
 
 	// Forever game loop
 	boost::asio::io_context ioContext;
-	Client client(ioContext);
-
-	// TODO: not this
-	client.camera = gameManager->camera;
-	client.playerT = gameManager->playerT;
-	client.worldT = gameManager->worldT;
+	Client client(ioContext, window);
 
 	boost::thread_group worker_threads;
 	worker_threads.create_thread(                            
@@ -106,7 +92,7 @@ int main(int argc, char** argv)
 		}
 
 		start = glfwGetTime();
-		gameManager->update(client);
+		client.callServer();
 	}
 
 	// destroy objects created

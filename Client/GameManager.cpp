@@ -1,5 +1,7 @@
 #include "GameManager.h"
 
+#include "Renderer.h"
+
 // TODO: possibly move these as well
 // Track mouse movements
 bool firstMouse = true;
@@ -19,14 +21,23 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	cubeT = new Transform();
+	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
+	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
-	monkeT = new Transform(glm::vec3(0.25f), glm::vec3(0.0f), glm::vec3(-15.0f, 0.0f, 0.0f));
 
-	// Initialize models to render
-	Model* playerM = new Model("res/models/head2.dae");
-	Model* monkeM = new Model("res/models/head2.dae");
 	Model* cube = new Model("res/models/unitCube.dae");
+
+	cubeT1 = new Transform();
+	cubeT2 = new Transform();
+	cubeT3 = new Transform();
+
+	cubeT1->add_child(cube);
+	cubeT2->add_child(cube);
+	cubeT3->add_child(cube);
+
+	worldT->add_child(cubeT1);
+	worldT->add_child(cubeT2);
+	worldT->add_child(cubeT3);
 	
 	// Build scene graph
 	//worldT->add_child(playerT);
@@ -36,12 +47,17 @@ GameManager::GameManager(GLFWwindow* window)
 	//cubeT->add_child(cube);
 	//worldT->add_child(cubeT);
 
+	// Add a test point light
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
+
+	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(2)));
 
 	// Initialize time variables
 	deltaTime = 0.0f;
-	prevTime = 0.0f;
-	currTime = 0.0f;
-}
+	prevTime = (float) glfwGetTime();
+	currTime = (float) glfwGetTime();
+} 
 
 GameManager::~GameManager()
 {
@@ -49,12 +65,14 @@ GameManager::~GameManager()
 	delete worldT; // Recursively calls destructor for all nodes... hopefully
 }
 
-void GameManager::update(Client& client)
+Event GameManager::update()
 {
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
 	deltaTime = currTime - prevTime;
 	prevTime = currTime;
+
+	worldT->update(deltaTime);
 
 	// Rendering of objects is done here. (Draw)
 	render();
@@ -63,24 +81,21 @@ void GameManager::update(Client& client)
 	glfwPollEvents();
 
 	// Process keyboard input
-	handleInput(client);
+	Event e = handleInput();
 
-	// Testing scene graph
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-
-	cubeT->setTranslate(camera->pos + 5.0f * camera->front);
-
-	
+	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
 	offsetX = 0.0f;
 	offsetY = 0.0f;
+	return e;
 }
 
 // Handle Keyboard Input
-void GameManager::handleInput(Client& client)
+Event GameManager::handleInput()
 {
 	// Get current mouse position
 	double xpos, ypos;
@@ -139,8 +154,7 @@ void GameManager::handleInput(Client& client)
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 
-	Event e(toSend, yaw, pitch);
-	client.callServer(e);
+	return Event(toSend, yaw, pitch);
 }
 
 // Use for one-time key presses
@@ -217,4 +231,53 @@ void GameManager::render()
 	//cube->draw(camera->view, Window::projection, shader);
 	// Swap buffers
 	glfwSwapBuffers(window);
+}
+
+void GameManager::updateMap(MapState& ms) {
+
+	for (float t : ms.transform1)
+	{
+		//cerr << "CLIENT MAP STATE TRANSFORM" << endl;
+		cerr << t << endl;
+		/*cerr << t[1] << endl;
+		cerr << t[2] << endl;
+		cerr << t[3] << endl;
+		cerr << t[4] << endl;
+		cerr << t[5] << endl;
+		cerr << t[6] << endl;
+		cerr << t[7] << endl;
+		cerr << t[8] << endl;
+		cerr << t[9] << endl;
+		cerr << t[10] << endl;
+		cerr << t[11] << endl;
+		cerr << t[12] << endl;
+		cerr << t[13] << endl;
+		cerr << t[14] << endl;
+		cerr << t[15] << endl;*/
+	}
+	for (float t : ms.transform2)
+	{
+		cerr << t << endl;
+	}    for (float t : ms.transform3)
+	{
+		cerr << t << endl;
+	}
+
+	Transform* newTrans = new Transform(ms.transform1);
+
+	cubeT1->translation = newTrans->translation;
+	cubeT2->translation = newTrans->translation;
+	cubeT3->translation = newTrans->translation;
+
+	std::cout << glm::to_string(newTrans->transform) << std::endl;
+
+	cubeT1->rotation = newTrans->rotation;
+	cubeT2->rotation = newTrans->rotation;
+	cubeT3->rotation = newTrans->rotation;
+
+	cubeT1->scale = newTrans->scale;
+	cubeT2->scale = newTrans->scale;
+	cubeT3->scale = newTrans->scale;
+
+	delete newTrans;
 }

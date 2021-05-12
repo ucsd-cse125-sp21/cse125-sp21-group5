@@ -30,7 +30,7 @@ GameManager::GameManager(GLFWwindow* window)
 	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	Model* cube = new Model("res/models/unitCube.dae");
+	Model* cube = new Model("res/models/riggingSimple.dae");
 
 	cubeT1 = new Transform();
 	cubeT2 = new Transform();
@@ -60,6 +60,7 @@ GameManager::GameManager(GLFWwindow* window)
 	deltaTime = 0.0f;
 	prevTime = (float) glfwGetTime();
 	currTime = (float) glfwGetTime();
+
 } 
 
 GameManager::~GameManager()
@@ -70,6 +71,12 @@ GameManager::~GameManager()
 
 Event GameManager::update()
 {
+	// Make a new imgui frame
+	// do this here so game objects can make ImGUI calls in their update function
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
 	deltaTime = currTime - prevTime;
@@ -225,14 +232,46 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Make a new imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
 
-	// show demo window
-	bool showWindow = true;
-	ImGui::ShowDemoWindow(&showWindow);
+	// show an example window
+
+	ImGuiWindowFlags windowFlags = 0;
+
+	windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoScrollbar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoNav;
+    windowFlags |= ImGuiWindowFlags_NoBackground;
+    windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	bool showUI = true;
+	ImGui::Begin("Health UI", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
+	ImGui::SetWindowSize(ImVec2(300, 100));
+
+	static float health = 0;
+	static float direction = 1;
+	health += 0.001 * direction;
+
+	if (health > 1) direction = -1;
+	if (health < 0) direction = 1;
+
+	ImGui::Text("Super basic health bar");
+	ImGui::SliderFloat("Health", &health, 0, 1);
+	ImGui::End();
+
+	// super basic crosshair, maybe move this somewhere else
+	ImGui::Begin("Crosshairs", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(Window::width / 2 - 20, Window::height / 2 - 20));
+	ImGui::SetWindowSize(ImVec2(200, 200));
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 p = ImGui::GetCursorScreenPos();
+	drawList->AddLine(ImVec2(p.x+20, p.y), ImVec2(p.x+20, p.y+40), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	drawList->AddLine(ImVec2(p.x, p.y+20), ImVec2(p.x+40, p.y+20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	ImGui::End();
 
 	// Render the models
 	worldT->draw(glm::mat4(1), Window::projection * camera->view);

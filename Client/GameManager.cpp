@@ -30,7 +30,7 @@ GameManager::GameManager(GLFWwindow* window)
 	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	Model* cube = new Model("res/models/riggingSimple.dae");
+	Model* cube = new Model("res/models/unitCube.dae");
 
 	cubeT1 = new Transform();
 	cubeT2 = new Transform();

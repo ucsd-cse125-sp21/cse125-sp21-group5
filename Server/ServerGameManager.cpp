@@ -87,7 +87,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 	buildQuadtree();
 
 	cerr << "asdfasd" << endl;
-
+	
 	// if player is colliding
 	// don't update player position
 	// TODO: Possibly need to ignore ground 
@@ -97,33 +97,42 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 		vector<BoxCollider*> nearbyColliders;
 		nearbyColliders = qt->query(&colliderRange, nearbyColliders);
 		//std::cerr << "Found " << nearbyColliders.size() << " in nearby colliders" << std::endl;
-
+		
 		// Actual collision 
 		for (auto otherCollider : nearbyColliders) {
 			// Collision happens
 			if (collider != otherCollider) {
 				// Determine which plane it collided with
 				glm::vec3 plane = collider->intersects(otherCollider);
-
+				
 				// Did it actually collide?
 				if (plane.x == 0.0f && plane.y == 0.0f && plane.z == 0.0f)
 				{
 					continue;
 				}
 
+				cerr << "the product is " << to_string(e.pos * plane) << endl;
+
 				// Actual collision --> don't update player position
 				glm::vec3 center = players[playerId].hitbox->center;
 				BoxCollider* hitbox = players[playerId].hitbox;
 
 				// zero out the dir the plane is in
-				glm::vec3 newDir = glm::normalize(e.pos * plane);
+				glm::vec3 newDir = e.pos * plane;
 
+				// Edge case where the product is 0
+				if (newDir.x != 0.0f || newDir.y != 0.0f || newDir.z != 0.0f) {
+					newDir = glm::normalize(newDir);
+				}
+				
 				// calculate projection to determine how much to move in other plane
-				glm::vec3 newDelta = glm::dot(e.pos, newDir) * newDir;
+				glm::vec3 newDelta = glm::length(e.pos) * newDir;
 
+				cerr << "newDir is " << to_string(newDir) << endl;
+				
 				// Move player backwards
 				players[playerId].update(newDelta - e.pos, 0.0f, 0.0f);
-
+				
 				// update position if the player "snaps" back
 				buildQuadtree();
 

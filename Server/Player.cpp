@@ -31,5 +31,7 @@ void Player::update(glm::vec3 pos, float yaw, float pitch) {
 	front = glm::normalize(this->front);
 
 	this->pos += pos;
+
+	// Move the collider
 	this->hitbox->center = this->pos;
 }

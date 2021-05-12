@@ -108,29 +108,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         boost::iostreams::basic_array_sink<char> mshSink(mshBuf, PACKET_SIZE);
         boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> mshSource(mshSink);
 
-        /*
-        cerr << "this state MAP STATE TRANSFORM" << endl;
-        for (vector<float> t : this->ms.transforms)
-        {
-            cerr << t[0] << endl;
-            cerr << t[1] << endl;
-            cerr << t[2] << endl;
-            cerr << t[3] << endl;
-            cerr << t[4] << endl;
-            cerr << t[5] << endl;
-            cerr << t[6] << endl;
-            cerr << t[7] << endl;
-            cerr << t[8] << endl;
-            cerr << t[9] << endl;
-            cerr << t[10] << endl;
-            cerr << t[11] << endl;
-            cerr << t[12] << endl;
-            cerr << t[13] << endl;
-            cerr << t[14] << endl;
-            cerr << t[15] << endl;
-        }
-        */
-
         boost::archive::text_oarchive mshAR(mshSource);
         mshAR << this->ms;
         mshSource << "\r\n\r\n";
@@ -150,8 +127,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
 
         do_read(playerId);
     }
-
-    
 }
 
 void Server::broadcast_send(ClientConnectEvent ev, int ignore_clientID) {

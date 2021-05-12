@@ -1,4 +1,7 @@
 #include "Collider.h"
+#include "glm/gtx/string_cast.hpp"
+#include <iostream>
+#include <algorithm>
 
 // TODO: potentailly radius x,y,z
 SphereCollider::SphereCollider(const glm::vec3& center, const float& radius)
@@ -15,15 +18,15 @@ BoxCollider::BoxCollider(const glm::vec3& center, const glm::vec3& dimensions)
 	this->width = dimensions.y;
 	this->height = dimensions.z;
 			/*
-		   6--------4
+		   7--------6
 		  /        /|
 		 /        / |
-		7--------5  |
+		3--------2  |
 		|        |  |
-		|   2----|--0
+		|   5----|--4
 		|  /     | /
 		| /      |/
-		3--------1
+		1--------0
 			*/
 
 	// Build eight points
@@ -51,6 +54,9 @@ BoxCollider::BoxCollider(const glm::vec3& center, const glm::vec3& dimensions)
 	points[7] = glm::vec3(center.x + dimensions.x / 2,
 		                  center.y + dimensions.y / 2,
 		                  center.z + dimensions.z / 2);
+
+	// Define 6 faces
+
 }
 
 // this functions checks if the box contains another box
@@ -65,10 +71,8 @@ bool BoxCollider::contains(BoxCollider* p) {
 }
 
 
-bool BoxCollider::intersects(BoxCollider* range) {
+glm::vec3 BoxCollider::intersects(BoxCollider* range) {
 	// Check x-y-z plane
-	//std::cout << range->center.x - range->length << std::endl;
-	//std::cout << this->center.x + this->length << std::endl;
 	bool xy = !(
 		range->center.x - range->length > this->center.x + this->length ||
 		range->center.x + range->length < this->center.x - this->length ||
@@ -87,8 +91,32 @@ bool BoxCollider::intersects(BoxCollider* range) {
 		range->center.x - range->length > this->center.x + this->length ||
 		range->center.x + range->length < this->center.x - this->length
 		);
-	//if (xy && yz && zx) std::cerr << "intersected" << std::endl;
-	return xy && yz && zx;
+
+	// If intersecting
+	if (xy && yz && zx)
+	{
+		// Determine which face it's intersecting with
+		glm::vec3 diff = this->center - range->center;
+		glm::vec3 abs_diff = glm::abs(diff);
+
+		// x is max
+		if (abs_diff.x >= abs_diff.y && abs_diff.x >= abs_diff.z)
+		{
+			//float dir = (diff.x >= 0.0f) ? 1.0f : -1.0f;
+			return glm::vec3(0.0f, 1.0f, 1.0f);
+		}
+		// y is max
+		else if (abs_diff.y >= abs_diff.x && abs_diff.y >= abs_diff.z)
+		{
+			return glm::vec3(1.0f, 0.0f, 1.0f);
+		}
+		// z is max
+		else
+		{
+			return glm::vec3(1.0f, 1.0f, 0.0f);
+		}
+	}
+	return glm::vec3(0.0f);
 }
 
 bool BoxCollider::contains(SphereCollider* p) {
@@ -104,7 +132,7 @@ bool BoxCollider::contains(Collider* p) {
 
 bool BoxCollider::check_collision(BoxCollider* other) {
 	//std::cerr << "Checking collision between box and box" << std::endl;
-	return this->intersects(other);
+	return false;
 }
 
 bool SphereCollider::check_collision(SphereCollider* other)

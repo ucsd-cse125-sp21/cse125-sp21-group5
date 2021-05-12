@@ -95,6 +95,9 @@ Event GameManager::update()
 
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 
+	cerr << "playerPos:" << glm::to_string(camera->pos) << endl;
+	cerr << "playerFront:" << glm::to_string(camera->front) << endl;
+
 	// Update camera position
 	// TODO: place camera inside of Player class
 	offsetX = 0.0f;
@@ -232,7 +235,6 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	// show an example window
 
 	ImGuiWindowFlags windowFlags = 0;
@@ -284,36 +286,8 @@ void GameManager::render()
 	glfwSwapBuffers(window);
 }
 
-void GameManager::updateMap(MapState& ms) {
-
-	for (float t : ms.transform1)
-	{
-		//cerr << "CLIENT MAP STATE TRANSFORM" << endl;
-		cerr << t << endl;
-		/*cerr << t[1] << endl;
-		cerr << t[2] << endl;
-		cerr << t[3] << endl;
-		cerr << t[4] << endl;
-		cerr << t[5] << endl;
-		cerr << t[6] << endl;
-		cerr << t[7] << endl;
-		cerr << t[8] << endl;
-		cerr << t[9] << endl;
-		cerr << t[10] << endl;
-		cerr << t[11] << endl;
-		cerr << t[12] << endl;
-		cerr << t[13] << endl;
-		cerr << t[14] << endl;
-		cerr << t[15] << endl;*/
-	}
-	for (float t : ms.transform2)
-	{
-		cerr << t << endl;
-	}    for (float t : ms.transform3)
-	{
-		cerr << t << endl;
-	}
-
+void GameManager::updateMap(MapState& ms)
+{
 	Transform* newTrans = new Transform(ms.transform1);
 
 	cubeT1->translation = newTrans->translation;

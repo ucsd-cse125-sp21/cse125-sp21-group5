@@ -22,10 +22,13 @@ Transform::Transform(const glm::vec3& scale,
 	create_transformation_matrix();
 }
 
-Transform::Transform(const Transform* transform)
+Transform::Transform(const Transform* other)
 {
 	// Deep copy transformation matrix
-	this->transform = transform->transform;
+	this->scale = other->scale;
+	this->rotation = other->rotation;
+	this->translation = other->translation;
+	this->transform = other->transform;
 }
 
 Transform::Transform(const vector<float> transform)

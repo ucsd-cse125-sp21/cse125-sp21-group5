@@ -123,7 +123,9 @@ vector<BoxCollider*> Quadtree::query(BoxCollider* range, vector<BoxCollider*>& f
 
     }
     // if the range is not within the boundary, just return 
-    if (!this->boundary.intersects(range)) {
+    glm::vec3 isIntersect = this->boundary.intersects(range);
+    if (isIntersect.x == 0.0f && isIntersect.y == 0.0f && isIntersect.z == 0.0f)
+    {
         return found;
     }
     // if they do intersect

@@ -69,7 +69,7 @@ public:
     bool contains(BoxCollider* p);
 	bool contains(Collider* p);
 	bool contains(SphereCollider* p);
-	bool intersects(BoxCollider* range);
+	glm::vec3 intersects(BoxCollider* range);
 
 	// Helper functions to determine if box contains sphere 
 	//float plane_distance()

@@ -176,7 +176,9 @@ void Client::handle_read_map_state_update()
     boost::archive::text_iarchive eAR(eSource);
     eAR >> ms;
 
-    acquireGameInfo(ms);
+    // Tell GameManager to add objects accordingly
+    gm.updateMap(ms);
+
     do_read_header();
 }
 

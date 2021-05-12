@@ -1,6 +1,12 @@
 #include "GameManager.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include "Renderer.h"
+
+
 
 // TODO: possibly move these as well
 // Track mouse movements
@@ -22,10 +28,9 @@ GameManager::GameManager(GLFWwindow* window)
 	// Initialize transforms
 	worldT = new Transform();
 	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
-	//monkeT = new Transform(glm::vec3(0.5f), glm::vec3(0.0f), glm::vec3(0.0.0f, 0.0f, 0.0f));
 	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	Model* cube = new Model("res/models/unitCube.dae");
+	Model* cube = new Model("res/models/riggingSimple.dae");
 
 	cubeT1 = new Transform();
 	cubeT2 = new Transform();
@@ -41,9 +46,7 @@ GameManager::GameManager(GLFWwindow* window)
 	
 	// Build scene graph
 	//worldT->add_child(playerT);
-	//worldT->add_child(monkeT);
 	//playerT->add_child(playerM);
-	//monkeT->add_child(monkeM);
 	//cubeT->add_child(cube);
 	//worldT->add_child(cubeT);
 
@@ -57,6 +60,7 @@ GameManager::GameManager(GLFWwindow* window)
 	deltaTime = 0.0f;
 	prevTime = (float) glfwGetTime();
 	currTime = (float) glfwGetTime();
+
 } 
 
 GameManager::~GameManager()
@@ -67,6 +71,12 @@ GameManager::~GameManager()
 
 Event GameManager::update()
 {
+	// Make a new imgui frame
+	// do this here so game objects can make ImGUI calls in their update function
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
 	deltaTime = currTime - prevTime;
@@ -84,8 +94,6 @@ Event GameManager::update()
 	Event e = handleInput();
 
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
-	//monkeT->translate(glm::vec3(0.001f, 0.0f, 0.0f));
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -224,11 +232,54 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+	// show an example window
+
+	ImGuiWindowFlags windowFlags = 0;
+
+	windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoScrollbar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoNav;
+    windowFlags |= ImGuiWindowFlags_NoBackground;
+    windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	bool showUI = true;
+	ImGui::Begin("Health UI", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
+	ImGui::SetWindowSize(ImVec2(300, 100));
+
+	static float health = 0;
+	static float direction = 1;
+	health += 0.001 * direction;
+
+	if (health > 1) direction = -1;
+	if (health < 0) direction = 1;
+
+	ImGui::Text("Super basic health bar");
+	ImGui::SliderFloat("Health", &health, 0, 1);
+	ImGui::End();
+
+	// super basic crosshair, maybe move this somewhere else
+	ImGui::Begin("Crosshairs", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(Window::width / 2 - 20, Window::height / 2 - 20));
+	ImGui::SetWindowSize(ImVec2(200, 200));
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 p = ImGui::GetCursorScreenPos();
+	drawList->AddLine(ImVec2(p.x+20, p.y), ImVec2(p.x+20, p.y+40), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	drawList->AddLine(ImVec2(p.x, p.y+20), ImVec2(p.x+40, p.y+20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	ImGui::End();
+
 	// Render the models
 	worldT->draw(glm::mat4(1), Window::projection * camera->view);
 
-	//tile->draw(camera->view, Window::projection, shader);
-	//cube->draw(camera->view, Window::projection, shader);
+	// call ImGUI render to actually render the ui to opengl
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	// Swap buffers
 	glfwSwapBuffers(window);
 }

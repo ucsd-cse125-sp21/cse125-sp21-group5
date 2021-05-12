@@ -18,8 +18,7 @@ void Renderer::addDirectionalLight(DirectionalLight light)
 	mDirectionalLight = light;
 }
 
-
-void Renderer::bindToShader(GLuint shader) 
+void Renderer::bindToShader(GLuint shader)
 {
 	// tell the shader where we're viewing from
 	SetShader3f(shader, "aViewPos", mCamera->pos);

@@ -1,5 +1,9 @@
 #include "Window.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 // Window Properties
 int Window::width;
 int Window::height;
@@ -10,6 +14,9 @@ glm::mat4 Window::projection;
 // Cleanup objects
 void Window::cleanUp()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 GLFWwindow* Window::create(int width, int height, string title) {
@@ -43,6 +50,22 @@ GLFWwindow* Window::create(int width, int height, string title) {
 	if (GLEW_OK != err) {
 		cerr << "Failed to init GLEW" << endl;
 	}
+
+	// set up ImGUI context on the window
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 430");
+
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	// don't want to let the mouse clicks interact with the 
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+
+	io.Fonts->AddFontFromFileTTF("res/fonts/ptsans/PTC55F.ttf", 30);
+
 	glEnable(GL_DEPTH_TEST);
 
 	// Set swap interval to 0

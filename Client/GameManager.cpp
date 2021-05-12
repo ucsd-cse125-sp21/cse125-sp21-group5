@@ -37,8 +37,8 @@ GameManager::GameManager(GLFWwindow* window)
 	cubeT3 = new Transform();
 
 	cubeT1->add_child(cube);
-	cubeT2->add_child(cube);
-	cubeT3->add_child(cube);
+	//cubeT2->add_child(cube);
+	//cubeT3->add_child(cube);
 
 	worldT->add_child(cubeT1);
 	worldT->add_child(cubeT2);

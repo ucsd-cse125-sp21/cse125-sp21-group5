@@ -18,7 +18,6 @@ uniform mat4 model;
 out vec3 fragNormal;
 out vec3 fragPos;
 
-
 //TODO: remove testColor
 out vec3 testColor;
 out float visibility;
@@ -56,7 +55,7 @@ void main()
 
 	// calculate fog
 	float fogDensity = 0.1;
-	float fogGradient = 1;
+	float fogGradient = 3;
 	visibility = calculateFog(length(fragPos - viewPos), fogDensity, fogGradient);
 }
 

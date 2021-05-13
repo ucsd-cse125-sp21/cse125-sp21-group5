@@ -16,5 +16,5 @@ public:
 	Collider(const glm::vec3& center, const glm::vec3& dimensions);
 	
 	bool contains(Collider* other);
-	bool check_collision(Collider* other);
+	glm::vec3 check_collision(Collider* other);
 };

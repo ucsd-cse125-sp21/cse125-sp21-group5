@@ -17,5 +17,5 @@ void Player::update(float deltaTime)
 
 void Player::updatePlayer(PlayerState ps) {
 	cam->update(ps.pos, ps.front);
-	transform->setTranslate(ps.pos + glm::vec3(0.0f, -1.0f, 0.0f));
+	transform->setTranslate(ps.pos + glm::vec3(0.0f, -2.0f, 0.0f));
 }

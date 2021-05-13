@@ -338,8 +338,6 @@ void GameManager::updateMap(MapState& ms) {
 	cubeT2->translation = newTrans->translation;
 	cubeT3->translation = newTrans->translation;
 
-	std::cout << glm::to_string(newTrans->transform) << std::endl;
-
 	cubeT1->rotation = newTrans->rotation;
 	cubeT2->rotation = newTrans->rotation;
 	cubeT3->rotation = newTrans->rotation;

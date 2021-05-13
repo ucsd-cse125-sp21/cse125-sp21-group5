@@ -55,7 +55,7 @@ MapState ServerGameManager::generateMap() {
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			t2.push_back(transform1[i][j]);
+			t2.push_back(transform2[i][j]);
 		}
 	}
 	vector<float> t3;
@@ -63,7 +63,7 @@ MapState ServerGameManager::generateMap() {
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			t3.push_back(transform1[i][j]);
+			t3.push_back(transform3[i][j]);
 		}
 	}
 
@@ -88,30 +88,41 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 	// TODO: colliders should stop at border 
 	// Calculate where player wants to be
 	players[playerId].update(e.pos, e.yaw, e.pitch);
-	cerr << glm::to_string(players[playerId].pos) << endl;
+	//cerr << glm::to_string(players[playerId].pos) << endl;
+
+	// TODO: only need to focus on one player
 
 	// Remove and readd player collider
 	//buildQuadtree();
 
 	// Naive collision (for now)
-	for (int i = 0; i < allColliders.size(); i++) {
-		Collider* collider = allColliders[i];
+	// TODO: separate players into vector of just player colliders
+	Collider* playerCollider = players[playerId].hitbox;
+	for (Collider* otherCollider : allColliders)
+	{
+		// Ignore collisions with yourself
+		if (playerCollider == otherCollider)
+			continue;
 
-		// Actual collision 
-		for (int j = i + 1; j < allColliders.size(); j++) {
-			Collider* otherCollider = allColliders[j];
-			// Collision happens
-			if (collider != otherCollider && collider->check_collision(otherCollider)) {
-				// Actual collision --> don't update player position 
-				glm::vec3 center = players[playerId].hitbox->center;
-				Collider* hitbox = players[playerId].hitbox;
-				std::cout << "Collided" << std::endl;
-				players[playerId].update(-e.pos, 0.0f, 0.0f);
-				// Collided with first thing 
-				break;
-			}
-		}
-		break;
+		// Determine which plane collision happened on
+		glm::vec3 plane = playerCollider->check_collision(otherCollider);
+
+		// If it happened on no plane
+		if (plane == glm::vec3(0.0f))
+			continue;
+
+		// Zero out the dir the plane is in
+		glm::vec3 newDir = e.pos * plane;
+
+		// Edge case where the product is 0 (perfectly perpendicular collision)
+		if (newDir != glm::vec3(0.0f))
+			newDir = glm::normalize(newDir);
+
+		// calculate projection to determine how much to move in other plane
+		glm::vec3 newDelta = glm::length(e.pos) * newDir;
+
+		// Move player backwards
+		players[playerId].update(newDelta - e.pos, 0.0f, 0.0f);
 	}
 }
 

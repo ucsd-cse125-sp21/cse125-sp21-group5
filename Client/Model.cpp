@@ -2,7 +2,10 @@
 
 #include "Shader.h"
 #include "stb_image.h"
+#include "Renderer.h"
+
 #include <GLFW/glfw3.h>
+
 
 Model::Model(std::string modelPath)
 {
@@ -51,6 +54,7 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 
 		// get the locations and send the uniforms to the shader 
 		SetShaderMat4(mat->shader, "viewProj", viewProjMtx);
+		SetShader3f(mat->shader, "viewPos", Renderer::get().mCamera->pos);
 		SetShaderMat4(mat->shader, "model", modelMtx);
 
 	    mesh->draw();

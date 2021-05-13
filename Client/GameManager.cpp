@@ -82,6 +82,7 @@ Event GameManager::update()
 	deltaTime = currTime - prevTime;
 	prevTime = currTime;
 
+	Renderer::get().update(deltaTime);
 	worldT->update(deltaTime);
 
 	// Rendering of objects is done here. (Draw)

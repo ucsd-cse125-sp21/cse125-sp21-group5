@@ -1,6 +1,8 @@
 #include "Renderer.h"
+#include "imgui.h"
 
 #include "Shader.h"
+
 
 void Renderer::setCamera(Camera* camera)
 {
@@ -53,6 +55,11 @@ void Renderer::bindToShader(GLuint shader)
 		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "quadratic");
 		SetShaderFloat(shader, buff, p.mQuadratic);
 	}
+}
+
+void Renderer::update(float deltaTime)
+{
+	// todo: track time here for animation stuff
 }
 
 

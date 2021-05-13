@@ -14,39 +14,29 @@ ServerGameManager::ServerGameManager() {
 	for (Player p : players) {
 		allColliders.push_back(p.hitbox);
 	}
+
+	//Set up flag
+	allColliders.push_back(flag1);
+
 	buildQuadtree();
 }
 
 MapState ServerGameManager::generateMap() {
 
 	// Add one new box object into world
-	Collider* box = new Collider(glm::vec3(0.0f, -1.0f, 0), glm::vec3(20.0f));
-	allColliders.push_back(box);
+	//Collider* box = new Collider(glm::vec3(0.0f, -1.0f, 0), glm::vec3(20.0f));
 
 	// Add all colliders to MapState
 
 
 	Collider* c = allColliders[1];
-	for (glm::vec3 point : c->points) {
-		cout << glm::to_string(point) << endl;
-	}
-	
+
 	MapState ms;
 	glm::mat4 transform1 = glm::mat4(1);
 	transform1 = glm::scale(transform1, glm::vec3(c->length, c->width, c->height));
 	transform1 = glm::translate(transform1, c->center);
 
-
-	//c = allColliders[1];
-	//glm::mat4 transform2 = glm::mat4(1);
-	//transform2 = glm::scale(transform2, glm::vec3(c->length, c->width, c->height));
-	//transform2 = glm::translate(transform2, c->center);
-
-	//c = allColliders[2];
-	//glm::mat4 transform3 = glm::mat4(1);
-	//transform3 = glm::scale(transform3, glm::vec3(c->length, c->width, c->height));
-	//transform3 = glm::translate(transform3, c->center);
-
+	//Set up float vector to send
 	vector<float> t1;
 	for (int i = 0; i < 4; i++)
 	{
@@ -55,26 +45,8 @@ MapState ServerGameManager::generateMap() {
 			t1.push_back(transform1[i][j]);
 		}
 	}
-	//vector<float> t2;
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	for (int j = 0; j < 4; j++)
-	//	{
-	//		t2.push_back(transform2[i][j]);
-	//	}
-	//}
-	//vector<float> t3;
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	for (int j = 0; j < 4; j++)
-	//	{
-	//		t3.push_back(transform1[i][j]);
-	//	}
-	//}
 
 	ms.transform1 = t1;
-	//ms.transform2 = t2;
-	//ms.transform3 = t3;
 
 	for (Collider* c : allColliders) {
 		for (int i = 0; i < 8; i++)
@@ -99,28 +71,22 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 	for (auto collider : allColliders) {
 		Collider colliderRange = Collider(collider->center,
 			glm::vec3(collider->length, collider->width, collider->height) * 2.0f);
-		cout << "C RANGE " << colliderRange.length << " " << colliderRange.width << " " << colliderRange.height << endl;
 		vector<Collider*> nearbyColliders;
 		nearbyColliders = qt->query(&colliderRange, nearbyColliders);
-		std::cerr << "Found " << nearbyColliders[nearbyColliders.size() -1]->height << " in nearby colliders" << std::endl;
 		
 		
 		// Actual collision 
-		for (auto otherCollider : nearbyColliders) {
+		for (Collider* otherCollider : nearbyColliders) {
 			// Collision happens
 			if (collider != otherCollider) {
 				// Determine which plane it collided with
 				glm::vec3 plane = collider->intersects(otherCollider);
-
-				cerr << "\tplane collided on: \n" << glm::to_string(plane) << endl;
 				
 				// Did it actually collide?
 				if (plane.x == 0.0f && plane.y == 0.0f && plane.z == 0.0f)
 				{
 					continue;
 				}
-
-				cerr << "the product is " << to_string(e.pos * plane) << endl;
 
 				// Actual collision --> don't update player position
 				glm::vec3 center = players[playerId].hitbox->center;
@@ -137,13 +103,16 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 				// calculate projection to determine how much to move in other plane
 				glm::vec3 newDelta = glm::length(e.pos) * newDir;
 
-				cerr << "newDir is " << to_string(newDir) << endl;
-				
 				// Move player backwards
 				players[playerId].update(newDelta - e.pos, 0.0f, 0.0f);
 				
 				// update position if the player "snaps" back
 				buildQuadtree();
+
+				//If the collider is the flag, have it follow the player
+				if (flagCarrierId == -1 && otherCollider == flag1) {
+					flagCarrierId = playerId;
+				}
 
 				// Collided with first thing 
 				break;
@@ -165,5 +134,23 @@ void ServerGameManager::buildQuadtree() {
 }
 
 GameState ServerGameManager::getGameState(int playerId) {
-	return GameState(players[playerId].pos, players[playerId].front);
+	if (flagCarrierId != -1) {
+		flag1->center = players[playerId].hitbox->center - glm::vec3(0, 3, 0);
+	}
+
+	glm::mat4 transform1 = glm::mat4(1);
+	transform1 = glm::scale(transform1, glm::vec3(flag1->length, flag1->width, flag1->height));
+	transform1 = glm::translate(transform1, flag1->center);
+
+	//Set up float vector to send
+	vector<float> flagPosVec;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			flagPosVec.push_back(transform1[i][j]);
+		}
+	}
+
+	return GameState(players[playerId].pos, players[playerId].front, flagPosVec);
 }

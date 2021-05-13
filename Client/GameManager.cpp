@@ -291,21 +291,6 @@ void GameManager::updateMap(MapState& ms)
 	Transform* newTrans = new Transform(ms.transform1);
 
 	cubeT1->transform = newTrans->transform;
-	//cubeT2->translation = newTrans->translation;
-	//cubeT3->translation = newTrans->translation;
-
-	std::cout << glm::to_string(newTrans->transform) << std::endl;
-
-	//cubeT1->rotation = newTrans->rotation;
-	//cubeT2->rotation = newTrans->rotation;
-	//cubeT3->rotation = newTrans->rotation;
-
-	//cubeT1->scale = newTrans->scale;
-	//cubeT2->scale = newTrans->scale;
-	//cubeT3->scale = newTrans->scale;
-
-	//cubeT1->create_transformation_matrix();
-	std::cout << glm::to_string(cubeT1->transform) << std::endl;
 
 	delete newTrans;
 }

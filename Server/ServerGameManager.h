@@ -15,6 +15,10 @@ public:
 	// TODO: need to be able to make this generic 
 	Collider worldBox = Collider(glm::vec3(0.0f, 0.0f, 0.0f),
 									   glm::vec3(10000.0f, 10000.0f, 10000.0f));
+
+	Collider* flag1 = new Collider(glm::vec3(0.0f), glm::vec3(1.0f));
+	int flagCarrierId = -1;
+
 	vector<Collider*> allColliders;
 
 	// Quadtree variable 

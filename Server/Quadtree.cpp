@@ -2,36 +2,6 @@
 #include <iostream>
 using namespace std;
 
-// Inserts a new SphereCollider into the tree 
-// Non-Functional
-/*void Quadtree::insert(SphereCollider* p) {
-    // check if the quadtree can house the point, if it can't, don't do anything
-    if (!this->boundary.contains(p)) {
-        return;
-    }
-    // if capacity of the quadtree is not full
-    if (this->objects.size() < this->capacity) {
-        this->objects.push_back(p);
-    }
-    // if it is full
-    else {
-        // check if it has been divided before 
-        if (!this->hasDivided) {
-            subdivide();
-            this->hasDivided = true;
-        }
-        //recurisvely call insert in order to put the points in the sub-quadtrees
-        this->one->insert(p);
-        this->two->insert(p);
-        this->three->insert(p);
-        this->four->insert(p);
-        this->five->insert(p);
-        this->six->insert(p);
-        this->seven->insert(p);
-        this->eight->insert(p);
-    }
-}*/
-
 // Inserts a new BoxCollider into the tree 
 void Quadtree::insert(Collider* p) {
     // check if the quadtree can house the point, if it can't, don't do anything
@@ -157,31 +127,3 @@ vector<Collider*> Quadtree::query(Collider* range, vector<Collider*>& found) {
     }
     return found;
 }
-
-// Quadtree3D::~Quadtree3D(){
-//     destructorHelper(this);
-// }
-
-// void Quadtree3D::destructorHelper(Quadtree3D * qt){
-//     // if it has no children, just delete itself
-//     if(!this->topLeft && !this->topRight 
-//         && !this->bottomLeft && this->bottomRight){
-//             delete this;
-//     }
-//     // deletes everything else recurisvely 
-//     if(this->topLeft){
-//         destructorHelper(this->topLeft);
-//     }
-//     if(this->topRight){
-//         destructorHelper(this->topRight);
-//     }
-//     if(this->bottomLeft){
-//         destructorHelper(this->bottomLeft);
-//     }
-//     if(this->bottomRight){
-//         destructorHelper(this->bottomRight);
-//     }
-
-//     // deletes itself after it has deleted its children
-//     delete this;
-// }

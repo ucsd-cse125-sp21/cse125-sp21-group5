@@ -93,13 +93,6 @@ glm::vec3 Collider::intersects(Collider* range) {
 		range->center.x + range->length < this->center.x - this->length
 		);
 
-	std::cerr << "range->center:" << glm::to_string(range->center) << std::endl;
-	std::cerr << "range->length:" << range->length << std::endl;
-
-	std::cerr << "this->center:" << glm::to_string(this->center) << std::endl;
-	std::cerr << "this->length:" << this->length << std::endl;
-
-
 	// If intersecting
 	if (xy && yz && zx)
 	{

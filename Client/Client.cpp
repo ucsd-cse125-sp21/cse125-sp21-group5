@@ -158,6 +158,11 @@ void Client::handle_read_game_state() {
     // TODO: move to game manager
     gm.camera->update(gs.pos, gs.front);
     gm.playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
+    
+    //Update flag position
+    Transform* newTrans = new Transform(gs.flag1Pos);
+    gm.cubeT1->transform = newTrans->transform;
+    delete newTrans;
 
     do_read_header();
 }

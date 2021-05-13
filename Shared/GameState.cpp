@@ -1,11 +1,12 @@
 #include "GameState.h"
 
-GameState::GameState(glm::vec3 pos, glm::vec3 front) {
+GameState::GameState(glm::vec3 pos, glm::vec3 front, std::vector<float> flag1Pos) {
 	//this->posX = pos.x;
 	//this->posY = pos.y;
 	//this->posZ = pos.z;
 	this->pos = pos;
 	this->front = front;
+	this->flag1Pos = flag1Pos;
 }
 
 GameState::GameState() {
@@ -14,4 +15,5 @@ GameState::GameState() {
 	//this->posZ = 0;
 	this->pos = glm::vec3(0);
 	this->front = glm::vec3(0);
+	this->flag1Pos = std::vector<float>();
 }

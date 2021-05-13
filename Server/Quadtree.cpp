@@ -33,7 +33,7 @@ using namespace std;
 }*/
 
 // Inserts a new BoxCollider into the tree 
-void Quadtree::insert(BoxCollider* p) {
+void Quadtree::insert(Collider* p) {
     // check if the quadtree can house the point, if it can't, don't do anything
     //TODO subclass/sueprclass 
     if (!this->boundary.contains(p)) {
@@ -70,8 +70,8 @@ void Quadtree::insert(BoxCollider* p) {
 // four equal sizes 
 void Quadtree::subdivide() {
     glm::vec3 c = this->boundary.center;
-    BoxCollider b = this->boundary;
-    vector<BoxCollider*> p1, p2, p3, p4, p5, p6, p7, p8;
+    Collider b = this->boundary;
+    vector<Collider*> p1, p2, p3, p4, p5, p6, p7, p8;
     /*
    +--------+
   /   4  2 /|
@@ -83,42 +83,42 @@ void Quadtree::subdivide() {
 |  7  5  |/
 +--------+
     */
-    BoxCollider one = BoxCollider(glm::vec3(c.x - b.length / 2, c.y - b.width / 2, c.z - b.height / 2), 
+    Collider one = Collider(glm::vec3(c.x - b.length / 2, c.y - b.width / 2, c.z - b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->one = new Quadtree(one, capacity, p1);
 
-    BoxCollider two = BoxCollider(glm::vec3(c.x - b.length / 2, c.y - b.width / 2, c.z + b.height / 2),
+    Collider two = Collider(glm::vec3(c.x - b.length / 2, c.y - b.width / 2, c.z + b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->two = new Quadtree(two, capacity, p2);
 
-    BoxCollider three = BoxCollider(glm::vec3(c.x - b.length / 2, c.y + b.width / 2, c.z - b.height / 2),
+    Collider three = Collider(glm::vec3(c.x - b.length / 2, c.y + b.width / 2, c.z - b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->three = new Quadtree(three, capacity, p3);
 
-    BoxCollider four = BoxCollider(glm::vec3(c.x - b.length / 2, c.y + b.width / 2, c.z + b.height / 2),
+    Collider four = Collider(glm::vec3(c.x - b.length / 2, c.y + b.width / 2, c.z + b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->four = new Quadtree(four, capacity, p4);
 
-    BoxCollider five = BoxCollider(glm::vec3(c.x + b.length / 2, c.y - b.width / 2, c.z - b.height / 2),
+    Collider five = Collider(glm::vec3(c.x + b.length / 2, c.y - b.width / 2, c.z - b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->five = new Quadtree(five, capacity, p5);
 
-    BoxCollider six = BoxCollider(glm::vec3(c.x + b.length / 2, c.y - b.width / 2, c.z + b.height / 2),
+    Collider six = Collider(glm::vec3(c.x + b.length / 2, c.y - b.width / 2, c.z + b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->six = new Quadtree(six, capacity, p6);
 
-    BoxCollider seven = BoxCollider(glm::vec3(c.x + b.length / 2, c.y + b.width / 2, c.z - b.height / 2),
+    Collider seven = Collider(glm::vec3(c.x + b.length / 2, c.y + b.width / 2, c.z - b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->seven = new Quadtree(seven, capacity, p7);
 
-    BoxCollider eight = BoxCollider(glm::vec3(c.x + b.length / 2, c.y + b.width / 2, c.z + b.height / 2),
+    Collider eight = Collider(glm::vec3(c.x + b.length / 2, c.y + b.width / 2, c.z + b.height / 2),
         glm::vec3(b.length / 2, b.width / 2, b.height / 2));
     this->eight = new Quadtree(eight, capacity, p8);
 }
 
 
-// TODO: need to make this generic and not just use BoxCollider 
-vector<BoxCollider*> Quadtree::query(BoxCollider* range, vector<BoxCollider*>& found) {
+// TODO: need to make this generic and not just use Collider 
+vector<Collider*> Quadtree::query(Collider* range, vector<Collider*>& found) {
     if (found.empty()) {
 
     }

@@ -13,9 +13,9 @@ class ServerGameManager
 public:
 	// To keep track of all the particles/hitboxes 
 	// TODO: need to be able to make this generic 
-	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 0.0f),
-									   glm::vec3(200.0f, 200.0f, 200.0f));
-	vector<BoxCollider*> allColliders;
+	Collider worldBox = Collider(glm::vec3(0.0f, 0.0f, 0.0f),
+									   glm::vec3(10000.0f, 10000.0f, 10000.0f));
+	vector<Collider*> allColliders;
 
 	// Quadtree variable 
 	Quadtree* qt;

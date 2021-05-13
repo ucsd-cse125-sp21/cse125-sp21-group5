@@ -4,13 +4,13 @@
 #include <algorithm>
 
 // TODO: potentailly radius x,y,z
-SphereCollider::SphereCollider(const glm::vec3& center, const float& radius)
-{
-	this->center = center;
-	this->radius = radius;
-}
+//SphereCollider::SphereCollider(const glm::vec3& center, const float& radius)
+//{
+//	this->center = center;
+//	this->radius = radius;
+//}
 
-BoxCollider::BoxCollider(const glm::vec3& center, const glm::vec3& dimensions)
+Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
 {
 	// Define center
 	this->center = center;
@@ -30,6 +30,7 @@ BoxCollider::BoxCollider(const glm::vec3& center, const glm::vec3& dimensions)
 			*/
 
 	// Build eight points
+	// TODO: Useless
 	points[0] = glm::vec3(center.x - dimensions.x / 2,
 						  center.y - dimensions.y / 2,
 		                  center.z - dimensions.z / 2);
@@ -61,7 +62,7 @@ BoxCollider::BoxCollider(const glm::vec3& center, const glm::vec3& dimensions)
 
 // this functions checks if the box contains another box
 // this is only useful in the quadtree calculation of insertion 
-bool BoxCollider::contains(BoxCollider* p) {
+bool Collider::contains(Collider* p) {
 	return (p->center.x > this->center.x - this->length &&
 		p->center.x < this->center.x + this->length &&
 		p->center.y > this->center.y - this->width &&
@@ -71,7 +72,7 @@ bool BoxCollider::contains(BoxCollider* p) {
 }
 
 
-glm::vec3 BoxCollider::intersects(BoxCollider* range) {
+glm::vec3 Collider::intersects(Collider* range) {
 	// Check x-y-z plane
 	bool xy = !(
 		range->center.x - range->length > this->center.x + this->length ||
@@ -91,6 +92,13 @@ glm::vec3 BoxCollider::intersects(BoxCollider* range) {
 		range->center.x - range->length > this->center.x + this->length ||
 		range->center.x + range->length < this->center.x - this->length
 		);
+
+	std::cerr << "range->center:" << glm::to_string(range->center) << std::endl;
+	std::cerr << "range->length:" << range->length << std::endl;
+
+	std::cerr << "this->center:" << glm::to_string(this->center) << std::endl;
+	std::cerr << "this->length:" << this->length << std::endl;
+
 
 	// If intersecting
 	if (xy && yz && zx)
@@ -118,39 +126,39 @@ glm::vec3 BoxCollider::intersects(BoxCollider* range) {
 	}
 	return glm::vec3(0.0f);
 }
+//
+//bool BoxCollider::contains(SphereCollider* p) {
+//	bool furthestX = p->center.x + p->radius;
+//	bool furthestY = p->center.y + p->radius;
+//	bool furthestZ = p->center.z + p->radius;
+//	return false;
+//}
 
-bool BoxCollider::contains(SphereCollider* p) {
-	bool furthestX = p->center.x + p->radius;
-	bool furthestY = p->center.y + p->radius;
-	bool furthestZ = p->center.z + p->radius;
-	return false;
-}
+//bool Collider::contains(Collider* p) {
+//	return false;
+//}
 
-bool BoxCollider::contains(Collider* p) {
-	return false;
-}
+//bool BoxCollider::check_collision(BoxCollider* other) {
+//	//std::cerr << "Checking collision between box and box" << std::endl;
+//	return false;
+//}
 
-bool BoxCollider::check_collision(BoxCollider* other) {
-	//std::cerr << "Checking collision between box and box" << std::endl;
-	return false;
-}
+//bool SphereCollider::check_collision(SphereCollider* other)
+//{
+//	float center_diff = glm::distance(this->center, other->center);
+//	bool tmp = center_diff <= this->radius + other->radius;
+//	if (tmp)
+//		std::cerr << "Sphere & Sphere Collision Detected!" << std::endl;
+//	return tmp;
+//}
 
-bool SphereCollider::check_collision(SphereCollider* other)
-{
-	float center_diff = glm::distance(this->center, other->center);
-	bool tmp = center_diff <= this->radius + other->radius;
-	if (tmp)
-		std::cerr << "Sphere & Sphere Collision Detected!" << std::endl;
-	return tmp;
-}
-
-bool SphereCollider::check_collision(BoxCollider* other)
-{
-
-	return false;
-}
-
-bool SphereCollider::check_collision(PlaneCollider* other)
-{
-	return false;
-}
+//bool SphereCollider::check_collision(BoxCollider* other)
+//{
+//
+//	return false;
+//}
+//
+//bool SphereCollider::check_collision(PlaneCollider* other)
+//{
+//	return false;
+//}

@@ -5,7 +5,7 @@ Player::Player() {
 	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->yaw = 0.0f;
 	this->pitch = 0.0f;
-	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
+	this->hitbox = new Collider(this->pos, glm::vec3(1.0f));
 }
 
 Player::Player(glm::vec3 initPos) {
@@ -13,7 +13,7 @@ Player::Player(glm::vec3 initPos) {
 	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->yaw = 0.0f;
 	this->pitch = 0.0f;
-	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
+	this->hitbox = new Collider(this->pos, glm::vec3(1.0f));
 }
 
 

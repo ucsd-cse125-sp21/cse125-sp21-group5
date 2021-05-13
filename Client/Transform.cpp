@@ -1,4 +1,6 @@
 #include "Transform.h"
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 Transform::Transform()
 {
@@ -101,10 +103,15 @@ void Transform::create_transformation_matrix()
 
 	// (rotation * (scale * model)) + translation
 	transform = glm::scale(transform, scale);
+	std::cout << glm::to_string(scale) << std::endl;
 	transform = glm::rotate(transform, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
 	transform = glm::rotate(transform, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 	transform = glm::rotate(transform, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+	std::cout << glm::to_string(rotation) << std::endl;
+
 	transform = glm::translate(transform, translation);
+	std::cout << glm::to_string(translation) << std::endl;
+
 }
 
 void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)

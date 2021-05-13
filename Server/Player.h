@@ -12,7 +12,7 @@ public:
 	glm::vec3 front;
 	float yaw, pitch;
 
-	BoxCollider* hitbox; 
+	Collider* hitbox;
 
 	Player();
 	Player(glm::vec3 initPos);

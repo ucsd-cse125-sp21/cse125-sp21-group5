@@ -37,12 +37,12 @@ GameManager::GameManager(GLFWwindow* window)
 	cubeT3 = new Transform();
 
 	cubeT1->add_child(cube);
-	cubeT2->add_child(cube);
-	cubeT3->add_child(cube);
+	//cubeT2->add_child(cube);
+	//cubeT3->add_child(cube);
 
 	worldT->add_child(cubeT1);
-	worldT->add_child(cubeT2);
-	worldT->add_child(cubeT3);
+	//worldT->add_child(cubeT2);
+	//worldT->add_child(cubeT3);
 	
 	// Build scene graph
 	//worldT->add_child(playerT);
@@ -95,8 +95,8 @@ Event GameManager::update()
 
 	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
 
-	cerr << "playerPos:" << glm::to_string(camera->pos) << endl;
-	cerr << "playerFront:" << glm::to_string(camera->front) << endl;
+	//cerr << "playerPos:" << glm::to_string(camera->pos) << endl;
+	//cerr << "playerFront:" << glm::to_string(camera->front) << endl;
 
 	// Update camera position
 	// TODO: place camera inside of Player class
@@ -290,19 +290,22 @@ void GameManager::updateMap(MapState& ms)
 {
 	Transform* newTrans = new Transform(ms.transform1);
 
-	cubeT1->translation = newTrans->translation;
-	cubeT2->translation = newTrans->translation;
-	cubeT3->translation = newTrans->translation;
+	cubeT1->transform = newTrans->transform;
+	//cubeT2->translation = newTrans->translation;
+	//cubeT3->translation = newTrans->translation;
 
 	std::cout << glm::to_string(newTrans->transform) << std::endl;
 
-	cubeT1->rotation = newTrans->rotation;
-	cubeT2->rotation = newTrans->rotation;
-	cubeT3->rotation = newTrans->rotation;
+	//cubeT1->rotation = newTrans->rotation;
+	//cubeT2->rotation = newTrans->rotation;
+	//cubeT3->rotation = newTrans->rotation;
 
-	cubeT1->scale = newTrans->scale;
-	cubeT2->scale = newTrans->scale;
-	cubeT3->scale = newTrans->scale;
+	//cubeT1->scale = newTrans->scale;
+	//cubeT2->scale = newTrans->scale;
+	//cubeT3->scale = newTrans->scale;
+
+	//cubeT1->create_transformation_matrix();
+	std::cout << glm::to_string(cubeT1->transform) << std::endl;
 
 	delete newTrans;
 }

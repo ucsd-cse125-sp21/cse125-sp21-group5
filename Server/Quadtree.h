@@ -10,10 +10,10 @@ using std::vector;
 class Quadtree {
 public:
     // variables of the quadtree itself 
-    BoxCollider boundary;
+    Collider boundary;
 
     // TODO: need to make this generic 
-    vector<BoxCollider*> objects;
+    vector<Collider*> objects;
     int capacity;
     bool hasDivided;
 
@@ -28,7 +28,7 @@ public:
     Quadtree* eight;
 
     // Constructor for the quadtree/map 
-    Quadtree(BoxCollider boundary, int capacity, vector<BoxCollider*> objects) {
+    Quadtree(Collider boundary, int capacity, vector<Collider*> objects) {
         this->boundary = boundary;
         this->capacity = capacity;
         this->objects = objects;
@@ -39,10 +39,10 @@ public:
     //~Quadtree3D();
     //void destructorHelper(Quadtree3D * qt);
 
-    void insert(BoxCollider* p);
-    void insert(SphereCollider* p);
     void insert(Collider* p);
+    //void insert(SphereCollider* p);
+    //void insert(Collider* p);
     void subdivide();
     // Can query a box? 
-    vector<BoxCollider*> query(BoxCollider* range, vector<BoxCollider*>& found);
+    vector<Collider*> query(Collider* range, vector<Collider*>& found);
 };

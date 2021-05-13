@@ -107,6 +107,10 @@ void Client::handle_read_clientID() {
     clientId = id.clientID;
     cout << "\t\tReceived client Id from server is " << clientId << endl;
 
+    // Update local player ID in GameManager
+    gm.addPlayer(id.clientID);
+    gm.setLocalPlayerID(id.clientID);
+    
     do_read_header();
 }
 
@@ -129,6 +133,7 @@ void Client::handle_read_client_connect_update() {
     for (int i = 0; i < ev.ids.size(); i++) {
         if (ev.ids.at(i) != clientId) {
             existing_IDs.push_back(ev.ids.at(i));
+            gm.addPlayer(ev.ids.at(i));
         }
     }
     
@@ -155,9 +160,7 @@ void Client::handle_read_game_state() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> gs;
 
-    // TODO: move to game manager
-    gm.camera->update(gs.pos, gs.front);
-    gm.playerT->setTranslate(gs.pos + glm::vec3(5.0f, 0.0f, 0.0f));
+    gm.updateGameState(&gs);
 
     do_read_header();
 }

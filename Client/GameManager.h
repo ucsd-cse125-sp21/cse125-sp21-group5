@@ -8,6 +8,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include "Tile.h"
 #include "Window.h"
@@ -16,6 +17,7 @@
 #include "../Shared/MapState.h"
 #include "Model.h"
 #include "Transform.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -35,12 +37,16 @@ private:
 	static float fov;
 
 public:
+	unordered_map<int, Player*> players;
+	int localPlayerId;
+	Model* playerModel;
+
 	// Important variables
-	Camera* camera;
+	//Camera* camera;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
-	Transform* playerT;
+	//Transform* playerT;
 	Transform* cubeT1;
 	Transform* cubeT2;
 	Transform* cubeT3;
@@ -60,6 +66,11 @@ public:
 	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void updateMap(MapState& map);
 
+	void addPlayer(int playerId);
+	void addPlayer(int playerId, Transform* transform);
+	void updateGameState(GameState* gs);
+
+	void setLocalPlayerID(int playerId);
 };
 
 

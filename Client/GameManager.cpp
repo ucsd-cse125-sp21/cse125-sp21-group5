@@ -23,20 +23,21 @@ GameManager::GameManager(GLFWwindow* window)
 	this->window = window;
 
 	// Create camera
-	this->camera = new Camera();
+	//this->camera = new Camera();
 
 	// Initialize transforms
 	worldT = new Transform();
-	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
-	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
+	//playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
+	//playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	Model* cube = new Model("res/models/riggingSimple.dae");
+	playerModel = new Model("res/models/unitCube.dae");
 
+	Model* cube = playerModel;
 	cubeT1 = new Transform();
 	cubeT2 = new Transform();
 	cubeT3 = new Transform();
 
-	cubeT1->add_child(cube);
+	//cubeT1->add_child(cube);
 	//cubeT2->add_child(cube);
 	//cubeT3->add_child(cube);
 
@@ -61,6 +62,8 @@ GameManager::GameManager(GLFWwindow* window)
 	prevTime = (float) glfwGetTime();
 	currTime = (float) glfwGetTime();
 
+	// Uninitialized playerID
+	localPlayerId = -1;
 } 
 
 GameManager::~GameManager()
@@ -71,6 +74,18 @@ GameManager::~GameManager()
 
 Event GameManager::update()
 {
+	if (localPlayerId == -1) {
+		// Client has not yet connected to the server.
+		cout << "Local Player ID not received yet... Waiting to connect to Server..." << endl;
+		// TODO: Display Loading Screen...
+		return Event();
+	}
+	else {
+		//cout << "Player pointer in unordered_map for localPlayerID " << localPlayerId << " is " << players[localPlayerId];
+	}
+
+	cerr << glm::to_string(players[localPlayerId]->cam->pos) << endl;
+
 	// Make a new imgui frame
 	// do this here so game objects can make ImGUI calls in their update function
 	ImGui_ImplOpenGL3_NewFrame();
@@ -128,6 +143,9 @@ Event GameManager::handleInput()
 	// System Controls
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	// Get Player Camera
+	Camera* camera = players[localPlayerId]->cam;
 
 	// Player Controls
 	glm::vec3 toSend = glm::vec3(0);
@@ -274,7 +292,7 @@ void GameManager::render()
 	ImGui::End();
 
 	// Render the models
-	worldT->draw(glm::mat4(1), Window::projection * camera->view);
+	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
 	// call ImGUI render to actually render the ui to opengl
 	ImGui::Render();
@@ -331,4 +349,48 @@ void GameManager::updateMap(MapState& ms) {
 	cubeT3->scale = newTrans->scale;
 
 	delete newTrans;
+}
+
+void GameManager::addPlayer(int playerId) {
+	Transform* newTrans = new Transform();
+	//cerr << "1 New Transform Ptr:" << newTrans << endl;
+	addPlayer(playerId, newTrans);
+	//cerr << "2 New Transform Ptr:" << newTrans << endl;
+}
+
+void GameManager::addPlayer(int playerId, Transform* transform)
+{
+	//cerr << "3 New Transform Ptr:" << transform << endl;
+	// Check player with ID exists.
+	if (players.find(playerId) != players.end()) {
+		cout << "Player with ID " << playerId << "already exists!" << endl;
+		return;
+	}
+
+	//cerr << "4 New Transform Ptr:" << transform << endl;
+	Player* player = new Player(transform, this->playerModel);
+	//cerr << "5 New Transform Ptr:" << transform << endl;
+	
+	cout << "\t\t\tPlayer pointer after creation is "  << player << endl;
+
+	worldT->add_child(transform);
+
+	transform->add_child(player);
+
+	players.insert(make_pair(playerId, player));
+}
+
+void GameManager::updateGameState(GameState* gs) {
+	for (const PlayerState ps: gs->states) {
+		if (players.find(ps.playerId) == players.end()) {
+			continue;
+		}
+
+		players[ps.playerId]->updatePlayer(ps);
+	}
+}
+
+void GameManager::setLocalPlayerID(int playerId)
+{
+	this->localPlayerId = playerId;
 }

@@ -28,7 +28,7 @@
 using boost::asio::ip::tcp;
 
 using namespace std;
-#define NUM_PLAYERS 1
+#define NUM_PLAYERS 4
 #define PACKET_SIZE 1024
 
 
@@ -72,7 +72,10 @@ public:
 	vector<tcp_connection_ptr> connections;
 	ServerGameManager gm;
 	MapState ms;
+	boost::asio::io_context& ioContext;
 	std::shared_ptr<tcp::acceptor> acceptor;
+
+	int nextClientID;
 
 	Server(boost::asio::io_context& ioContext);
 
@@ -81,6 +84,9 @@ public:
 	void handle_accept(int playerId, boost::system::error_code error);
 	void handle_read(int playerId, boost::system::error_code error, size_t bytes_read);
 	void broadcast_send(ClientConnectEvent ev, int ignore_clientID = -1);
+
+	void broadcast_send(GameState gs, int ignore_clientID = -1);
+	void accept_new_connection();
 
 private:
 	vector<boost::asio::streambuf> bufs;

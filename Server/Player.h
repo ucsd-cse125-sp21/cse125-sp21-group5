@@ -8,14 +8,21 @@
 class Player
 {
 public:
-	glm::vec3 pos;
+	// Camera variables
 	glm::vec3 front;
+	glm::vec3 pos;
 	float yaw, pitch;
 
+	// Collision variables
 	Collider* hitbox; 
 
 	Player();
-	Player(glm::vec3 initPos);
-	void update(glm::vec3 pos, float yaw, float pitch);
+	Player(const glm::vec3& initPos);
+	Player(const glm::vec3& initPos,
+		   const glm::vec3& hitboxSize,
+		   float initYaw,
+		   float initPitch);
+
+	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
 };
 

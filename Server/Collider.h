@@ -7,8 +7,7 @@
 class Collider
 {
 public:
-	// The eight corners that make up a box
-	//glm::vec3 points[8];
+	// Define box using center point and dimensions
 	glm::vec3 center;
 	glm::vec3 dim;
 	

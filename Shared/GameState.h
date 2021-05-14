@@ -12,7 +12,7 @@ public:
 	int playerId;
 	glm::vec3 pos, front;
 
-	PlayerState(int playerId, glm::vec3 pos, glm::vec3 front);
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front);
 	PlayerState();
 
 	template <typename Archive>
@@ -32,9 +32,7 @@ class GameState
 public:
 	std::vector<PlayerState> states;
 
-	GameState();
-
-	void addState(PlayerState ps);
+	void addState(PlayerState& ps);
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {

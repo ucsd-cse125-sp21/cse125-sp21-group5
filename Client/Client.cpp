@@ -108,7 +108,7 @@ void Client::handle_read_clientID() {
     cout << "\t\tReceived client Id from server is " << clientId << endl;
 
     // Update local player ID in GameManager
-    gm.addPlayer(id.clientID);
+    gm.addPlayer(id.clientID, nullptr);
     gm.setLocalPlayerID(id.clientID);
     
     do_read_header();
@@ -128,12 +128,14 @@ void Client::handle_read_client_connect_update() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> ev;
 
+    // Add all player ids
     existing_IDs.clear();
-
-    for (int i = 0; i < ev.ids.size(); i++) {
-        if (ev.ids.at(i) != clientId) {
+    for (int i = 0; i < ev.ids.size(); i++) 
+    {
+        if (ev.ids.at(i) != clientId)
+        {
             existing_IDs.push_back(ev.ids.at(i));
-            gm.addPlayer(ev.ids.at(i));
+            gm.addPlayer(ev.ids.at(i), gm.playerModel);
         }
     }
     
@@ -147,7 +149,6 @@ void Client::handle_read_client_connect_update() {
 }
 
 void Client::handle_read_game_state() {
-    //cout << "Inside handle_read_game_state" << endl;
     size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
     GameState gs;
     std::string s = std::string{
@@ -160,7 +161,7 @@ void Client::handle_read_game_state() {
     boost::archive::text_iarchive eAR(eSource);
     eAR >> gs;
 
-    gm.updateGameState(&gs);
+    gm.updateGameState(gs);
 
     do_read_header();
 }
@@ -179,11 +180,6 @@ void Client::handle_read_map_state_update()
     boost::archive::text_iarchive eAR(eSource);
     eAR >> ms;
 
-    acquireGameInfo(ms);
-    do_read_header();
-}
-
-void Client::acquireGameInfo(MapState& ms) {
-    // Create and move objects in scene graph accordingly
     gm.updateMap(ms);
+    do_read_header();
 }

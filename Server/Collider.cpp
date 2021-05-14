@@ -68,19 +68,19 @@ glm::vec3 Collider::check_collision(Collider* other) {
 		);
 
 	// Intersection on yz plane
-	bool yz = !(
-		other->center.y - other->dim.y > this->center.y + this->dim.y ||
-		other->center.y + other->dim.y < this->center.y - this->dim.y ||
-		other->center.z - other->dim.z > this->center.z + this->dim.z ||
-		other->center.z + other->dim.z < this->center.z - this->dim.z
+	bool yz = (
+		other->center.y - other->dim.y <= this->center.y + this->dim.y &&
+		other->center.y + other->dim.y >= this->center.y - this->dim.y &&
+		other->center.z - other->dim.z <= this->center.z + this->dim.z &&
+		other->center.z + other->dim.z >= this->center.z - this->dim.z
 		);
 
 	// Intersection on zx plane
-	bool zx = !(
-		other->center.z - other->dim.z > this->center.z + this->dim.z ||
-		other->center.z + other->dim.z < this->center.z - this->dim.z ||
-		other->center.x - other->dim.x > this->center.x + this->dim.x ||
-		other->center.x + other->dim.x < this->center.x - this->dim.x
+	bool zx = (
+		other->center.z - other->dim.z <= this->center.z + this->dim.z &&
+		other->center.z + other->dim.z >= this->center.z - this->dim.z &&
+		other->center.x - other->dim.x <= this->center.x + this->dim.x &&
+		other->center.x + other->dim.x >= this->center.x - this->dim.x
 		);
 
 	// If there was a collision 
@@ -92,20 +92,15 @@ glm::vec3 Collider::check_collision(Collider* other) {
 
 		// x is max
 		if (abs_diff.x >= abs_diff.y && abs_diff.x >= abs_diff.z)
-		{
 			return glm::vec3(0.0f, 1.0f, 1.0f);
-		}
 		// y is max
 		else if (abs_diff.y >= abs_diff.x && abs_diff.y >= abs_diff.z)
-		{
 			return glm::vec3(1.0f, 0.0f, 1.0f);
-		}
 		// z is max
 		else
-		{
 			return glm::vec3(1.0f, 1.0f, 0.0f);
-		}
 	}
 
+	// No collision
 	return glm::vec3(0.0f);
 }

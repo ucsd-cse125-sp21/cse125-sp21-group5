@@ -1,26 +1,18 @@
 #include "GameState.h"
 
-PlayerState::PlayerState(int playerId, glm::vec3 pos, glm::vec3 front) {
-	//this->posX = pos.x;
-	//this->posY = pos.y;
-	//this->posZ = pos.z;
+PlayerState::PlayerState() {
+	this->playerId = 0;
+	this->pos = glm::vec3(0.0f);
+	this->front = glm::vec3(0.0f);
+}
+
+PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front) {
 	this->playerId = playerId;
 	this->pos = pos;
 	this->front = front;
 }
 
-PlayerState::PlayerState() {
-	//this->posX = 0;
-	//this->posY = 0;
-	//this->posZ = 0;
-	this->playerId = 0;
-	this->pos = glm::vec3(0);
-	this->front = glm::vec3(0);
-}
-
-GameState::GameState() { }
-
-void GameState::addState(PlayerState ps)
+void GameState::addState(PlayerState& ps)
 {
 	states.push_back(ps);
 }

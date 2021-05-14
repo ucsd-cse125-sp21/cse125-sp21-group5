@@ -24,10 +24,8 @@ using namespace std;
 class GameManager
 {
 private:
-	// Important variables
+	// Window for callback functions
 	GLFWwindow* window;
-
-	//Client client = Client();
 
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
@@ -37,28 +35,24 @@ private:
 	static float fov;
 
 public:
+	// Track players in the world
 	unordered_map<int, Player*> players;
 	int localPlayerId;
-	Model* playerModel;
 
-	// Important variables
-	//Camera* camera;
+	// Models used in the environment
+	Model* playerModel;
+	Model* cubeModel;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
-	//Transform* playerT;
-	Transform* cubeT1;
-	Transform* cubeT2;
-	Transform* cubeT3;
 
 	GameManager(GLFWwindow * window);
 	~GameManager();
 
-	Event update();
-
 	void render();
 
 	Event handleInput();
+	Event update();
 	
 	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
@@ -66,9 +60,8 @@ public:
 	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void updateMap(MapState& map);
 
-	void addPlayer(int playerId);
-	void addPlayer(int playerId, Transform* transform);
-	void updateGameState(GameState* gs);
+	void addPlayer(int playerId, Model* transform);
+	void updateGameState(GameState& gs);
 
 	void setLocalPlayerID(int playerId);
 };

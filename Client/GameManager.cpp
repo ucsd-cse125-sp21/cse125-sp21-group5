@@ -30,26 +30,10 @@ GameManager::GameManager(GLFWwindow* window)
 	//playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
 	//playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	playerModel = new Model("res/models/unitCube.dae");
-
-	Model* cube = playerModel;
-	cubeT1 = new Transform();
-	cubeT2 = new Transform();
-	cubeT3 = new Transform();
-
-	//cubeT1->add_child(cube);
-	//cubeT2->add_child(cube);
-	//cubeT3->add_child(cube);
-
-	worldT->add_child(cubeT1);
-	worldT->add_child(cubeT2);
-	worldT->add_child(cubeT3);
-	
-	// Build scene graph
-	//worldT->add_child(playerT);
-	//playerT->add_child(playerM);
-	//cubeT->add_child(cube);
-	//worldT->add_child(cubeT);
+	// Preload models
+	// TODO: maybe save this in a map for less variables
+	playerModel = new Model("res/models/head2.dae");
+	cubeModel = new Model("res/models/unitCube.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -84,8 +68,6 @@ Event GameManager::update()
 		//cout << "Player pointer in unordered_map for localPlayerID " << localPlayerId << " is " << players[localPlayerId];
 	}
 
-	cerr << glm::to_string(players[localPlayerId]->cam->pos) << endl;
-
 	// Make a new imgui frame
 	// do this here so game objects can make ImGUI calls in their update function
 	ImGui_ImplOpenGL3_NewFrame();
@@ -108,10 +90,8 @@ Event GameManager::update()
 	// Process keyboard input
 	Event e = handleInput();
 
-	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
-
 	// Update camera position
-	// TODO: place camera inside of Player class
+	// TODO: necessary?
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 	return e;
@@ -230,7 +210,6 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 // Detect mouse position
 void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	
 }
 
 // Detect mouse scroll
@@ -243,7 +222,6 @@ void GameManager::scrollCallback(GLFWwindow* window, double xoffset, double yoff
 		glm::perspective(glm::radians(fov), (float) Window::width / (float) Window::height, 0.1f, 1000.0f);
 }
 
-// TODO: Move this to render class
 // Draw objects to screen
 void GameManager::render()
 {
@@ -302,90 +280,47 @@ void GameManager::render()
 	glfwSwapBuffers(window);
 }
 
-void GameManager::updateMap(MapState& ms) {
-
-	for (float t : ms.transform1)
-	{
-		//cerr << "CLIENT MAP STATE TRANSFORM" << endl;
-		cerr << t << endl;
-		/*cerr << t[1] << endl;
-		cerr << t[2] << endl;
-		cerr << t[3] << endl;
-		cerr << t[4] << endl;
-		cerr << t[5] << endl;
-		cerr << t[6] << endl;
-		cerr << t[7] << endl;
-		cerr << t[8] << endl;
-		cerr << t[9] << endl;
-		cerr << t[10] << endl;
-		cerr << t[11] << endl;
-		cerr << t[12] << endl;
-		cerr << t[13] << endl;
-		cerr << t[14] << endl;
-		cerr << t[15] << endl;*/
-	}
-	for (float t : ms.transform2)
-	{
-		cerr << t << endl;
-	}    for (float t : ms.transform3)
-	{
-		cerr << t << endl;
-	}
-
-	Transform* newTrans = new Transform(ms.transform1);
-
-	cubeT1->translation = newTrans->translation;
-	cubeT2->translation = newTrans->translation;
-	cubeT3->translation = newTrans->translation;
-
-	cubeT1->rotation = newTrans->rotation;
-	cubeT2->rotation = newTrans->rotation;
-	cubeT3->rotation = newTrans->rotation;
-
-	cubeT1->scale = newTrans->scale;
-	cubeT2->scale = newTrans->scale;
-	cubeT3->scale = newTrans->scale;
-
-	delete newTrans;
-}
-
-void GameManager::addPlayer(int playerId) {
-	Transform* newTrans = new Transform();
-	//cerr << "1 New Transform Ptr:" << newTrans << endl;
-	addPlayer(playerId, newTrans);
-	//cerr << "2 New Transform Ptr:" << newTrans << endl;
-}
-
-void GameManager::addPlayer(int playerId, Transform* transform)
+void GameManager::updateMap(MapState& ms)
 {
-	//cerr << "3 New Transform Ptr:" << transform << endl;
-	// Check player with ID exists.
-	if (players.find(playerId) != players.end()) {
-		cout << "Player with ID " << playerId << "already exists!" << endl;
-		return;
+	for (const MapPiece& mp : ms.pieces)
+	{
+		Transform* pieceT = new Transform(mp.scale, mp.rotation, mp.translation);
+		pieceT->add_child(cubeModel);
+		worldT->add_child(pieceT);
 	}
-
-	//cerr << "4 New Transform Ptr:" << transform << endl;
-	Player* player = new Player(transform, this->playerModel);
-	//cerr << "5 New Transform Ptr:" << transform << endl;
-	
-	cout << "\t\t\tPlayer pointer after creation is "  << player << endl;
-
-	worldT->add_child(transform);
-
-	transform->add_child(player);
-
-	players.insert(make_pair(playerId, player));
 }
 
-void GameManager::updateGameState(GameState* gs) {
-	for (const PlayerState ps: gs->states) {
-		if (players.find(ps.playerId) == players.end()) {
+void GameManager::updateGameState(GameState& gs)
+{
+	for (const PlayerState& ps : gs.states)
+	{
+		// Ignore update if player doesn't exist
+		if (players.find(ps.playerId) == players.end())
 			continue;
-		}
 
 		players[ps.playerId]->updatePlayer(ps);
 	}
+}
+
+// TODO: Model* should be a string or int to what kind of model should be used to render player
+void GameManager::addPlayer(int playerId, Model* playerModel)
+{
+	// Check if player already exists
+	if (players.find(playerId) != players.end())
+	{
+		cerr << "Player with ID " << playerId << "already exists!" << endl;
+		return;
+	}
+
+	// Create new player with model
+	Transform* playerT = new Transform();
+	Player* player = new Player(playerT, playerModel);
+
+	playerT->add_child(player);
+	worldT->add_child(playerT);
+
+	//players.insert(make_pair(playerId, player));
+	players[playerId] = player;
 }
 
 void GameManager::setLocalPlayerID(int playerId)

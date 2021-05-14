@@ -4,29 +4,41 @@
 #include <vector>
 
 using namespace std;
+
+class MapPiece
+{
+public:
+	glm::vec3 scale, rotation, translation;
+
+	MapPiece();
+	MapPiece(const glm::vec3& scale,
+			 const glm::vec3& rotation,
+			 const glm::vec3& translation);
+
+	template <typename Archive>
+	void serialize(Archive& ar, const unsigned int version) {
+		ar& scale.x;
+		ar& scale.y;
+		ar& scale.z;
+		ar& rotation.x;
+		ar& rotation.y;
+		ar& rotation.z;
+		ar& translation.x;
+		ar& translation.y;
+		ar& translation.z;
+	}
+};
+
 class MapState
 {
 public:
-	// TODO: how to send floats?
-	//vector<vector<float>> transforms;
-	vector<float> transform1;
-	vector<float> transform2;
-	vector<float> transform3;
+	vector<MapPiece> pieces;
 
-	MapState();
-
-	void add(glm::mat4 transform);
+	void addPiece(MapPiece& mp);
 
 	template <typename Archive>
-	/*
 	void serialize(Archive& ar, const unsigned int version) {
-		ar& transforms;
-	}
-	*/
-	void serialize(Archive& ar, const unsigned int version) {
-		ar& transform1;
-		ar& transform2;
-		ar& transform3;
+		ar& pieces;
 	}
 };
 

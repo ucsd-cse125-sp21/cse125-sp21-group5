@@ -108,7 +108,6 @@ void Transform::create_transformation_matrix()
 
 void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 {
-	std::cerr << glm::to_string(parent_transform) << std::endl;
 	for (Node* child : this->children)
 	{
 		child->draw(parent_transform * this->transform, view);

@@ -39,5 +39,5 @@ void Player::update(const glm::vec3& dPos, const float dYaw, const float dPitch)
 
 	// Update position of camera and collider
 	pos += dPos;
-	hitbox->center = pos;
+	hitbox->cen = pos;
 }

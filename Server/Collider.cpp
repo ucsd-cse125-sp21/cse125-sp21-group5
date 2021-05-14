@@ -1,93 +1,48 @@
 #include "Collider.h"
+#include <glm/gtx/string_cast.hpp>
 
 Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
 {
 	// Define center
-	this->center = center;
-	this->dim = dimensions;
-			/*
-		   6--------4
-		  /        /|
-		 /        / |
-		7--------5  |
-		|        |  |
-		|   2----|--0
-		|  /     | /
-		| /      |/
-		3--------1
-			*/
-
-	// Build eight points
-	/*
-	points[0] = glm::vec3(center.x - dimensions.x / 2,
-						  center.y - dimensions.y / 2,
-		                  center.z - dimensions.z / 2);
-	points[1] = glm::vec3(center.x + dimensions.x / 2,
-		                  center.y - dimensions.y / 2,
-		                  center.z - dimensions.z / 2);
-	points[2] = glm::vec3(center.x - dimensions.x / 2,
-		                  center.y + dimensions.y / 2,
-		                  center.z - dimensions.z / 2);
-	points[3] = glm::vec3(center.x + dimensions.x / 2,
-		                  center.y + dimensions.y / 2,
-		                  center.z - dimensions.z / 2);
-	points[4] = glm::vec3(center.x - dimensions.x / 2,
-		                  center.y - dimensions.y / 2,
-		                  center.z + dimensions.z / 2);
-	points[5] = glm::vec3(center.x + dimensions.x / 2,
-		                  center.y - dimensions.y / 2,
-		                  center.z + dimensions.z / 2);
-	points[6] = glm::vec3(center.x - dimensions.x / 2,
-		                  center.y + dimensions.y / 2,
-		                  center.z + dimensions.z / 2);
-	points[7] = glm::vec3(center.x + dimensions.x / 2,
-		                  center.y + dimensions.y / 2,
-		                  center.z + dimensions.z / 2);
-	*/
+	cen = center;
+	dim = dimensions;
+	min = cen - dim;
+	max = cen + dim;
 }
 
 // this functions checks if the box contains another box
 // this is only useful in the quadtree calculation of insertion 
 bool Collider::contains(Collider* p) {
-	return (p->center.x > this->center.x - this->dim.x &&
-			p->center.x < this->center.x + this->dim.x &&
-			p->center.y > this->center.y - this->dim.y &&
-			p->center.y < this->center.y + this->dim.y &&
-			p->center.z > this->center.z - this->dim.z &&
-			p->center.z < this->center.z + this->dim.z);
+	return (p->cen.x > this->cen.x - this->dim.x &&
+			p->cen.x < this->cen.x + this->dim.x &&
+			p->cen.y > this->cen.y - this->dim.y &&
+			p->cen.y < this->cen.y + this->dim.y &&
+			p->cen.z > this->cen.z - this->dim.z &&
+			p->cen.z < this->cen.z + this->dim.z);
 }
 
 
 glm::vec3 Collider::check_collision(Collider* other) {
-	// Intersection on xy plane
-	bool xy = (
-		other->center.x - other->dim.x <= this->center.x + this->dim.x &&
-		other->center.x + other->dim.x >= this->center.x - this->dim.x &&
-		other->center.y - other->dim.y <= this->center.y + this->dim.y &&
-		other->center.y + other->dim.y >= this->center.y - this->dim.y
-		);
+	// TODO: Replace this with min and max corner vectors
+	bool x = ((this->cen.x - this->dim.x / 2.0f) < (other->cen.x + other->dim.x / 2.0f)) &&
+			 ((this->cen.x + this->dim.x / 2.0f) > (other->cen.x - other->dim.x / 2.0f));
+	bool y = ((this->cen.y - this->dim.y / 2.0f) < (other->cen.y + other->dim.y / 2.0f)) &&
+			 ((this->cen.y + this->dim.y / 2.0f) > (other->cen.y - other->dim.y / 2.0f));
+	bool z = ((this->cen.z - this->dim.z / 2.0f) < (other->cen.z + other->dim.z / 2.0f)) &&
+			 ((this->cen.z + this->dim.z / 2.0f) > (other->cen.z - other->dim.z / 2.0f));
 
-	// Intersection on yz plane
-	bool yz = (
-		other->center.y - other->dim.y <= this->center.y + this->dim.y &&
-		other->center.y + other->dim.y >= this->center.y - this->dim.y &&
-		other->center.z - other->dim.z <= this->center.z + this->dim.z &&
-		other->center.z + other->dim.z >= this->center.z - this->dim.z
-		);
-
-	// Intersection on zx plane
-	bool zx = (
-		other->center.z - other->dim.z <= this->center.z + this->dim.z &&
-		other->center.z + other->dim.z >= this->center.z - this->dim.z &&
-		other->center.x - other->dim.x <= this->center.x + this->dim.x &&
-		other->center.x + other->dim.x >= this->center.x - this->dim.x
-		);
+	/*
+	std::cerr << "this->cen = " << glm::to_string(this->cen) << std::endl;
+	std::cerr << "this->dim = " << glm::to_string(this->dim) << std::endl;
+	std::cerr << "other->cen = " << glm::to_string(other->cen) << std::endl;
+	std::cerr << "other->dim = " << glm::to_string(other->dim) << std::endl;
+	*/
 
 	// If there was a collision 
-	if (xy && yz && zx)
+	if (x && y && z)
 	{
 		// Determine which face it's intersecting with
-		glm::vec3 diff = this->center - other->center;
+		glm::vec3 diff = this->cen - other->cen;
 		glm::vec3 abs_diff = glm::abs(diff);
 
 		// x is max

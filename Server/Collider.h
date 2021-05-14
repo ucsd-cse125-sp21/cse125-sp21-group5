@@ -8,8 +8,10 @@ class Collider
 {
 public:
 	// Define box using center point and dimensions
-	glm::vec3 center;
+	glm::vec3 cen;
 	glm::vec3 dim;
+	glm::vec3 min;
+	glm::vec3 max;
 	
 	// Constructor
 	Collider(const glm::vec3& center, const glm::vec3& dimensions);

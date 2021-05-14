@@ -1,11 +1,12 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/random.hpp>
 
 ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
-	players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
+	//players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
 
 	// Add player hitboxes to all colliders
 	for (Player p : players) {
@@ -16,20 +17,29 @@ ServerGameManager::ServerGameManager() {
 MapState ServerGameManager::generateMap()
 {
 
-	// TODO: generate a bunch of colliders for world, but no need to send player colliders
-	// Add one new box object into world
-	allColliders.push_back(new Collider(glm::vec3(0.0f), glm::vec3(1.0f)));
+	// Generate a bunch of random colliders
+	vector<Collider*> mapColliders;
+	for (int i = 0; i < 5; i++)
+	{
+		glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
+		glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
+		//glm::vec3 center = glm::vec3(0.0f, 1.0f, 0.0f);
+		//glm::vec3 dim = glm::vec3(5.0f);
+		Collider* collider = new Collider(center, dim);
+		mapColliders.push_back(collider);
+		allColliders.push_back(collider);
+	}
 
 	// TODO: potentially optimize using pointers
 	// Create map state
 	MapState ms;
 
 	// Add all colliders to map
-	for (Collider* c : allColliders)
+	for (Collider* c : mapColliders)
 	{
 		// Convert collider to MapPiece
 		// TODO: really no point in sending rotation
-		MapPiece mp(c->dim, glm::vec3(0.0f), c->center);
+		MapPiece mp(c->dim/2.0f, glm::vec3(0.0f), c->cen);
 		ms.addPiece(mp);
 	}
 
@@ -37,6 +47,9 @@ MapState ServerGameManager::generateMap()
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId) {
+	// TODO: Predict player's intended position instead
+	bool reset = false;
+
 	// Calculate where player wants to be
 	players[playerId].update(e.dPos, e.dYaw, e.dPitch);
 
@@ -55,6 +68,14 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 		if (plane == glm::vec3(0.0f))
 			continue;
 
+		// Reset player back to original position
+		if (!reset)
+		{
+			players[playerId].update(-e.dPos, 0.0f, 0.0f);
+			reset = true;
+		}
+			
+
 		// Zero out the dir the plane is in
 		glm::vec3 newDir = e.dPos * plane;
 
@@ -66,7 +87,9 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 		glm::vec3 newDelta = glm::length(e.dPos) * newDir;
 
 		// Move player backwards, then into new direction
-		players[playerId].update(newDelta - e.dPos, 0.0f, 0.0f);
+		// Across multiple collisions, the hope is that the newDeltas will cancel out
+		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
+		players[playerId].update(newDelta, 0.0f, 0.0f);
 	}
 }
 

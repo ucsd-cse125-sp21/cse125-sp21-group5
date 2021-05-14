@@ -27,8 +27,6 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-	//playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
-	//playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
 	// Preload models
 	// TODO: maybe save this in a map for less variables
@@ -280,11 +278,14 @@ void GameManager::render()
 	glfwSwapBuffers(window);
 }
 
+// We fucking translate then scale on the server, so we have to match on client
 void GameManager::updateMap(MapState& ms)
 {
 	for (const MapPiece& mp : ms.pieces)
 	{
-		Transform* pieceT = new Transform(mp.scale, mp.rotation, mp.translation);
+		//Transform* pieceT = new Transform(mp.scale, mp.rotation, mp.translation);
+		Transform* pieceT = new Transform(glm::vec3(1.0f), mp.rotation, mp.translation);
+		pieceT->rescale(mp.scale);
 		pieceT->add_child(cubeModel);
 		worldT->add_child(pieceT);
 	}

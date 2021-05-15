@@ -64,7 +64,7 @@ GLFWwindow* Window::create(int width, int height, string title) {
 	// don't want to let the mouse clicks interact with the 
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
-	io.Fonts->AddFontFromFileTTF("res/fonts/ptsans/PTC55F.ttf", 30);
+	io.Fonts->AddFontFromFileTTF("res/fonts/comicsans/comicz.ttf", 30);
 
 	glEnable(GL_DEPTH_TEST);
 

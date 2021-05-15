@@ -58,6 +58,11 @@ public:
 
 	Camera* mCamera;
 
+
+	// fog parameters
+	float fogDensity;
+	float fogGradient;
+
 	std::vector<PointLight> mPointLights;
 
 	DirectionalLight mDirectionalLight;
@@ -67,10 +72,16 @@ public:
 	void addPointLight(PointLight light);
 	void addDirectionalLight(DirectionalLight light);
 	void bindToShader(GLuint shader);
-	
+
+	// let renderer update anything it needs
+	void update(float deltaTime);
 
 private:
 	// we don't want to make any new renderers outside of the singleton
-	Renderer() {}
+	Renderer() {
+		mCamera = nullptr;
+		fogDensity = 0.0001;
+		fogGradient = 1;
+	}
 };
 

@@ -12,6 +12,7 @@ uniform mat4 boneMatrices[MAX_BONES];
 
 // Uniform variables
 uniform mat4 viewProj;
+uniform vec3 viewPos;
 uniform mat4 model;
 
 out vec3 fragNormal;
@@ -19,6 +20,9 @@ out vec2 texCoord;
 out vec3 fragPos;
 
 out vec3 testColor;
+out float visibility;
+
+float calculateFog(float d, float density, float gradient);
 
 void main()
 {
@@ -48,4 +52,14 @@ void main()
     fragPos = vec3(model * vec4(totalPosition, 1));
 	texCoord = aTexCoord;
     gl_Position = viewProj * model * vec4(totalPosition, 1);
+
+	// calculate fog
+	float fogDensity = 0.1;
+	float fogGradient = 3;
+	visibility = calculateFog(length(fragPos - viewPos), fogDensity, fogGradient);
+}
+
+float calculateFog(float d, float density, float gradient) 
+{
+	return clamp(exp(-pow(d * density, gradient)), 0, 1);
 }

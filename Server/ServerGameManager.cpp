@@ -17,6 +17,7 @@ ServerGameManager::ServerGameManager() {
 
 MapState ServerGameManager::generateMap()
 {
+	srand((unsigned int)time(NULL));
 
 	// Generate a bunch of random colliders
 	vector<Collider*> mapColliders;

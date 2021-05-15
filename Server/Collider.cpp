@@ -87,10 +87,19 @@ bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir)
 	bool max_y = check_point_collision(y_max_plane_collision);
 	bool max_z = check_point_collision(z_max_plane_collision);
 
-	return min_x || min_y || min_z || max_x || max_y || max_z;
+	bool didHit = min_x || min_y || min_z || max_x || max_y || max_z;
+	if (didHit)
+	{
+
+	}
+
+
+	return didHit;
 }
 
 bool Collider::check_point_collision(glm::vec3 point)
 {
 	return glm::all(glm::lessThanEqual(min, point)) && glm::all(glm::lessThanEqual(point, max));
 }
+
+

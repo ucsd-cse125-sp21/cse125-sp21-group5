@@ -66,7 +66,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Check for shooting stuff
 		if (e.shooting)
 		{
-			cerr << "player is shooting" << endl;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front))
 			{
 				cerr << "hit" << endl;

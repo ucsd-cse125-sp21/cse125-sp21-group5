@@ -112,6 +112,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files\Library Source</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -233,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="imstb_truetype.h">
       <Filter>Header Files\Library Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

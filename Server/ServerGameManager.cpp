@@ -1,144 +1,122 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/random.hpp>
 
 ServerGameManager::ServerGameManager() {
-	// Creates box collider for the world and inits quadtree 
-	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(200.0f, 200.0f, 200.0f));
-	vector<BoxCollider*> objects;
-	qt = new Quadtree(worldBox, 4, objects);
 
 	// TODO: remove, hardcoded initPos
+	// TODO: add new player colliders as players connect
 	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
-	players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
-	//players.push_back(Player(glm::vec3(5.0f, 0.0f, 0.0f)));
-	//players.push_back(Player(glm::vec3(5.0f, 0.0f, 0.0f)));
+	//players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
+
+	// Add player hitboxes to all colliders
 	for (Player p : players) {
 		allColliders.push_back(p.hitbox);
 	}
-	buildQuadtree();
 }
 
-MapState ServerGameManager::generateMap() {
+MapState ServerGameManager::generateMap()
+{
 
-	// Add one new box object into world
-	allColliders.push_back(new BoxCollider(glm::vec3(0.0f), glm::vec3(1.0f)));
+	// Generate a bunch of random colliders
+	vector<Collider*> mapColliders;
+	for (int i = 0; i < 1; i++)
+	{
+		//glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
+		//glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
+		glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 dim = glm::vec3(1.0f);
+		Collider* collider = new Collider(center, dim);
+		mapColliders.push_back(collider);
+		allColliders.push_back(collider);
+	}
 
-	// Add all colliders to MapState
+	// TODO: potentially optimize using pointers
+	// Create map state
 	MapState ms;
 
-	Collider* c = allColliders[0];
-	glm::mat4 transform1 = glm::mat4(1);
-	transform1 = glm::scale(transform1, glm::vec3(c->length, c->width, c->height));
-	transform1 = glm::translate(transform1, c->center);
-
-	c = allColliders[1];
-	glm::mat4 transform2 = glm::mat4(1);
-	transform2 = glm::scale(transform2, glm::vec3(c->length, c->width, c->height));
-	transform2 = glm::translate(transform2, c->center);
-
-	c = allColliders[2];
-	glm::mat4 transform3 = glm::mat4(1);
-	transform3 = glm::scale(transform3, glm::vec3(c->length, c->width, c->height));
-	transform3 = glm::translate(transform3, c->center);
-
-	vector<float> t1;
-	for (int i = 0; i < 4; i++)
+	// Add all colliders to map
+	for (Collider* c : mapColliders)
 	{
-		for (int j = 0; j < 4; j++)
-		{
-			t1.push_back(transform1[i][j]);
-		}
-	}
-	vector<float> t2;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			t2.push_back(transform1[i][j]);
-		}
-	}
-	vector<float> t3;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			t3.push_back(transform1[i][j]);
-		}
+		// Convert collider to MapPiece
+		// TODO: really no point in sending rotation
+		MapPiece mp(c->dim/2.0f, glm::vec3(0.0f), c->cen);
+		ms.addPiece(mp);
 	}
 
-	ms.transform1 = t1;
-	ms.transform2 = t2;
-	ms.transform3 = t3;
-
-	/*
-	for (Collider* c : allColliders) {
-		glm::mat4 transform = glm::mat4(1);
-		transform = glm::scale(transform, glm::vec3(c->length, c->width, c->height));
-		transform = glm::translate(transform, c->center);
-		
-		ms.add(transform);
-	}
-	*/
 	return ms;
 }
 
-void ServerGameManager::handleEvent(Event& e, int playerId) {
-	//std::cerr << "size of allColliders " << allColliders.size() << std::endl;
-	// TODO: colliders should stop at border 
+void ServerGameManager::handleEvent(Event& e, int playerId)
+{
+	// TODO: Predict player's intended position instead
+	bool reset = false;
+
 	// Calculate where player wants to be
-	players[playerId].update(e.pos, e.yaw, e.pitch);
+	players[playerId].update(e.dPos, e.dYaw, e.dPitch);
 
-	// Remove and readd player collider
-	buildQuadtree();
+	// Naive collision (for now)
+	Collider* playerCollider = players[playerId].hitbox;
+	for (Collider* otherCollider : allColliders)
+	{
+		// Ignore collisions with yourself
+		if (playerCollider == otherCollider)
+			continue;
 
-	// if player is colliding
-	// don't update player position
-	// TODO: Possibly need to ignore ground 
-	for (auto collider : allColliders) {
-		BoxCollider colliderRange = BoxCollider(collider->center,
-			glm::vec3(collider->length, collider->width, collider->height) * 2.0f);
-		vector<BoxCollider*> nearbyColliders;
-		nearbyColliders = qt->query(&colliderRange, nearbyColliders);
-		//std::cerr << "Found " << nearbyColliders.size() << " in nearby colliders" << std::endl;
-
-		// Actual collision 
-		for (auto otherCollider : nearbyColliders) {
-			// Collision happens
-			if (collider != otherCollider && collider->check_collision(otherCollider)) {
-				// Actual collision --> don't update player position 
-				glm::vec3 center = players[playerId].hitbox->center;
-				BoxCollider* hitbox = players[playerId].hitbox;
-				//std::cout << "center of player " << playerId << " at " << to_string(center) << std::endl;
-				//std::cout << "Comparing collider at center " << to_string(collider->center)
-					//<< " with lwh " << collider->length << " " << collider->width << " " << collider->height;
-				//std::cout << " to collider at center " << to_string(otherCollider->center)
-					//<< " with lwh " << otherCollider->length << " " << otherCollider->width << " " << otherCollider->height << std::endl;
-				std::cout << "Collided" << std::endl;
-				players[playerId].update(-e.pos, 0.0f, 0.0f);
-				// update position if the player "snaps" back
-				buildQuadtree();
-				// Collided with first thing 
-				break;
+		// Check for shooting stuff
+		if (e.shooting)
+		{
+			std::cout << "shooting" << std::endl;
+			glm::vec3 hitPos;
+			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
+			{
+				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
 			}
 		}
-		break;
-	}
-}
 
-// Function that builds/rebuilds quadtree 
-void ServerGameManager::buildQuadtree() {
-	BoxCollider worldBox = BoxCollider(glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(420.0f, 200.0f, 200.0f));
-	vector<BoxCollider*> objects;
-	qt = new Quadtree(worldBox, 4, objects);
-	// TODO: might run into issue if we constnatly remove things 
-	// idea: hashtables 
-	for (BoxCollider* bc : allColliders) {
-		qt->insert(bc);
+		// Determine which plane collision happened on
+		glm::vec3 plane = playerCollider->check_collision(otherCollider);
+
+		// If it happened on no plane
+		if (plane == glm::vec3(0.0f))
+			continue;
+
+		// Reset player back to original position
+		if (!reset)
+		{
+			players[playerId].update(-e.dPos, 0.0f, 0.0f);
+			reset = true;
+		}
+			
+
+		// Zero out the dir the plane is in
+		glm::vec3 newDir = e.dPos * plane;
+
+		// Edge case where the product is 0 (perfectly perpendicular collision)
+		if (newDir != glm::vec3(0.0f))
+			newDir = glm::normalize(newDir);
+
+		// calculate projection to determine how much to move in other plane
+		glm::vec3 newDelta = glm::length(e.dPos) * newDir;
+
+		// Move player backwards, then into new direction
+		// Across multiple collisions, the hope is that the newDeltas will cancel out
+		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
+		players[playerId].update(newDelta, 0.0f, 0.0f);
+
+
+		
 	}
 }
 
 GameState ServerGameManager::getGameState(int playerId) {
-	return GameState(players[playerId].pos, players[playerId].front);
+	GameState gs;
+
+	for (int i = 0; i < players.size(); i++) {
+		PlayerState ps(i, players[i].pos, players[i].front);
+
+		gs.addState(ps);
+	}
+
+	return gs;
 }

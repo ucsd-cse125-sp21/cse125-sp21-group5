@@ -8,18 +8,20 @@
 class Event
 {
 public:
-	glm::vec3 pos;
-	float yaw, pitch;
+	glm::vec3 dPos;
+	float dYaw, dPitch;
+	bool shooting;
 
-	Event(glm::vec3 pos, float yaw, float pitch);
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting);
 	Event();
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
-		ar& pos.x;
-		ar& pos.y;
-		ar& pos.z;
-		ar& yaw;
-		ar& pitch;
+		ar& dPos.x;
+		ar& dPos.y;
+		ar& dPos.z;
+		ar& dYaw;
+		ar& dPitch;
+		ar& shooting;
 	}
 };

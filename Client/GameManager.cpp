@@ -22,33 +22,13 @@ GameManager::GameManager(GLFWwindow* window)
 	// Save pointer to window
 	this->window = window;
 
-	// Create camera
-	this->camera = new Camera();
-
 	// Initialize transforms
 	worldT = new Transform();
-	playerT = new Transform(glm::vec3(0.5f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 0.0f, 0.0));
-	playerT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(15.0f, 0.0f, 0.0));
 
-	Model* cube = new Model("res/models/riggingSimple.dae");
-
-	cubeT1 = new Transform();
-	cubeT2 = new Transform();
-	cubeT3 = new Transform();
-
-	cubeT1->add_child(cube);
-	//cubeT2->add_child(cube);
-	//cubeT3->add_child(cube);
-
-	worldT->add_child(cubeT1);
-	worldT->add_child(cubeT2);
-	worldT->add_child(cubeT3);
-	
-	// Build scene graph
-	//worldT->add_child(playerT);
-	//playerT->add_child(playerM);
-	//cubeT->add_child(cube);
-	//worldT->add_child(cubeT);
+	// Preload models
+	// TODO: maybe save this in a map for less variables
+	playerModel = new Model("res/models/unitCube.dae");
+	cubeModel = new Model("res/models/unitCube.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -61,6 +41,8 @@ GameManager::GameManager(GLFWwindow* window)
 	prevTime = (float) glfwGetTime();
 	currTime = (float) glfwGetTime();
 
+	// Uninitialized playerID
+	localPlayerId = -1;
 } 
 
 GameManager::~GameManager()
@@ -71,6 +53,16 @@ GameManager::~GameManager()
 
 Event GameManager::update()
 {
+	if (localPlayerId == -1) {
+		// Client has not yet connected to the server.
+		cout << "Local Player ID not received yet... Waiting to connect to Server..." << endl;
+		// TODO: Display Loading Screen...
+		return Event();
+	}
+	else {
+		//cout << "Player pointer in unordered_map for localPlayerID " << localPlayerId << " is " << players[localPlayerId];
+	}
+
 	// Make a new imgui frame
 	// do this here so game objects can make ImGUI calls in their update function
 	ImGui_ImplOpenGL3_NewFrame();
@@ -93,10 +85,11 @@ Event GameManager::update()
 	// Process keyboard input
 	Event e = handleInput();
 
-	//playerT->translate(glm::vec3(-0.001f, 0.0f, 0.0f));
+	// Process gravity
+
 
 	// Update camera position
-	// TODO: place camera inside of Player class
+	// TODO: necessary?
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 	return e;
@@ -105,6 +98,7 @@ Event GameManager::update()
 // Handle Keyboard Input
 Event GameManager::handleInput()
 {
+	// TODO: movement forward only happens on xz plane
 	// Get current mouse position
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -129,40 +123,55 @@ Event GameManager::handleInput()
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	// Get Player Camera
+	Camera* camera = players[localPlayerId]->cam;
+
 	// Player Controls
-	glm::vec3 toSend = glm::vec3(0);
+	glm::vec3 dPos = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		toSend += camera->front;
+		dPos += camera->front;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		toSend -= camera->front;
+		dPos -= camera->front;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) 
 	{
-		toSend += -glm::normalize(glm::cross(camera->front, camera->up));
+		dPos += -glm::normalize(glm::cross(camera->front, camera->up));
 	}
 	else if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		toSend += glm::normalize(glm::cross(camera->front, camera->up));
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE))
-	{
-		toSend += camera->up;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
-	{
-		toSend += -camera->up;
+		dPos += glm::normalize(glm::cross(camera->front, camera->up));
 	}
 
-	toSend *= camera->speed * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_SPACE))
+	{
+		dPos += camera->up;
+	}
+
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+	{
+		dPos += -camera->up;
+	}
+
+	dPos *= camera->speed * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 
-	return Event(toSend, yaw, pitch);
+	// Detect mouse presses
+	bool shooting = false;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+	{
+		cerr << "shoooting" << endl;
+		shooting = true;
+	}
+
+	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
+
+	return Event(dPos, yaw, pitch, shooting);
 }
 
 // Use for one-time key presses
@@ -173,6 +182,7 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 // Detect mouse clicks
 void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	/*
 	switch (button)
 	{
 		case GLFW_MOUSE_BUTTON_LEFT:
@@ -180,6 +190,7 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 			{
 			case GLFW_PRESS:
 				fprintf(stderr, "Left Mouse Pressed\n");
+
 				break;
 			case GLFW_RELEASE:
 				fprintf(stderr, "Left Mouse Released\n");
@@ -207,12 +218,12 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 			fprintf(stderr, "Default Mouse Button?\n");
 			break;
 	}
+	*/
 }
 
 // Detect mouse position
 void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	
 }
 
 // Detect mouse scroll
@@ -225,16 +236,13 @@ void GameManager::scrollCallback(GLFWwindow* window, double xoffset, double yoff
 		glm::perspective(glm::radians(fov), (float) Window::width / (float) Window::height, 0.1f, 1000.0f);
 }
 
-// TODO: Move this to render class
 // Draw objects to screen
 void GameManager::render()
 {
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	// show an example window
-
 	ImGuiWindowFlags windowFlags = 0;
 
 	windowFlags |= ImGuiWindowFlags_NoTitleBar;
@@ -274,7 +282,7 @@ void GameManager::render()
 	ImGui::End();
 
 	// Render the models
-	worldT->draw(glm::mat4(1), Window::projection * camera->view);
+	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
 	// call ImGUI render to actually render the ui to opengl
 	ImGui::Render();
@@ -284,51 +292,53 @@ void GameManager::render()
 	glfwSwapBuffers(window);
 }
 
-void GameManager::updateMap(MapState& ms) {
-
-	for (float t : ms.transform1)
+// We fucking translate then scale on the server, so we have to match on client
+void GameManager::updateMap(MapState& ms)
+{
+	for (const MapPiece& mp : ms.pieces)
 	{
-		//cerr << "CLIENT MAP STATE TRANSFORM" << endl;
-		cerr << t << endl;
-		/*cerr << t[1] << endl;
-		cerr << t[2] << endl;
-		cerr << t[3] << endl;
-		cerr << t[4] << endl;
-		cerr << t[5] << endl;
-		cerr << t[6] << endl;
-		cerr << t[7] << endl;
-		cerr << t[8] << endl;
-		cerr << t[9] << endl;
-		cerr << t[10] << endl;
-		cerr << t[11] << endl;
-		cerr << t[12] << endl;
-		cerr << t[13] << endl;
-		cerr << t[14] << endl;
-		cerr << t[15] << endl;*/
+		//Transform* pieceT = new Transform(mp.scale, mp.rotation, mp.translation);
+		Transform* pieceT = new Transform(glm::vec3(1.0f), mp.rotation, mp.translation);
+		pieceT->rescale(mp.scale);
+		pieceT->add_child(cubeModel);
+		worldT->add_child(pieceT);
 	}
-	for (float t : ms.transform2)
+}
+
+void GameManager::updateGameState(GameState& gs)
+{
+	for (const PlayerState& ps : gs.states)
 	{
-		cerr << t << endl;
-	}    for (float t : ms.transform3)
+		// Ignore update if player doesn't exist
+		if (players.find(ps.playerId) == players.end())
+			continue;
+
+		players[ps.playerId]->updatePlayer(ps);
+	}
+}
+
+// TODO: Model* should be a string or int to what kind of model should be used to render player
+void GameManager::addPlayer(int playerId, Model* playerModel)
+{
+	// Check if player already exists
+	if (players.find(playerId) != players.end())
 	{
-		cerr << t << endl;
+		cerr << "Player with ID " << playerId << "already exists!" << endl;
+		return;
 	}
 
-	Transform* newTrans = new Transform(ms.transform1);
+	// Create new player with model
+	Transform* playerT = new Transform();
+	Player* player = new Player(playerT, playerModel);
 
-	cubeT1->translation = newTrans->translation;
-	cubeT2->translation = newTrans->translation;
-	cubeT3->translation = newTrans->translation;
+	playerT->add_child(player);
+	worldT->add_child(playerT);
 
-	std::cout << glm::to_string(newTrans->transform) << std::endl;
+	//players.insert(make_pair(playerId, player));
+	players[playerId] = player;
+}
 
-	cubeT1->rotation = newTrans->rotation;
-	cubeT2->rotation = newTrans->rotation;
-	cubeT3->rotation = newTrans->rotation;
-
-	cubeT1->scale = newTrans->scale;
-	cubeT2->scale = newTrans->scale;
-	cubeT3->scale = newTrans->scale;
-
-	delete newTrans;
+void GameManager::setLocalPlayerID(int playerId)
+{
+	this->localPlayerId = playerId;
 }

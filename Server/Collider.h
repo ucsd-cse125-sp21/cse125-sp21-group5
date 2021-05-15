@@ -7,83 +7,17 @@
 class Collider
 {
 public:
-	// Variables that colliders should have
-	glm::vec3 center;
-
-	// TODO think of a better way to do this
-	float length;
-	float width;
-	float height;
-
-	enum class Type
-	{
-		sphere,
-		box,
-		plane
-	};
-
-	Collider() {}
-	Collider::Type type;
-
-	/*virtual bool check_collision(Collider* other) = 0*/
-	//virtual bool check_collision(BoxCollider* other) = 0;
-};
-
-// TODO: Is this bad? Should we just move to new files
-class SphereCollider;
-class BoxCollider;
-class PlaneCollider;
-
-class SphereCollider : public Collider
-{
-public:
-	glm::vec3 center;
-	float radius;
-	Collider::Type type = Collider::Type::sphere; // TODO: necessary?
-
-	SphereCollider(const glm::vec3& center, const float& radius);
-
+	// Define box using center point and dimensions
+	glm::vec3 cen;
+	glm::vec3 dim;
+	glm::vec3 min;
+	glm::vec3 max;
 	
-	bool check_collision(BoxCollider* other);
-	bool check_collision(SphereCollider* other);
-	bool check_collision(PlaneCollider* other);
-
-};
-
-class BoxCollider : public Collider
-{
-public:
-	// The eight corners that make up a box
-	glm::vec3 points[8];
-	//glm::vec3 center;
-	float length;
-	float width;
-	float height;
+	// Constructor
+	Collider(const glm::vec3& center, const glm::vec3& dimensions);
 	
-	// Need a default constructor because it needs to be used by quadtree
-	BoxCollider(){}
-	BoxCollider(const glm::vec3& center, const glm::vec3& dimensions);
-	bool check_collision(BoxCollider* other);
-	//bool check_collision(Collider* other);
-	//bool check_collision(Collider* other);
-    bool contains(BoxCollider* p);
-	bool contains(Collider* p);
-	bool contains(SphereCollider* p);
-	bool intersects(BoxCollider* range);
-
-	// Helper functions to determine if box contains sphere 
-	//float plane_distance()
-};
-
-class PlaneCollider : public Collider
-{
-public:
-	// The four corners that make up a plane
-	glm::vec3 points[4];
-
-	PlaneCollider(const glm::vec3& a,
-				  const glm::vec3& b,
-				  const glm::vec3& c,
-				  const glm::vec3& d);
-	bool check_collision(Collider* other);
+	bool contains(Collider* other);
+	glm::vec3 check_collision(Collider* other);
+	bool check_ray_collision(glm::vec3 origin, glm::vec3 dir, glm::vec3& hitPosition);
+	bool check_point_collision(glm::vec3 point);
 };

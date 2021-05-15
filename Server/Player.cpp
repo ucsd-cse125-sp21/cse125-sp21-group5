@@ -1,35 +1,43 @@
 #include "Player.h"
 
 Player::Player() {
-	this->pos = glm::vec3(0.0f);
-	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
-	this->yaw = 0.0f;
-	this->pitch = 0.0f;
-	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
+	pos = glm::vec3(0.0f);
+	front = glm::vec3(0.0f, 0.0f, 1.0f);
+	yaw = 0.0f;
+	pitch = 0.0f;
+	hitbox = new Collider(pos, glm::vec3(1.0f));
 }
 
-Player::Player(glm::vec3 initPos) {
-	this->pos = initPos;
-	this->front = glm::vec3(0.0f, 0.0f, 1.0f);
-	this->yaw = 0.0f;
-	this->pitch = 0.0f;
-	this->hitbox = new BoxCollider(this->pos, glm::vec3(1.0f));
+Player::Player(const glm::vec3& initPos) {
+	pos = initPos;
+	front = glm::vec3(0.0f, 0.0f, 1.0f);
+	yaw = 0.0f;
+	pitch = 0.0f;
+	hitbox = new Collider(pos, glm::vec3(1.0f));
 }
 
+Player::Player(const glm::vec3& initPos,
+			   const glm::vec3& hitboxSize,
+			   float initYaw,
+			   float initPitch)
+{
+	hitbox = new Collider(initPos, hitboxSize);
+	update(initPos, initYaw, initPitch);
+}
 
-// TODO: pos is supposed to be deltaPos
-void Player::update(glm::vec3 pos, float yaw, float pitch) {
+void Player::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
 	// Calculate new pitch and yaw
-	this->yaw += yaw;
-	this->pitch += pitch;
-	this->pitch = glm::clamp(this->pitch, -89.0f, 89.0f);
+	yaw += dYaw;
+	pitch += dPitch;
+	pitch = glm::clamp(pitch, -89.0f, 89.0f);
 
 	// Calculate new front
-	front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-	front.y = sin(glm::radians(this->pitch));
-	front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
-	front = glm::normalize(this->front);
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front = glm::normalize(front);
 
-	this->pos += pos;
-	this->hitbox->center = this->pos;
+	// Update position of camera and collider
+	pos += dPos;
+	hitbox->cen = pos;
 }

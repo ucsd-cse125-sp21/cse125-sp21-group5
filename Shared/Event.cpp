@@ -1,13 +1,17 @@
 #include "Event.h"
 
-Event::Event(glm::vec3 pos, float yaw, float pitch) {
-	this->pos = pos;
-	this->yaw = yaw;
-	this->pitch = pitch;
+// Empty event
+Event::Event() {
+	this->dPos = glm::vec3(0);
+	this->dYaw = 0;
+	this->dPitch = 0;
+	this->shooting = false;
 }
 
-Event::Event() {
-	this->pos = glm::vec3(0);
-	this->yaw = 0;
-	this->pitch = 0;
+// Movement update
+Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting) {
+	this->dPos = dPos;
+	this->dYaw = dYaw;
+	this->dPitch = dPitch;
+	this->shooting = shooting;
 }

@@ -13,7 +13,7 @@ class ServerGameManager
 public:
 	// To keep track of all the particles/hitboxes 
 	// TODO: need to be able to make this generic 
-	vector<BoxCollider*> allColliders;
+	vector<Collider*> allColliders;
 
 	// Quadtree variable 
 	Quadtree* qt;

@@ -6,7 +6,6 @@
 Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window)
     : io_context_(ioContext) , gm(window)
 {
-    cout << "CREATING NEW CLIENT OBJ" << endl;
     string port = "13";
     string host = boost::asio::ip::address_v4::loopback().to_string();
 
@@ -20,9 +19,6 @@ Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window)
     boost::asio::connect(connection->getSocket(), endpoints);
 
     start_client();
-
-    cout << "FINISHED CREATING CLIENT OBJ" << endl;
-
 }
 
 void Client::callServer()

@@ -6,8 +6,8 @@ Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
 	// Define center
 	cen = center;
 	dim = dimensions;
-	min = cen - dim;
-	max = cen + dim;
+	min = cen - dim / 2.0f;
+	max = cen + dim / 2.0f;
 }
 
 // this functions checks if the box contains another box
@@ -58,4 +58,39 @@ glm::vec3 Collider::check_collision(Collider* other) {
 
 	// No collision
 	return glm::vec3(0.0f);
+}
+
+
+bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir)
+{
+	// pos = origin + k * dir
+
+	// Find collision distances
+	glm::vec3 k_min = (min - origin) / dir;
+	glm::vec3 k_max = (max - origin) / dir;
+
+	// Find actual collision
+	glm::vec3 x_min_plane_collision = origin + k_min.x * dir;
+	glm::vec3 y_min_plane_collision = origin + k_min.y * dir;
+	glm::vec3 z_min_plane_collision = origin + k_min.z * dir;
+
+	glm::vec3 x_max_plane_collision = origin + k_max.x * dir;
+	glm::vec3 y_max_plane_collision = origin + k_max.y * dir;
+	glm::vec3 z_max_plane_collision = origin + k_max.z * dir;
+
+	// Check if any min/max plane collision is within box range
+	bool min_x = check_point_collision(x_min_plane_collision);
+	bool min_y = check_point_collision(y_min_plane_collision);
+	bool min_z = check_point_collision(z_min_plane_collision);
+
+	bool max_x = check_point_collision(x_max_plane_collision);
+	bool max_y = check_point_collision(y_max_plane_collision);
+	bool max_z = check_point_collision(z_max_plane_collision);
+
+	return min_x || min_y || min_z || max_x || max_y || max_z;
+}
+
+bool Collider::check_point_collision(glm::vec3 point)
+{
+	return glm::all(glm::lessThanEqual(min, point)) && glm::all(glm::lessThanEqual(point, max));
 }

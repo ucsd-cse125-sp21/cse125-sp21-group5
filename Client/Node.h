@@ -7,6 +7,7 @@
 class Node
 {
 public:
+	Node* parent;
 	virtual void draw(const glm::mat4& parent_transform, const glm::mat4& view) = 0;
 	virtual void update(float deltaTime) = 0;
 };

@@ -5,6 +5,7 @@
 ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
+	// TODO: add new player colliders as players connect
 	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
 	//players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
 
@@ -19,12 +20,12 @@ MapState ServerGameManager::generateMap()
 
 	// Generate a bunch of random colliders
 	vector<Collider*> mapColliders;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
-		glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
-		//glm::vec3 center = glm::vec3(0.0f, 1.0f, 0.0f);
-		//glm::vec3 dim = glm::vec3(5.0f);
+		//glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
+		//glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
+		glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 dim = glm::vec3(1.0f);
 		Collider* collider = new Collider(center, dim);
 		mapColliders.push_back(collider);
 		allColliders.push_back(collider);
@@ -46,7 +47,8 @@ MapState ServerGameManager::generateMap()
 	return ms;
 }
 
-void ServerGameManager::handleEvent(Event& e, int playerId) {
+void ServerGameManager::handleEvent(Event& e, int playerId)
+{
 	// TODO: Predict player's intended position instead
 	bool reset = false;
 
@@ -60,6 +62,16 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 		// Ignore collisions with yourself
 		if (playerCollider == otherCollider)
 			continue;
+
+		// Check for shooting stuff
+		if (e.shooting)
+		{
+			cerr << "player is shooting" << endl;
+			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front))
+			{
+				cerr << "hit" << endl;
+			}
+		}
 
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
@@ -90,6 +102,9 @@ void ServerGameManager::handleEvent(Event& e, int playerId) {
 		// Across multiple collisions, the hope is that the newDeltas will cancel out
 		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
 		players[playerId].update(newDelta, 0.0f, 0.0f);
+
+
+		
 	}
 }
 

@@ -22,15 +22,12 @@ GameManager::GameManager(GLFWwindow* window)
 	// Save pointer to window
 	this->window = window;
 
-	// Create camera
-	//this->camera = new Camera();
-
 	// Initialize transforms
 	worldT = new Transform();
 
 	// Preload models
 	// TODO: maybe save this in a map for less variables
-	playerModel = new Model("res/models/head2.dae");
+	playerModel = new Model("res/models/unitCube.dae");
 	cubeModel = new Model("res/models/unitCube.dae");
 
 	// Add a test point light
@@ -88,6 +85,9 @@ Event GameManager::update()
 	// Process keyboard input
 	Event e = handleInput();
 
+	// Process gravity
+
+
 	// Update camera position
 	// TODO: necessary?
 	offsetX = 0.0f;
@@ -98,6 +98,7 @@ Event GameManager::update()
 // Handle Keyboard Input
 Event GameManager::handleInput()
 {
+	// TODO: movement forward only happens on xz plane
 	// Get current mouse position
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -126,39 +127,51 @@ Event GameManager::handleInput()
 	Camera* camera = players[localPlayerId]->cam;
 
 	// Player Controls
-	glm::vec3 toSend = glm::vec3(0);
+	glm::vec3 dPos = glm::vec3(0);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		toSend += camera->front;
+		dPos += camera->front;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		toSend -= camera->front;
+		dPos -= camera->front;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) 
 	{
-		toSend += -glm::normalize(glm::cross(camera->front, camera->up));
+		dPos += -glm::normalize(glm::cross(camera->front, camera->up));
 	}
 	else if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		toSend += glm::normalize(glm::cross(camera->front, camera->up));
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE))
-	{
-		toSend += camera->up;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
-	{
-		toSend += -camera->up;
+		dPos += glm::normalize(glm::cross(camera->front, camera->up));
 	}
 
-	toSend *= camera->speed * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_SPACE))
+	{
+		dPos += camera->up;
+	}
+
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+	{
+		dPos += -camera->up;
+	}
+
+	dPos *= camera->speed * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
 
-	return Event(toSend, yaw, pitch);
+	// Detect mouse presses
+	bool shooting = false;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+	{
+		cerr << "shoooting" << endl;
+		shooting = true;
+	}
+
+	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
+
+	return Event(dPos, yaw, pitch, shooting);
 }
 
 // Use for one-time key presses
@@ -169,6 +182,7 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 // Detect mouse clicks
 void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	/*
 	switch (button)
 	{
 		case GLFW_MOUSE_BUTTON_LEFT:
@@ -176,6 +190,7 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 			{
 			case GLFW_PRESS:
 				fprintf(stderr, "Left Mouse Pressed\n");
+
 				break;
 			case GLFW_RELEASE:
 				fprintf(stderr, "Left Mouse Released\n");
@@ -203,6 +218,7 @@ void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action
 			fprintf(stderr, "Default Mouse Button?\n");
 			break;
 	}
+	*/
 }
 
 // Detect mouse position
@@ -226,9 +242,7 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	// show an example window
-
 	ImGuiWindowFlags windowFlags = 0;
 
 	windowFlags |= ImGuiWindowFlags_NoTitleBar;

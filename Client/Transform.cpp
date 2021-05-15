@@ -4,6 +4,9 @@
 
 Transform::Transform()
 {
+	// No parent by default
+	this->parent = nullptr;
+
 	// Default identity matrix
 	this->transform = glm::mat4(1.0f);
 	this->scale = glm::vec3(1.0f);
@@ -124,5 +127,6 @@ void Transform::update(float deltaTime)
 
 void Transform::add_child(Node* child)
 {
+	child->parent = this;
 	children.push_back(child);
 }

@@ -10,8 +10,9 @@ class Event
 public:
 	glm::vec3 dPos;
 	float dYaw, dPitch;
+	bool shooting;
 
-	Event(glm::vec3 dPos, float dYaw, float dPitch);
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting);
 	Event();
 
 	template <typename Archive>
@@ -21,5 +22,6 @@ public:
 		ar& dPos.z;
 		ar& dYaw;
 		ar& dPitch;
+		ar& shooting;
 	}
 };

@@ -19,7 +19,7 @@ MapState ServerGameManager::generateMap()
 
 	// Generate a bunch of random colliders
 	vector<Collider*> mapColliders;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
 		glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;

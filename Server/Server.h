@@ -17,6 +17,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/thread.hpp>
 
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
@@ -29,7 +30,7 @@ using boost::asio::ip::tcp;
 
 using namespace std;
 #define NUM_PLAYERS 4
-#define PACKET_SIZE 1024
+#define PACKET_SIZE 2048
 
 
 class tcp_connection
@@ -48,20 +49,22 @@ public:
 		return socket_;
 	}
 
+	void handle_write(char (&hBuf)[PACKET_SIZE], char (&eBuf)[PACKET_SIZE]) {
+		{
+			boost::lock_guard<boost::recursive_mutex> lock(mutex);
+			boost::system::error_code error;
+			boost::asio::write(this->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+			boost::asio::write(getSocket(), boost::asio::buffer(eBuf, strlen(eBuf)), error);
+		}
+	}
 private:
 	tcp_connection(boost::asio::io_context& io_context)
 		: socket_(io_context)
 	{
 	}
 
-	void handle_write(const boost::system::error_code& /*error*/,
-		size_t /*bytes_transferred*/)
-	{
-	}
-
-
-
 	tcp::socket socket_;
+	boost::recursive_mutex mutex;
 };
 
 

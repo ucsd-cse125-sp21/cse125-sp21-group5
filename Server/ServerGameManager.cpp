@@ -20,12 +20,12 @@ MapState ServerGameManager::generateMap()
 
 	// Generate a bunch of random colliders
 	vector<Collider*> mapColliders;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		//glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
-		//glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
-		glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 dim = glm::vec3(1.0f);
+		glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
+		glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
+		//glm::vec3 center = glm::vec3(0.0f, 1.0f, 0.0f);
+		//glm::vec3 dim = glm::vec3(5.0f);
 		Collider* collider = new Collider(center, dim);
 		mapColliders.push_back(collider);
 		allColliders.push_back(collider);
@@ -103,9 +103,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Across multiple collisions, the hope is that the newDeltas will cancel out
 		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
 		players[playerId].update(newDelta, 0.0f, 0.0f);
-
-
-		
 	}
 }
 

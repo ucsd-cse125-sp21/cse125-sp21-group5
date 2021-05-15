@@ -2,6 +2,8 @@
 #include <glm/glm.hpp>
 #include <boost/serialization/vector.hpp>
 #include <vector>
+#include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 
@@ -17,12 +19,16 @@ public:
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
+		cout << "SCALE " << glm::to_string(scale) << endl;
 		ar& scale.x;
 		ar& scale.y;
 		ar& scale.z;
+		cout << glm::to_string(rotation) << endl;
+
 		ar& rotation.x;
 		ar& rotation.y;
 		ar& rotation.z;
+		cout << glm::to_string(translation) << endl;
 		ar& translation.x;
 		ar& translation.y;
 		ar& translation.z;

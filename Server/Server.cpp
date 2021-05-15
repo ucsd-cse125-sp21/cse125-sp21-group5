@@ -84,8 +84,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         headSource << "\r\n\r\n";
         headSource << '\0';
 
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
-
         ClientIDEvent id(playerId);
         char hBuf[PACKET_SIZE];
         boost::iostreams::basic_array_sink<char> hSink(hBuf, PACKET_SIZE);
@@ -96,7 +94,7 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         hSource << "\r\n\r\n";
         hSource << '\0';
 
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+        connections[playerId]->handle_write(headBuf, hBuf);
 
         /* Sending Map State */
         Header msHead(HeaderType::MapStateUpdate);
@@ -109,8 +107,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         msHeadSource << "\r\n\r\n";
         msHeadSource << '\0';
 
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(msHeadBuf, strlen(msHeadBuf)), error);
-
         char mshBuf[PACKET_SIZE];
         boost::iostreams::basic_array_sink<char> mshSink(mshBuf, PACKET_SIZE);
         boost::iostreams::stream<boost::iostreams::basic_array_sink<char>> mshSource(mshSink);
@@ -120,8 +116,9 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         mshSource << "\r\n\r\n";
         mshSource << '\0';
 
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(mshBuf, strlen(mshBuf)), error);
+        connections[playerId]->handle_write(msHeadBuf, mshBuf);
 
+        //Add client id and start reading from them
         vector<int> ids;
         for (int i = 0; i < connections.size(); i++) {
             ids.push_back(i);
@@ -132,7 +129,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         broadcast_send(ev);
 
         do_read(playerId);
-
         accept_new_connection();
     }
 
@@ -165,8 +161,7 @@ void Server::broadcast_send(ClientConnectEvent ev, int ignore_clientID) {
         if (playerId == ignore_clientID) {
             continue;
         }
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+        connections[playerId]->handle_write(headBuf, hBuf);
     }
 }
 
@@ -196,8 +191,7 @@ void Server::broadcast_send(GameState gs, int ignore_clientID) {
         if (playerId == ignore_clientID) {
             continue;
         }
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(headBuf, strlen(headBuf)), error);
-        boost::asio::write(connections[playerId]->getSocket(), boost::asio::buffer(hBuf, strlen(hBuf)), error);
+        connections[playerId]->handle_write(headBuf, hBuf);
     }
 }
 

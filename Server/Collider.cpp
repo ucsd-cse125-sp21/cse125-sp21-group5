@@ -61,7 +61,7 @@ glm::vec3 Collider::check_collision(Collider* other) {
 }
 
 
-bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir)
+bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir, glm::vec3& hitPosition)
 {
 	// pos = origin + k * dir
 
@@ -79,21 +79,43 @@ bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir)
 	glm::vec3 z_max_plane_collision = origin + k_max.z * dir;
 
 	// Check if any min/max plane collision is within box range
-	bool min_x = check_point_collision(x_min_plane_collision);
-	bool min_y = check_point_collision(y_min_plane_collision);
-	bool min_z = check_point_collision(z_min_plane_collision);
+	bool hit_min_x = check_point_collision(x_min_plane_collision);
+	bool hit_min_y = check_point_collision(y_min_plane_collision);
+	bool hit_min_z = check_point_collision(z_min_plane_collision);
 
-	bool max_x = check_point_collision(x_max_plane_collision);
-	bool max_y = check_point_collision(y_max_plane_collision);
-	bool max_z = check_point_collision(z_max_plane_collision);
+	bool hit_max_x = check_point_collision(x_max_plane_collision);
+	bool hit_max_y = check_point_collision(y_max_plane_collision);
+	bool hit_max_z = check_point_collision(z_max_plane_collision);
 
-	bool didHit = min_x || min_y || min_z || max_x || max_y || max_z;
-	if (didHit)
-	{
+	bool didHit = hit_min_x || hit_min_y || hit_min_z || hit_max_x || hit_max_y || hit_max_z;
 
+	hitPosition = glm::vec3(0);
+	float hitLength = RAND_MAX;
+
+	if (hit_min_x && glm::length(x_min_plane_collision - origin) < hitLength) {
+		hitPosition = x_min_plane_collision;
+		hitLength = glm::length(x_min_plane_collision - origin);
 	}
-
-
+	if (hit_min_y && glm::length(y_min_plane_collision - origin) < hitLength) {
+		hitPosition = y_min_plane_collision;
+		hitLength = glm::length(y_min_plane_collision - origin);
+	}
+	if (hit_min_z && glm::length(z_min_plane_collision - origin) < hitLength) {
+		hitPosition = z_min_plane_collision;
+		hitLength = glm::length(z_min_plane_collision - origin);
+	}
+	if (hit_max_x && glm::length(x_max_plane_collision - origin) < hitLength) {
+		hitPosition = x_max_plane_collision;
+		hitLength = glm::length(x_max_plane_collision - origin);
+	}
+	if (hit_max_y && glm::length(y_max_plane_collision - origin) < hitLength) {
+		hitPosition = y_max_plane_collision;
+		hitLength = glm::length(y_max_plane_collision - origin);
+	}
+	if (hit_max_z && glm::length(z_max_plane_collision - origin) < hitLength) {
+		hitPosition = z_max_plane_collision;
+		hitLength = glm::length(z_max_plane_collision - origin);
+	}
 	return didHit;
 }
 

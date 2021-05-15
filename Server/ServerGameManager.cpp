@@ -66,9 +66,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Check for shooting stuff
 		if (e.shooting)
 		{
-			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front))
+			std::cout << "shooting" << std::endl;
+			glm::vec3 hitPos;
+			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
-				cerr << "hit" << endl;
+				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
 			}
 		}
 

@@ -18,6 +18,6 @@ public:
 	
 	bool contains(Collider* other);
 	glm::vec3 check_collision(Collider* other);
-	bool check_ray_collision(glm::vec3 origin, glm::vec3 dir);
+	bool check_ray_collision(glm::vec3 origin, glm::vec3 dir, glm::vec3& hitPosition);
 	bool check_point_collision(glm::vec3 point);
 };

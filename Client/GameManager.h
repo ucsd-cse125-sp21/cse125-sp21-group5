@@ -21,6 +21,8 @@
 
 using namespace std;
 
+#define NUM_TILES 3
+
 class GameManager
 {
 private:

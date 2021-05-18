@@ -13,39 +13,37 @@ ServerGameManager::ServerGameManager() {
 	for (Player p : players) {
 		allColliders.push_back(p.hitbox);
 	}
+
+	tileSeed = (int)time(NULL);
 }
 
 MapState ServerGameManager::generateMap()
 {
-	srand((unsigned int)time(NULL));
-
-	// Generate a bunch of random colliders
-	vector<Collider*> mapColliders;
-	for (int i = 0; i < 10; i++)
+	srand(tileSeed);
+	for (int i = 0; i < NUM_TILES; i++)
 	{
-		glm::vec3 center = (glm::vec3(rand(), rand(), rand()) / (float) RAND_MAX) * 10.0f;
-		glm::vec3 dim = (glm::vec3(rand()) / (float) RAND_MAX) * 5.0f;
-		//glm::vec3 center = glm::vec3(0.0f, 1.0f, 0.0f);
-		//glm::vec3 dim = glm::vec3(5.0f);
-		Collider* collider = new Collider(center, dim);
-		mapColliders.push_back(collider);
-		allColliders.push_back(collider);
-	}
+		for (int j = 0; j < NUM_TILES; j++) {
+			//Skip the two flag tiles
+			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
+				continue;
+			}
 
-	// TODO: potentially optimize using pointers
+			//Create the tile for the trees to rest on
+			Collider* tileT = new Collider(glm::vec3(10.0f, 10, 10.0f), glm::vec3(10 * i - 10, 0, 10 * j - 10));
+
+			int numTrees = rand() % 10;
+
+			for (int k = 0; k < numTrees; k++) {
+				float u1 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float u2 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+
+				//genrate the position inside the tile
+				Collider* treeT = new Collider(glm::vec3(1.0f / 10.0f) + tileT->dim, glm::vec3(u1, 6, u2) + tileT->cen);
+			}
+		}
+	}
 	// Create map state
-	MapState ms;
-
-	// Add all colliders to map
-	for (Collider* c : mapColliders)
-	{
-		// Convert collider to MapPiece
-		// TODO: really no point in sending rotation
-		MapPiece mp(c->dim/2.0f, glm::vec3(0.0f), c->cen);
-		ms.addPiece(mp);
-	}
-
-	return ms;
+	return MapState(tileSeed);
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId)

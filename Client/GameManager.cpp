@@ -27,8 +27,8 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Preload models
 	// TODO: maybe save this in a map for less variables
-	playerModel = new Model("res/models/toxicGunDab.dae");
-	cubeModel = new Model("res/models/toxicGunDab.dae");
+	playerModel = new Model("res/models/unitCube.dae");
+	cubeModel = new Model("res/models/unitCube.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -293,16 +293,36 @@ void GameManager::render()
 	glfwSwapBuffers(window);
 }
 
-// We fucking translate then scale on the server, so we have to match on client
+// We translate then scale on the server, so we have to match on client
 void GameManager::updateMap(MapState& ms)
 {
-	for (const MapPiece& mp : ms.pieces)
-	{
-		//Transform* pieceT = new Transform(mp.scale, mp.rotation, mp.translation);
-		Transform* pieceT = new Transform(glm::vec3(1.0f), mp.rotation, mp.translation);
-		pieceT->rescale(mp.scale);
-		pieceT->add_child(cubeModel);
-		worldT->add_child(pieceT);
+	srand(ms.tileSeed);
+	for (int i = 0; i < NUM_TILES; i++) {
+		for (int j = 0; j < NUM_TILES; j++) {
+			//Skip the two flag tiles
+			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
+				continue;
+			}
+
+			//Create the tile for the trees to rest on
+			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(10*i-10, 0, 10*j-10));
+			tileT->rescale(glm::vec3(10.0f, 10, 10.0f));
+			cout << glm::to_string(tileT->translation) << endl;
+			tileT->add_child(cubeModel);
+			worldT->add_child(tileT);
+
+			int numTrees = rand() % 10;
+
+			for (int k = 0; k < numTrees; k++) {
+				float u1 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float u2 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+			    
+				//genrate the position inside the tile
+				Transform* treeT = new Transform(glm::vec3(1.0f/10.0f), glm::vec3(0), glm::vec3(u1, 6, u2));
+				treeT->add_child(cubeModel);
+				tileT->add_child(treeT);
+			}
+		}
 	}
 }
 

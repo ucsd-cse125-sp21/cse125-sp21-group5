@@ -28,6 +28,8 @@ void Renderer::bindToShader(GLuint shader)
 
 	SetShader3f(shader, "sunLight.direction", mDirectionalLight.mDirection);
 	SetShader3f(shader, "sunLight.color", mDirectionalLight.mColor);
+
+	SetShader3f(shader, "aFogColor", fogColor);
 	
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 
@@ -60,6 +62,8 @@ void Renderer::bindToShader(GLuint shader)
 void Renderer::update(float deltaTime)
 {
 	// todo: track time here for animation stuff
+
+	glClearColor(fogColor.x, fogColor.y, fogColor.z, 0);
 }
 
 

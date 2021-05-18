@@ -58,10 +58,10 @@ public:
 
 	Camera* mCamera;
 
-
 	// fog parameters
 	float fogDensity;
 	float fogGradient;
+	glm::vec3 fogColor;
 
 	std::vector<PointLight> mPointLights;
 
@@ -82,6 +82,7 @@ private:
 		mCamera = nullptr;
 		fogDensity = 0.0001;
 		fogGradient = 1;
+		fogColor = glm::vec3(0.2, 0.05, 0.15);
 	}
 };
 

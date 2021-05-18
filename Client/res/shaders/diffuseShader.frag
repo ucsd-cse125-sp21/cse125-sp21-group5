@@ -9,6 +9,7 @@ in float visibility;
 uniform vec3 aColor;
 uniform vec3 aViewPos;
 uniform vec3 aViewDir;
+uniform vec3 aFogColor;
 
 // LIGHTING
 
@@ -52,7 +53,7 @@ void main()
 
     //fragColor = vec4(color, 1);
 
-    fragColor = vec4(mix(vec3(0.1, 0.1, 0.1), color, visibility), 1);
+    fragColor = vec4(mix(aFogColor, color, visibility), 1);
 }
 
 

@@ -27,8 +27,8 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Preload models
 	// TODO: maybe save this in a map for less variables
-	playerModel = new Model("res/models/toxicGunDab.dae");
-	cubeModel = new Model("res/models/toxicGunDab.dae");
+	playerModel = new Model("res/models/willowTrunk.dae");
+	cubeModel = new Model("res/models/willowTrunk.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));

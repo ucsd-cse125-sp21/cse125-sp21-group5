@@ -4,9 +4,12 @@ in vec3 fragNormal;
 in vec2 texCoord;
 in vec3 fragPos;
 
+in float visibility;
+
 uniform sampler2D TEX_diffuse;
 uniform vec3 aViewPos;
 uniform vec3 aViewDir;
+uniform vec3 aFogColor;
 
 // this mirrors the class in Renderer.h
 struct PointLight {
@@ -46,8 +49,8 @@ void main()
 
     color += CalcDirectionalLight(sunLight, fragNormal, aViewDir);
 
-    fragColor = vec4(color, 1);
-    //fragColor = vec4(normalize((fragNormal + 1) / 2), 1);
+    //fragColor = vec4(color, 1);
+    fragColor = vec4(mix(aFogColor, color, visibility), 1);
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

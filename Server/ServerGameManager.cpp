@@ -6,7 +6,7 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
+	players.push_back(Player(glm::vec3(0.0f, 20.0f, 0.0f)));
 	//players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
 
 	// Add player hitboxes to all colliders
@@ -20,28 +20,30 @@ ServerGameManager::ServerGameManager() {
 MapState ServerGameManager::generateMap()
 {
 	srand(tileSeed);
+
 	for (int i = 0; i < NUM_TILES; i++)
 	{
 		for (int j = 0; j < NUM_TILES; j++) {
 			//Skip the two flag tiles
 			// TODO:can't skip here
 			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
-				//continue;
+				continue;
 			}
 
 			//Create the tile for the trees to rest on
-			Collider* tileC = new Collider(glm::vec3(10 * (i - 1), -4.9, 10 * (j - 1)), glm::vec3(10.0f));
+			Collider* tileC = new Collider(glm::vec3(20 * (i - 1), 0.0f, 20 * (j - 1)), glm::vec3(20.0f, 0.1f, 20.0f));
 			allColliders.push_back(tileC);
 
 			int numTrees = rand() % 10;
+			cerr << numTrees << endl;
 
 			for (int k = 0; k < numTrees; k++) {
-				float x = 10.0f * (rand() / (float)RAND_MAX) - 5.0f;
-				float z = 10.0f * (rand() / (float)RAND_MAX) - 5.0f;
+				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
+				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 
-				//genrate the position inside the tile
-				Collider* treeC = new Collider(glm::vec3(x, 0.0f, z) + glm::vec3(tileC->cen.x, 0.0f, tileC->cen.z), glm::vec3(0.5f));
-				//allColliders.push_back(treeC);
+				//generate the position inside the tile
+				Collider* treeC = new Collider(glm::vec3(x, 5.0f, z) + glm::vec3(tileC->cen.x, 0.0f, tileC->cen.z), glm::vec3(1.0f, 10.0f, 1.0f));
+				allColliders.push_back(treeC);
 			}
 		}
 	}
@@ -84,6 +86,9 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
+		players[playerId].update(plane, 0.0f, 0.0f);
+
+		/*
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f))
 			continue;
@@ -110,6 +115,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Across multiple collisions, the hope is that the newDeltas will cancel out
 		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
 		players[playerId].update(newDelta, 0.0f, 0.0f);
+		*/
 	}
 }
 

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define NUM_TILES 3
+#define NUM_TILES 1
 
 class ServerGameManager
 {

@@ -129,7 +129,7 @@ Event GameManager::handleInput()
 	Camera* camera = players[localPlayerId]->cam;
 
 	// Player Controls
-	glm::vec3 dPos = glm::vec3(0);
+	glm::vec3 dPos = glm::vec3(0.0f);
 	glm::vec3 dir(camera->front.x, 0.0f, camera->front.z);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
@@ -163,7 +163,9 @@ Event GameManager::handleInput()
 		dPos -= camera->up;
 	}
 
-	dPos = glm::normalize(dPos) * camera->speed * deltaTime;
+	if (dPos != glm::vec3(0.0f))
+		dPos = glm::normalize(dPos);
+	dPos *= camera->speed * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
@@ -304,23 +306,27 @@ void GameManager::render()
 void GameManager::updateMap(MapState& ms)
 {
 	srand(ms.tileSeed);
-	for (int i = 0; i < NUM_TILES; i++) {
-		for (int j = 0; j < NUM_TILES; j++) {
+
+	for (int i = 0; i < NUM_TILES; i++)
+	{
+		for (int j = 0; j < NUM_TILES; j++)
+		{
 			//Skip the two flag tiles
 			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
 				continue;
 			}
 
 			//Create the tile for the trees to rest on
-			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(10*(i-1), 0, 10*(j-1)));
+			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i-1), 0, 20*(j-1)));
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
 			int numTrees = rand() % 10;
+			cerr << numTrees << endl;
 
 			for (int k = 0; k < numTrees; k++) {
-				float x = (rand() / (float)RAND_MAX) * 10.f - 5.f;
-				float z = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
+				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 			    
 				//genrate the position inside the tile
 				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));

@@ -6,11 +6,11 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(Player(glm::vec3(0.0f, 15.0f, 0.0f)));
-	//players.push_back(Player(glm::vec3(0.0f, -15.0f, 0.0f)));
+	players.push_back(ServerPlayer(glm::vec3(0.0f, 15.0f, 0.0f)));
+	players.push_back(ServerPlayer(glm::vec3(0.0f, -15.0f, 0.0f)));
 
 	// Add player hitboxes to all colliders
-	for (Player p : players) {
+	for (ServerPlayer p : players) {
 		allColliders.push_back(p.hitbox);
 	}
 }
@@ -111,7 +111,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation);
 
 		gs.addState(ps);
 	}

@@ -83,6 +83,7 @@ void Model::loadModel(std::string modelPath)
 		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
 		//aiProcess_OptimizeMeshes |				// join small meshes, if possible;
 		//aiProcess_PreTransformVertices |
+		aiProcess_FlipUVs |
 		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
 		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
 		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges

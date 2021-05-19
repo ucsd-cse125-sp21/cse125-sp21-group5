@@ -69,6 +69,8 @@ public:
 	void operator=(Renderer const&) = delete;
 	// END SINGLETON STUFF
 
+	int localPlayerId = -1;
+
 	Camera* mCamera;
 
 	double gameTime;

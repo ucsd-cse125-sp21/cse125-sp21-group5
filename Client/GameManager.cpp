@@ -27,16 +27,16 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Preload models
 	// TODO: maybe save this in a map for less variables
-	playerModel = new Model("res/models/willowTrunk.dae");
-	cubeModel = new Model("res/models/willowTrunk.dae");
+	playerModel = new Model("res/models/finalWalk.dae");
+	cubeModel = new Model("res/models/finalWalk.dae");
 
 	// Add a test point light
-	//Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
-	//Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
+	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
 
-	//Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(2)));
+	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
-	Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
+	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -332,7 +332,7 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 
 	// Create new player with model
 	Transform* playerT = new Transform();
-	Player* player = new Player(playerT, playerModel);
+	Player* player = new Player(playerT, playerId);
 
 	playerT->add_child(player);
 	worldT->add_child(playerT);
@@ -344,4 +344,5 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 void GameManager::setLocalPlayerID(int playerId)
 {
 	this->localPlayerId = playerId;
+	Renderer::get().localPlayerId = playerId;
 }

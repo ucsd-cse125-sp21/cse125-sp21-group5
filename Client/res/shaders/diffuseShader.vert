@@ -48,7 +48,7 @@ void main()
 		}
     }
 
-    fragNormal = vec3(model * vec4(totalNormal, 0));
+    fragNormal = normalize(vec3(model * vec4(totalNormal, 0)));
     fragPos = vec3(model * vec4(totalPosition, 1));
     gl_Position = viewProj * model * vec4(totalPosition, 1);
 

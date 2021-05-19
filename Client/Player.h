@@ -11,16 +11,25 @@ class Player : public Node
 public:
 	Camera* cam;
 	Transform* transform;
+
 	Model* model;
+	std::vector<Model*> models;
+
+	int playerId;
+
+private:
+	bool mustLoadModels;
 
 public:
-	Player(Transform* transform, Model* model);
+	Player(Transform* transform, int playerId);
+	~Player();
 
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);
 	void update(float deltaTime);
 
+	void loadModels();
+
 	// Update Camera attributes
 	void updatePlayer(PlayerState ps);
-	
 };
 

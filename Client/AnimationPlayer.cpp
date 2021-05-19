@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Model.h"
+#include "Renderer.h"
 
 AnimationPlayer::AnimationPlayer(std::vector<Animation*> animations, Model* model)
 {
@@ -32,8 +33,8 @@ void AnimationPlayer::update(float deltaTime)
 
 	if (mAnimations.size() > 0 && mCurrentAnimationIdx != NO_ANIMATION) {
 		Animation* currAnimation = mAnimations[mCurrentAnimationIdx];
-		mCurrentTime += currAnimation->getTicksPerSecond() * deltaTime;
-		mCurrentTime = fmod(mCurrentTime, currAnimation->getDuration());
+
+		mCurrentTime = fmod(Renderer::get().gameTime, currAnimation->getDuration());
 
 		calculateBoneTransform(currAnimation->getRootNode(), glm::mat4(1));
 	}

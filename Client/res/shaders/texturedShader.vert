@@ -54,7 +54,7 @@ void main()
     gl_Position = viewProj * model * vec4(totalPosition, 1);
 
 	// calculate fog
-	float fogDensity = 0.1;
+	float fogDensity = 0.05;
 	float fogGradient = 3;
 	visibility = calculateFog(length(fragPos - viewPos), fogDensity, fogGradient);
 }

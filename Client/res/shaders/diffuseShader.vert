@@ -54,7 +54,7 @@ void main()
 
 
 	// calculate fog
-	float fogDensity = 0.1;
+	float fogDensity = 0.05;
 	float fogGradient = 3;
 	visibility = calculateFog(length(fragPos - viewPos), fogDensity, fogGradient);
 }

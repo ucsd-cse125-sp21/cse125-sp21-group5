@@ -8,6 +8,7 @@
 
 
 #define NUM_POINT_LIGHTS 32
+#define NUM_SPOT_LIGHTS 32
 
 class PointLight {
 public:
@@ -37,6 +38,18 @@ public:
 };
 
 
+class SpotLight {
+public:
+	glm::vec3 mPosition;
+	glm::vec3 mColor;
+	glm::vec3 mDirection;
+
+	float mAngle;
+	float mConstant, mLinear, mQuadratic;
+
+	SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, float angle);
+};
+
 /*
  * The global renderer. Right now this just needs to keep track of the scene lights that will
  * be applied to all the different shaders.
@@ -58,27 +71,32 @@ public:
 
 	Camera* mCamera;
 
+	double gameTime;
+
 	// fog parameters
 	float fogDensity;
 	float fogGradient;
 	glm::vec3 fogColor;
 
 	std::vector<PointLight> mPointLights;
+	std::vector<SpotLight> mSpotLights;
 
 	DirectionalLight mDirectionalLight;
 
 	void setCamera(Camera* camera);
 
 	void addPointLight(PointLight light);
+	void addSpotLight(SpotLight light);
 	void addDirectionalLight(DirectionalLight light);
 	void bindToShader(GLuint shader);
 
 	// let renderer update anything it needs
-	void update(float deltaTime);
+	void update(double deltaTime);
 
 private:
 	// we don't want to make any new renderers outside of the singleton
 	Renderer() {
+		gameTime = 0;
 		mCamera = nullptr;
 		fogDensity = 0.0001;
 		fogGradient = 1;

@@ -43,7 +43,8 @@ public:
 
 	// Models used in the environment
 	Model* playerModel;
-	Model* cubeModel;
+	Model* tileModel;
+	Model* treeModel;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;

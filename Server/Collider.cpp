@@ -24,12 +24,17 @@ bool Collider::contains(Collider* p) {
 
 glm::vec3 Collider::check_collision(Collider* other) {
 	// TODO: Replace this with min and max corner vectors
+	/*
 	bool x = ((this->cen.x - this->dim.x / 2.0f) < (other->cen.x + other->dim.x / 2.0f)) &&
 			 ((this->cen.x + this->dim.x / 2.0f) > (other->cen.x - other->dim.x / 2.0f));
 	bool y = ((this->cen.y - this->dim.y / 2.0f) < (other->cen.y + other->dim.y / 2.0f)) &&
 			 ((this->cen.y + this->dim.y / 2.0f) > (other->cen.y - other->dim.y / 2.0f));
 	bool z = ((this->cen.z - this->dim.z / 2.0f) < (other->cen.z + other->dim.z / 2.0f)) &&
 			 ((this->cen.z + this->dim.z / 2.0f) > (other->cen.z - other->dim.z / 2.0f));
+	*/
+
+	bool isColliding = glm::all(glm::lessThanEqual(this->min, other->max)) &&
+					   glm::all(glm::lessThanEqual(other->min, this->max));
 
 	/*
 	std::cerr << "this->cen = " << glm::to_string(this->cen) << std::endl;
@@ -39,7 +44,7 @@ glm::vec3 Collider::check_collision(Collider* other) {
 	*/
 
 	// If there was a collision 
-	if (x && y && z)
+	if (isColliding)
 	{
 		// Determine which face it's intersecting with
 		glm::vec3 diff = this->cen - other->cen;

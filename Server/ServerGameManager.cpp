@@ -24,23 +24,31 @@ MapState ServerGameManager::generateMap()
 	{
 		for (int j = 0; j < NUM_TILES; j++) {
 			//Skip the two flag tiles
+			// TODO:can't skip here
 			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
-				continue;
+				//continue;
 			}
 
 			//Create the tile for the trees to rest on
-			Collider* tileT = new Collider(glm::vec3(10.0f, 10, 10.0f), glm::vec3(10 * i - 10, 0, 10 * j - 10));
+			Collider* tileC = new Collider(glm::vec3(10 * (i - 1), -4.9, 10 * (j - 1)), glm::vec3(10.0f));
+			allColliders.push_back(tileC);
 
 			int numTrees = rand() % 10;
 
 			for (int k = 0; k < numTrees; k++) {
-				float u1 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
-				float u2 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float x = 10.0f * (rand() / (float)RAND_MAX) - 5.0f;
+				float z = 10.0f * (rand() / (float)RAND_MAX) - 5.0f;
 
 				//genrate the position inside the tile
-				Collider* treeT = new Collider(glm::vec3(1.0f / 10.0f) + tileT->dim, glm::vec3(u1, 6, u2) + tileT->cen);
+				Collider* treeC = new Collider(glm::vec3(x, 0.0f, z) + glm::vec3(tileC->cen.x, 0.0f, tileC->cen.z), glm::vec3(0.5f));
+				//allColliders.push_back(treeC);
 			}
 		}
+	}
+
+	for (Collider* c : allColliders)
+	{
+		cout << to_string(c->cen) << endl;
 	}
 	// Create map state
 	return MapState(tileSeed);
@@ -65,7 +73,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Check for shooting stuff
 		if (e.shooting)
 		{
-			std::cout << "shooting" << std::endl;
+			//std::cout << "shooting" << std::endl;
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{

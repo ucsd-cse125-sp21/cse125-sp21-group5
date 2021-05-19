@@ -39,7 +39,6 @@ void Model::update(float deltaTime)
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 {
-
 	for (Mesh* mesh : meshes) 
 	{
 		Material* mat = materials[mesh->materialIdx];

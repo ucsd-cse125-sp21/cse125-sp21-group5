@@ -28,7 +28,8 @@ GameManager::GameManager(GLFWwindow* window)
 	// Preload models
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
-	cubeModel = new Model("res/models/unitCube.dae");
+	tileModel = new Model("res/models/tile.dae");
+	treeModel = new Model("res/models/willowTrunk.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -87,7 +88,7 @@ Event GameManager::update()
 	Event e = handleInput();
 
 	// Process gravity
-
+	cout << glm::to_string(players[localPlayerId]->cam->pos) << endl;
 
 	// Update camera position
 	// TODO: necessary?
@@ -129,23 +130,29 @@ Event GameManager::handleInput()
 
 	// Player Controls
 	glm::vec3 dPos = glm::vec3(0);
+	glm::vec3 dir(camera->front.x, 0.0f, camera->front.z);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		dPos += camera->front;
+		//dPos += camera->front;
+		dPos += glm::normalize(dir);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		dPos -= camera->front;
+		//dPos -= camera->front;
+		dPos -= glm::normalize(dir);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) 
 	{
-		dPos += -glm::normalize(glm::cross(camera->front, camera->up));
+		//dPos += -glm::normalize(glm::cross(camera->front, camera->up));
+		dPos -= glm::normalize(glm::cross(dir, camera->up));
 	}
 	else if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		dPos += glm::normalize(glm::cross(camera->front, camera->up));
+		//dPos += glm::normalize(glm::cross(camera->front, camera->up));
+		dPos += glm::normalize(glm::cross(dir, camera->up));
 	}
 
+	// TODO: Add Sam's Jump code
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
 	{
 		dPos += camera->up;
@@ -153,10 +160,10 @@ Event GameManager::handleInput()
 
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
 	{
-		dPos += -camera->up;
+		dPos -= camera->up;
 	}
 
-	dPos *= camera->speed * deltaTime;
+	dPos = glm::normalize(dPos) * camera->speed * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
@@ -166,7 +173,7 @@ Event GameManager::handleInput()
 	bool shooting = false;
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
 	{
-		cerr << "shoooting" << endl;
+		//cerr << "shoooting" << endl;
 		shooting = true;
 	}
 
@@ -305,25 +312,25 @@ void GameManager::updateMap(MapState& ms)
 			}
 
 			//Create the tile for the trees to rest on
-			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(10*i-10, 0, 10*j-10));
-			tileT->rescale(glm::vec3(10.0f, 10, 10.0f));
-			cout << glm::to_string(tileT->translation) << endl;
-			tileT->add_child(cubeModel);
+			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(10*(i-1), 0, 10*(j-1)));
+			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
 			int numTrees = rand() % 10;
 
 			for (int k = 0; k < numTrees; k++) {
-				float u1 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
-				float u2 = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float x = (rand() / (float)RAND_MAX) * 10.f - 5.f;
+				float z = (rand() / (float)RAND_MAX) * 10.f - 5.f;
 			    
 				//genrate the position inside the tile
-				Transform* treeT = new Transform(glm::vec3(1.0f/10.0f), glm::vec3(0), glm::vec3(u1, 6, u2));
-				treeT->add_child(cubeModel);
+				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));
+				treeT->add_child(treeModel);
 				tileT->add_child(treeT);
 			}
 		}
 	}
+
+
 }
 
 void GameManager::updateGameState(GameState& gs)

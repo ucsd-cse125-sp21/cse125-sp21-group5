@@ -8,6 +8,8 @@
 
 using namespace std;
 
+#define NUM_TILES 1
+
 class ServerGameManager
 {
 public:
@@ -24,5 +26,7 @@ public:
 	void buildQuadtree();
 	GameState getGameState(int playerId);
 	MapState generateMap();
+
+	int tileSeed;
 };
 

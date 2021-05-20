@@ -21,6 +21,8 @@
 
 using namespace std;
 
+#define NUM_TILES 1
+
 class GameManager
 {
 private:
@@ -41,7 +43,8 @@ public:
 
 	// Models used in the environment
 	Model* playerModel;
-	Model* cubeModel;
+	Model* tileModel;
+	Model* treeModel;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;

@@ -9,7 +9,7 @@ ServerGameManager::ServerGameManager() {
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
 	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -10.0f)));
-	players.push_back(ServerPlayer(glm::vec3(-10.0f, -15.0f, -5.0f)));
+	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -5.0f)));
 
 	// Add player hitboxes to all colliders
 	for (ServerPlayer p : players) {
@@ -65,7 +65,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	bool reset = false;
 
 	// Calculate where player wants to be
-	players[playerId].update(e.dPos, e.dYaw, e.dPitch);
+	players[playerId].update(e.dPos - glm::vec3(0.0f, 0.1f, 0.0f), e.dYaw, e.dPitch);
 	players[playerId].updateAnimations(e);
 
 	// Naive collision (for now)

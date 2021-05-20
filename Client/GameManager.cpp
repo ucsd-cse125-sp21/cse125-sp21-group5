@@ -172,7 +172,7 @@ Event GameManager::handleInput()
 	dPos *= camera->speed * deltaTime;
 
 	// Test: gravity 
-	dPos.y = dPos.y + gravity * deltaTime;
+	//dPos.y = dPos.y + gravity * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;

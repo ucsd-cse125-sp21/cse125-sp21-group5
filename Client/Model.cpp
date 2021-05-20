@@ -31,10 +31,7 @@ Model::~Model()
 void Model::update(float deltaTime)
 {
 	//get the new transform of the bones
-	if (animationPlayer == nullptr) {
-		std::cout << "ANIMATION PLAYER IS NULL" << std::endl;
-	}
-	animationPlayer->update(deltaTime);
+	if (animationPlayer != nullptr) animationPlayer->update(deltaTime);
 }
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
@@ -82,6 +79,7 @@ void Model::loadModel(std::string modelPath)
 		aiProcess_LimitBoneWeights |			// limit bone weights to 4 per vertex
 		//aiProcess_OptimizeMeshes |				// join small meshes, if possible;
 		//aiProcess_PreTransformVertices |
+		aiProcess_FlipUVs |
 		aiProcess_GenSmoothNormals |			// generate smooth normal vectors if not existing
 		aiProcess_SplitLargeMeshes |			// split large, unrenderable meshes into sub-meshes
 		aiProcess_Triangulate |					// triangulate polygons with more than 3 edges

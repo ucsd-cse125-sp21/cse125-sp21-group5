@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Player.h"
+#include "ServerPlayer.h"
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/MapState.h"
@@ -20,7 +20,7 @@ public:
 	// Quadtree variable 
 	Quadtree* qt;
 
-	vector<Player> players;
+	vector<ServerPlayer> players;
 	ServerGameManager();
 	void handleEvent(Event& e, int playerId);
 	void buildQuadtree();

@@ -4,8 +4,9 @@
 #include "glm/glm.hpp"
 #include <iostream>
 #include "Collider.h"
+#include "../Shared/GameState.h"
 
-class Player
+class ServerPlayer
 {
 public:
 	// Camera variables
@@ -13,12 +14,14 @@ public:
 	glm::vec3 pos;
 	float yaw, pitch;
 
+	AnimationID animation;
+
 	// Collision variables
 	Collider* hitbox; 
 
-	Player();
-	Player(const glm::vec3& initPos);
-	Player(const glm::vec3& initPos,
+	ServerPlayer();
+	ServerPlayer(const glm::vec3& initPos);
+	ServerPlayer(const glm::vec3& initPos,
 		   const glm::vec3& hitboxSize,
 		   float initYaw,
 		   float initPitch);

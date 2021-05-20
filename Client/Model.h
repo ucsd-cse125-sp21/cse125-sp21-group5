@@ -36,7 +36,6 @@ struct BoneInfo
 class Model : public Node
 {
 private:
-	glm::mat4 model = glm::mat4(1.0f);
 
 	// Stuff for textures
 	std::vector<Mesh*> meshes;

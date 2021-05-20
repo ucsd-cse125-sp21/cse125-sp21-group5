@@ -6,13 +6,21 @@
 #include <vector>
 #include <boost/serialization/vector.hpp>
 
+enum class AnimationID {
+	IDLE = 0,
+	WALK = 1,
+	SHOOT = 2
+};
+
 class PlayerState
 {
 public:
 	int playerId;
 	glm::vec3 pos, front;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front);
+	AnimationID currentAnimation;
+
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation);
 	PlayerState();
 
 	template <typename Archive>
@@ -24,6 +32,7 @@ public:
 		ar& front.x;
 		ar& front.y;
 		ar& front.z;
+		ar& currentAnimation;
 	}
 };
 

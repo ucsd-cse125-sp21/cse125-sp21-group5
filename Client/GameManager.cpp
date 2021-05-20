@@ -4,9 +4,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "../Shared/Global_variables.h"
+
 #include "Renderer.h"
-
-
 
 // TODO: possibly move these as well
 // Track mouse movements
@@ -92,7 +92,7 @@ Event GameManager::update()
 	Event e = handleInput();
 
 	// Process gravity
-	cout << glm::to_string(players[localPlayerId]->cam->pos) << endl;
+	//cout << glm::to_string(players[localPlayerId]->cam->pos) << endl;
 
 	// Update camera position
 	// TODO: necessary?
@@ -314,26 +314,27 @@ void GameManager::updateMap(MapState& ms)
 {
 	srand(ms.tileSeed);
 
-	for (int i = 0; i < NUM_TILES; i++)
+	for (int i = 0; i < NUM_MAP_TILES; i++)
 	{
-		for (int j = 0; j < NUM_TILES; j++)
+		for (int j = 0; j < NUM_MAP_TILES; j++)
 		{
-			//Skip the two flag tiles
-			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
-				continue;
-			}
-
 			//Create the tile for the trees to rest on
 			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i-1), 0, 20*(j-1)));
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
-			int numTrees = rand() % 10;
+			//Skip the two flag tiles
+			if ((i == 0 && j == NUM_MAP_TILES / 2) || (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+				continue;
+			}
+
+			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
 			cerr << numTrees << endl;
 
 			for (int k = 0; k < numTrees; k++) {
 				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
+
 			    
 				//genrate the position inside the tile
 				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));
@@ -342,8 +343,6 @@ void GameManager::updateMap(MapState& ms)
 			}
 		}
 	}
-
-
 }
 
 void GameManager::updateGameState(GameState& gs)

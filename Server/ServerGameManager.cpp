@@ -2,6 +2,8 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/random.hpp>
 
+#include "../Shared/Global_variables.h"
+
 ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
@@ -21,20 +23,21 @@ MapState ServerGameManager::generateMap()
 {
 	srand(tileSeed);
 
-	for (int i = 0; i < NUM_TILES; i++)
+	for (int i = 0; i < NUM_MAP_TILES; i++)
 	{
-		for (int j = 0; j < NUM_TILES; j++) {
-			//Skip the two flag tiles
-			// TODO:can't skip here
-			if ((i == 0 && j == 1) || (i == 2 && j == 1)) {
-				continue;
-			}
+		for (int j = 0; j < NUM_MAP_TILES; j++) {
 
 			//Create the tile for the trees to rest on
 			Collider* tileC = new Collider(glm::vec3(20 * (i - 1), 0.0f, 20 * (j - 1)), glm::vec3(20.0f, 0.1f, 20.0f));
 			allColliders.push_back(tileC);
 
-			int numTrees = rand() % 10;
+			//Skip the two flag tiles
+			// TODO:can't skip here
+			if ((i == 0 && j == NUM_MAP_TILES / 2) || (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+				continue;
+			}
+
+			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
 			cerr << numTrees << endl;
 
 			for (int k = 0; k < numTrees; k++) {

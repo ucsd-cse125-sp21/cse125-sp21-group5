@@ -14,7 +14,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
 	pitch = 0.0f;
-	hitbox = new Collider(pos, glm::vec3(1.0f));
+	hitbox = new Collider(pos + glm::vec3(0, -0.38f, 0), glm::vec3(1, 2.2f, 1));
 	animation = AnimationID::IDLE;
 }
 

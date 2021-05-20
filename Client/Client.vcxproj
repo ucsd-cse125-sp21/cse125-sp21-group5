@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="..\Shared\Event.cpp" />
     <ClCompile Include="..\Shared\GameState.cpp" />
+    <ClCompile Include="..\Shared\Global_variables.cpp" />
     <ClCompile Include="..\Shared\MapState.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationPlayer.cpp" />
@@ -194,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Event.h" />
+    <ClInclude Include="..\Shared\Global_variables.h" />
+    <ClInclude Include="..\Shared\Header.h" />
+    <ClInclude Include="..\Shared\NetworkEvents.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationPlayer.h" />
     <ClInclude Include="AssimpGLMHelpers.h" />

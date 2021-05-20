@@ -38,6 +38,7 @@ public:
 	// Track players in the world
 	unordered_map<int, Player*> players;
 	int localPlayerId;
+	bool localIsColliding;
 
 	// Models used in the environment
 	Model* playerModel;

@@ -9,9 +9,10 @@ Event::Event() {
 }
 
 // Movement update
-Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting) {
+Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping) {
 	this->dPos = dPos;
 	this->dYaw = dYaw;
 	this->dPitch = dPitch;
 	this->shooting = shooting;
+	this->jumping = jumping;
 }

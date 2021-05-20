@@ -8,11 +8,11 @@ PlayerState::PlayerState() {
 	this->currentAnimation = AnimationID::IDLE;
 }
 
-PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation) {
+PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding) {
 	this->playerId = playerId;
 	this->pos = pos;
 	this->front = front;
-
+	this->isColliding = isColliding;
 	this->currentAnimation = currentAnimation;
 }
 

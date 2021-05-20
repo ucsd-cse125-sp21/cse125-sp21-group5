@@ -132,6 +132,9 @@ Event GameManager::handleInput()
 	// Get Player Camera
 	Camera* camera = players[localPlayerId]->cam;
 
+	// Jumping control 
+	bool jumping = false;
+
 	// Player Controls
 	glm::vec3 dPos = glm::vec3(0.0f);
 	glm::vec3 dir(camera->front.x, 0.0f, camera->front.z);
@@ -159,7 +162,7 @@ Event GameManager::handleInput()
 	// TODO: Add Sam's Jump code
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
 	{
-		dPos += camera->up;
+		jumping = true;
 	}
 
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
@@ -171,8 +174,6 @@ Event GameManager::handleInput()
 		dPos = glm::normalize(dPos);
 	dPos *= camera->speed * deltaTime;
 
-	// Test: gravity 
-	//dPos.y = dPos.y + gravity * deltaTime;
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
@@ -188,7 +189,7 @@ Event GameManager::handleInput()
 
 	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
 
-	return Event(dPos, yaw, pitch, shooting);
+	return Event(dPos, yaw, pitch, shooting, jumping);
 }
 
 // Use for one-time key presses
@@ -354,6 +355,12 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
+
+		// Local colliding
+		if (ps.playerId == localPlayerId) {
+			localIsColliding = ps.isColliding;
+			//cout << "localisColliding is " << localIsColliding << endl;
+		}
 	}
 }
 

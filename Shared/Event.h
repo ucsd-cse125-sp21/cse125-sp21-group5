@@ -12,7 +12,9 @@ public:
 	float dYaw, dPitch;
 	bool shooting;
 
-	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting);
+	bool jumping; 
+
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping);
 	Event();
 
 	template <typename Archive>
@@ -23,5 +25,6 @@ public:
 		ar& dYaw;
 		ar& dPitch;
 		ar& shooting;
+		ar& jumping;
 	}
 };

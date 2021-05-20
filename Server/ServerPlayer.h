@@ -15,10 +15,13 @@ public:
 	glm::vec3 pos;
 	float yaw, pitch;
 
+	float vVelocity;
+
 	AnimationID animation;
 
 	// Collision variables
 	Collider* hitbox; 
+	bool isColliding;
 
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos);

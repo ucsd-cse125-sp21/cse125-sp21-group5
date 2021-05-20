@@ -7,8 +7,10 @@ ServerPlayer::ServerPlayer() {
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
 	pitch = 0.0f;
+	vVelocity = -0.1;
 	hitbox = new Collider(pos, glm::vec3(1.0f));
 	animation = AnimationID::IDLE;
+	isColliding = false;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
@@ -18,6 +20,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	pitch = 0.0f;
 	hitbox = new Collider(pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	animation = AnimationID::IDLE;
+	isColliding = false;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,

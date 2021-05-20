@@ -24,14 +24,14 @@ MapState ServerGameManager::generateMap()
 	srand(tileSeed);
 
 	//Create the tile for the trees to rest on
-	Collider* tileC = new Collider(glm::vec3(0, -0.05f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 0.1f, 20.0f * NUM_MAP_TILES));
+	Collider* tileC = new Collider(glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
 	allColliders.push_back(tileC);
 
 	for (int i = 0; i < NUM_MAP_TILES; i++)
 	{
 		for (int j = 0; j < NUM_MAP_TILES; j++) {
 
-			glm::vec3 tileCenter = glm::vec3(20 * (i - NUM_MAP_TILES / 2), 0.0f, 20 * (j - NUM_MAP_TILES / 2));
+			glm::vec3 tileCenter = glm::vec3(20 * (i - NUM_MAP_TILES / 2), -5.0f, 20 * (j - NUM_MAP_TILES / 2));
 
 			//Skip the two flag tiles
 			// TODO:can't skip here
@@ -67,9 +67,26 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	bool reset = false;
 
 	// Calculate where player wants to be
-	players[playerId].update(e.dPos - glm::vec3(0.0f, 0.1f, 0.0f), e.dYaw, e.dPitch);
+	// Not jumping
+	if (!e.jumping) {
+		if (players[playerId].vVelocity >= 0) {
+			players[playerId].vVelocity -= 0.1f;
+		}
+		players[playerId].update(e.dPos + glm::vec3(0,players[playerId].vVelocity,0), e.dYaw, e.dPitch);
+
+	}
+	// Jumping 
+	else {
+		if (players[playerId].vVelocity < 0) {
+			players[playerId].vVelocity = 0.5;
+		}
+		// Why hold space when you can shoot your enemies? 
+		if (players[playerId].pos.y <= 1.0f)
+			players[playerId].update(e.dPos + glm::vec3(0, players[playerId].vVelocity, 0), e.dYaw, e.dPitch);
+	}
 	players[playerId].updateAnimations(e);
 
+	bool isColliding = false;
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
 	for (Collider* otherCollider : allColliders)
@@ -94,8 +111,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 		players[playerId].update(plane, 0.0f, 0.0f);
 
-
-		/*
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f))
 			continue;
@@ -130,7 +145,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding);
 
 		gs.addState(ps);
 	}

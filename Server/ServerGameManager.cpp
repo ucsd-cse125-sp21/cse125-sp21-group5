@@ -6,8 +6,8 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(ServerPlayer(glm::vec3(0.0f, 15.0f, 0.0f)));
-	players.push_back(ServerPlayer(glm::vec3(0.0f, -15.0f, 0.0f)));
+	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -10.0f)));
+	players.push_back(ServerPlayer(glm::vec3(-10.0f, -15.0f, -5.0f)));
 
 	// Add player hitboxes to all colliders
 	for (ServerPlayer p : players) {

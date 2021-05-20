@@ -171,6 +171,9 @@ Event GameManager::handleInput()
 		dPos = glm::normalize(dPos);
 	dPos *= camera->speed * deltaTime;
 
+	// Test: gravity 
+	dPos.y = dPos.y + gravity * deltaTime;
+
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;

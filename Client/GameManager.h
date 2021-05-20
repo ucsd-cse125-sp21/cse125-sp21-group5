@@ -32,6 +32,9 @@ private:
 	// Calculate deltaTime to ensure consistent movement
 	float deltaTime, prevTime, currTime;
 
+	// Gravity variable, the smaller the negative number the more floaty
+	float gravity = -4;
+
 	// Mouse variables
 	static float offsetX, offsetY, lastX, lastY;
 	static float fov;

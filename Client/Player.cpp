@@ -52,11 +52,9 @@ void Player::updatePlayer(PlayerState ps) {
 	if (mustLoadModels) return;
 
 	if (ps.currentAnimation == AnimationID::WALK) {
-		std::cout << "they see me walkin" << std::endl;
 		model = models[1];
 	}
 	else {
-		std::cout << "pew pew" << std::endl;
 		model = models[0];
 	}
 

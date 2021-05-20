@@ -37,6 +37,8 @@ GameManager::GameManager(GLFWwindow* window)
 
 	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
+	Renderer::get().fogDensity = 0.0001;
+
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	// Initialize time variables
@@ -359,7 +361,7 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 	// Check if player already exists
 	if (players.find(playerId) != players.end())
 	{
-		cerr << "Player with ID " << playerId << "already exists!" << endl;
+		cerr << "Player with ID " << playerId << " already exists!" << endl;
 		return;
 	}
 

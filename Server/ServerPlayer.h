@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Collider.h"
 #include "../Shared/GameState.h"
+#include "../Shared/Event.h"
 
 class ServerPlayer
 {
@@ -27,5 +28,6 @@ public:
 		   float initPitch);
 
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
+	void updateAnimations(const Event& e);
 };
 

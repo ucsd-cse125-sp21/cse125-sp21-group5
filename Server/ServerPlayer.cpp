@@ -39,17 +39,20 @@ void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float d
 	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front = glm::normalize(front);
 
-	// choose the animation to play on the client
 
-	if (glm::length(dPos) > 0.01) {
+	// Update position of camera and collider
+	pos += dPos;
+	hitbox->set_center(pos);
+}
+
+
+void ServerPlayer::updateAnimations(const Event& e) {
+	// choose the animation to play on the client
+	if (glm::length(e.dPos) > 0) {
 		// the player is moving, play the run animation
 		animation = AnimationID::WALK;
 	}
 	else {
 		animation = AnimationID::IDLE;
 	}
-
-	// Update position of camera and collider
-	pos += dPos;
-	hitbox->set_center(pos);
 }

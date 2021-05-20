@@ -63,6 +63,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 	// Calculate where player wants to be
 	players[playerId].update(e.dPos, e.dYaw, e.dPitch);
+	players[playerId].updateAnimations(e);
 
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
@@ -87,6 +88,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
 		players[playerId].update(plane, 0.0f, 0.0f);
+
 
 		/*
 		// If it happened on no plane

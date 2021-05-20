@@ -4,6 +4,16 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+// Forward declare class
+class ServerPlayer;
+
+enum class ObjectType
+{
+	ENVIRONMENT = 0,
+	PLAYER = 1,
+	GROUND = 2,
+};
+
 class Collider
 {
 public:
@@ -12,9 +22,12 @@ public:
 	glm::vec3 dim;
 	glm::vec3 min;
 	glm::vec3 max;
+
+	ObjectType type;
+	ServerPlayer* parentPlayerObject;
 	
 	// Constructor
-	Collider(const glm::vec3& center, const glm::vec3& dimensions);
+	Collider(ObjectType type, const glm::vec3& center, const glm::vec3& dimensions);
 	
 	bool contains(Collider* other);
 	glm::vec3 check_collision(Collider* other);
@@ -22,4 +35,8 @@ public:
 	glm::vec3 old_check_collision(Collider* other);
 	bool check_ray_collision(glm::vec3 origin, glm::vec3 dir, glm::vec3& hitPosition);
 	bool check_point_collision(glm::vec3 point);
+
+	void setParentPlayer(ServerPlayer* player);
 };
+
+#include "ServerPlayer.h"

@@ -8,9 +8,11 @@ ServerPlayer::ServerPlayer() {
 	yaw = 0.0f;
 	pitch = 0.0f;
 	vVelocity = -0.1;
-	hitbox = new Collider(pos, glm::vec3(1.0f));
+	hitbox = new Collider(ObjectType::PLAYER, pos, glm::vec3(1.0f));
+	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
 	isColliding = false;
+	health = 100.0f;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
@@ -18,9 +20,11 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
 	pitch = 0.0f;
-	hitbox = new Collider(pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
+	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
+	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
 	isColliding = false;
+	health -= 100.0f;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
@@ -28,8 +32,10 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 			   float initYaw,
 			   float initPitch)
 {
-	hitbox = new Collider(initPos, hitboxSize);
+	hitbox = new Collider(ObjectType::PLAYER, initPos, hitboxSize);
+	hitbox->setParentPlayer(this);
 	update(initPos, initYaw, initPitch);
+	health = 100.0f;
 }
 
 void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
@@ -60,4 +66,9 @@ void ServerPlayer::updateAnimations(const Event& e) {
 	else {
 		animation = AnimationID::IDLE;
 	}
+}
+
+void ServerPlayer::decreaseHealth(float decAmount)
+{
+	health -= decAmount;
 }

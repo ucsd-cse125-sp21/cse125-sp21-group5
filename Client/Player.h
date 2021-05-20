@@ -14,7 +14,7 @@ public:
 
 	Model* model;
 	std::vector<Model*> models;
-
+	float health;
 	int playerId;
 
 private:
@@ -28,8 +28,9 @@ public:
 	void update(float deltaTime);
 
 	void loadModels();
-
 	// Update Camera attributes
 	void updatePlayer(PlayerState ps);
+
+	void displayHUD();
 };
 

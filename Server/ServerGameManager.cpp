@@ -24,7 +24,7 @@ MapState ServerGameManager::generateMap()
 	srand(tileSeed);
 
 	//Create the tile for the trees to rest on
-	Collider* tileC = new Collider(glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
+	Collider* tileC = new Collider(ObjectType::GROUND, glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
 	allColliders.push_back(tileC);
 
 	for (int i = 0; i < NUM_MAP_TILES; i++)
@@ -47,7 +47,7 @@ MapState ServerGameManager::generateMap()
 				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 
 				//generate the position inside the tile
-				Collider* treeC = new Collider(glm::vec3(x, 5.0f, z) + glm::vec3(tileCenter.x, 0.0f, tileCenter.z), glm::vec3(1.0f, 10.0f, 1.0f));
+				Collider* treeC = new Collider(ObjectType::ENVIRONMENT, glm::vec3(x, 5.0f, z) + glm::vec3(tileCenter.x, 0.0f, tileCenter.z), glm::vec3(1.0f, 10.0f, 1.0f));
 				allColliders.push_back(treeC);
 			}
 		}
@@ -99,10 +99,18 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (e.shooting)
 		{
 			//std::cout << "shooting" << std::endl;
+
+
+			// TODO: Implement nearest hit search
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
 				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
+				
+				// Handle Hit Damage
+				if (otherCollider->type == ObjectType::PLAYER) {
+					otherCollider->parentPlayerObject->decreaseHealth(10.0f);
+				}
 			}
 		}
 
@@ -137,7 +145,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Across multiple collisions, the hope is that the newDeltas will cancel out
 		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
 		players[playerId].update(newDelta, 0.0f, 0.0f);
-		*/
 	}
 }
 
@@ -145,7 +152,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding, players[i].health);
 
 		gs.addState(ps);
 	}

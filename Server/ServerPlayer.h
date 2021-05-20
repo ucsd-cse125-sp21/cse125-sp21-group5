@@ -14,7 +14,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 pos;
 	float yaw, pitch;
-
+	float health;
 	float vVelocity;
 
 	AnimationID animation;
@@ -31,6 +31,7 @@ public:
 		   float initPitch);
 
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
+	void decreaseHealth(float decAmount);
 	void updateAnimations(const Event& e);
 };
 

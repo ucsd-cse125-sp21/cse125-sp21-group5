@@ -59,6 +59,10 @@ void Player::updatePlayer(PlayerState ps) {
 	}
 
 	// TODO: transform->setRotate(ps.front);
+
+
+	// Health update
+	health = ps.health;
 }
 
 
@@ -69,4 +73,10 @@ void Player::loadModels() {
 	models.push_back(new Model("res/models/finalWalk.dae"));
 
 	model = models[0];
+}
+
+void Player::displayHUD()
+{
+	// TODO: Fill in IMGUI stuff.
+
 }

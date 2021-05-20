@@ -1,13 +1,20 @@
 #include "Collider.h"
 #include <glm/gtx/string_cast.hpp>
 
-Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
+Collider::Collider(ObjectType type, const glm::vec3& center, const glm::vec3& dimensions)
 {
 	// Define center
 	cen = center;
 	dim = dimensions;
 	min = cen - dim / 2.0f;
 	max = cen + dim / 2.0f;
+
+	this->type = type;
+}
+
+void Collider::setParentPlayer(ServerPlayer* player)
+{
+	this->parentPlayerObject = player;
 }
 
 // this functions checks if the box contains another box

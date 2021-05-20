@@ -17,11 +17,12 @@ class PlayerState
 public:
 	int playerId;
 	glm::vec3 pos, front;
+	float health;
 
 	bool isColliding;
 	AnimationID currentAnimation;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding);
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding, float health);
 	PlayerState();
 
 	template <typename Archive>
@@ -35,6 +36,7 @@ public:
 		ar& front.z;
 		ar& currentAnimation;
 		ar& isColliding;
+		ar& health;
 	}
 };
 

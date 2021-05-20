@@ -319,7 +319,7 @@ void GameManager::updateMap(MapState& ms)
 		for (int j = 0; j < NUM_MAP_TILES; j++)
 		{
 			//Create the tile for the trees to rest on
-			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i-1), 0, 20*(j-1)));
+			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i - NUM_MAP_TILES / 2), 0, 20*(j - NUM_MAP_TILES / 2)));
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
@@ -382,4 +382,5 @@ void GameManager::setLocalPlayerID(int playerId)
 {
 	this->localPlayerId = playerId;
 	Renderer::get().localPlayerId = playerId;
+	Renderer::get().setCamera(players[playerId]->cam);
 }

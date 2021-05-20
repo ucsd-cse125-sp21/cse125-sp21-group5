@@ -1,5 +1,7 @@
 #include "ServerPlayer.h"
 
+const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
+
 ServerPlayer::ServerPlayer() {
 	pos = glm::vec3(0.0f);
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -14,7 +16,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
 	pitch = 0.0f;
-	hitbox = new Collider(pos + glm::vec3(0, -0.38f, 0), glm::vec3(1, 2.2f, 1));
+	hitbox = new Collider(pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	animation = AnimationID::IDLE;
 }
 
@@ -42,7 +44,7 @@ void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float d
 
 	// Update position of camera and collider
 	pos += dPos;
-	hitbox->set_center(pos);
+	hitbox->set_center(pos + PLAYER_COLLIDER_OFFSET);
 }
 
 

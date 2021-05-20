@@ -23,13 +23,15 @@ MapState ServerGameManager::generateMap()
 {
 	srand(tileSeed);
 
+	//Create the tile for the trees to rest on
+	Collider* tileC = new Collider(glm::vec3(0, -0.05f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 0.1f, 20.0f * NUM_MAP_TILES));
+	allColliders.push_back(tileC);
+
 	for (int i = 0; i < NUM_MAP_TILES; i++)
 	{
 		for (int j = 0; j < NUM_MAP_TILES; j++) {
 
-			//Create the tile for the trees to rest on
-			Collider* tileC = new Collider(glm::vec3(20 * (i - 1), 0.0f, 20 * (j - 1)), glm::vec3(20.0f, 0.1f, 20.0f));
-			allColliders.push_back(tileC);
+			glm::vec3 tileCenter = glm::vec3(20 * (i - NUM_MAP_TILES / 2), 0.0f, 20 * (j - NUM_MAP_TILES / 2));
 
 			//Skip the two flag tiles
 			// TODO:can't skip here
@@ -45,7 +47,7 @@ MapState ServerGameManager::generateMap()
 				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 
 				//generate the position inside the tile
-				Collider* treeC = new Collider(glm::vec3(x, 5.0f, z) + glm::vec3(tileC->cen.x, 0.0f, tileC->cen.z), glm::vec3(1.0f, 10.0f, 1.0f));
+				Collider* treeC = new Collider(glm::vec3(x, 5.0f, z) + glm::vec3(tileCenter.x, 0.0f, tileCenter.z), glm::vec3(1.0f, 10.0f, 1.0f));
 				allColliders.push_back(treeC);
 			}
 		}

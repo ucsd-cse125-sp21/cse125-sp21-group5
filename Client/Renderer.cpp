@@ -3,6 +3,8 @@
 
 #include "Shader.h"
 
+#include <glm/gtx/string_cast.hpp>
+
 
 void Renderer::setCamera(Camera* camera)
 {

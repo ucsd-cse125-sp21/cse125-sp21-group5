@@ -32,7 +32,7 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 	// don't draw null model anything if model is null
 	if (mustLoadModels) return;
 	if (playerId == Renderer::get().localPlayerId) return;
-	model->draw(parent_transform, view);
+	model->draw(glm::rotate(parent_transform, -glm::atan(cam->front.z, cam->front.x) - glm::pi<float>() / 2, glm::vec3(0, 1, 0)), view);
 }
 
 void Player::update(float deltaTime)

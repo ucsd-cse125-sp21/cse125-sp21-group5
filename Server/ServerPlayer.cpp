@@ -75,7 +75,5 @@ void ServerPlayer::updateAnimations(const Event& e) {
 
 void ServerPlayer::decreaseHealth(float decAmount)
 {
-	std::cout << "Player about to take damage.\n\tHealth before damage: " << health;
 	health -= decAmount;
-	std::cout << "\n\tHealth after damage: " << health << std::endl;
 }

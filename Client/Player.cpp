@@ -64,11 +64,6 @@ void Player::updatePlayer(PlayerState ps) {
 	}
 
 	// TODO: transform->setRotate(ps.front);
-
-
-	if (ps.health < health) {
-		cout << "Player " << ps.playerId << " took damage " << (health - ps.health) << endl;
-	}
 	// Health update
 	health = ps.health;
 }

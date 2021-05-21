@@ -13,6 +13,7 @@ ServerGameManager::ServerGameManager() {
 
 	// Add player hitboxes to all colliders
 	for (ServerPlayer p : players) {
+		cout << p.health << endl;
 		allColliders.push_back(p.hitbox);
 	}
 
@@ -69,6 +70,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
+		//cout << "Not Jumping" << endl;
 		if (players[playerId].vVelocity >= 0) {
 			players[playerId].vVelocity -= 0.1f;
 		}
@@ -78,12 +80,13 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Jumping 
 	else {
 		if (players[playerId].vVelocity < 0) {
-			players[playerId].vVelocity = 0.5;
+			players[playerId].vVelocity = 0.5f;
 		}
 		// Why hold space when you can shoot your enemies? 
 		if (players[playerId].pos.y <= 1.0f)
 			players[playerId].update(e.dPos + glm::vec3(0, players[playerId].vVelocity, 0), e.dYaw, e.dPitch);
 	}
+
 	players[playerId].updateAnimations(e);
 
 	bool isColliding = false;
@@ -109,6 +112,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				
 				// Handle Hit Damage
 				if (otherCollider->type == ObjectType::PLAYER) {
+					cout << "Bullet hit player with health " << otherCollider->parentPlayerObject->health << endl;
 					otherCollider->parentPlayerObject->decreaseHealth(10.0f);
 				}
 			}
@@ -123,12 +127,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (plane == glm::vec3(0.0f))
 			continue;
 
-		// Reset player back to original position
-		if (!reset)
-		{
-			players[playerId].update(-e.dPos, 0.0f, 0.0f);
-			reset = true;
-		}
+		//// Reset player back to original position
+		//if (!reset)
+		//{
+		//	players[playerId].update(-e.dPos, 0.0f, 0.0f);
+		//	reset = true;
+		//}
 			
 
 		// Zero out the dir the plane is in

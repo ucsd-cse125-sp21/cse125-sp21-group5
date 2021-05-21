@@ -19,6 +19,8 @@ Player::Player(Transform* transform, int playerId)
 	this->transform = transform;
 	cam = new Camera();
 	mustLoadModels = true;
+	this->model = NULL;
+	this->health = -1.0f;
 }
 
 Player::~Player() {
@@ -29,6 +31,7 @@ Player::~Player() {
 
 void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 {
+	//cout << "\tCurrently drawing " << name << endl;
 	// don't draw null model anything if model is null
 	if (mustLoadModels) return;
 	if (playerId == Renderer::get().localPlayerId) return;
@@ -37,6 +40,7 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Player::update(float deltaTime)
 {
+	//cout << "\tCurrently updating " << name << endl;
 	if (mustLoadModels) {
 		loadModels();
 		mustLoadModels = false;
@@ -61,6 +65,9 @@ void Player::updatePlayer(PlayerState ps) {
 	// TODO: transform->setRotate(ps.front);
 
 
+	if (ps.health < health) {
+		cout << "Player " << ps.playerId << " took damage " << (health - ps.health) << endl;
+	}
 	// Health update
 	health = ps.health;
 }
@@ -78,5 +85,20 @@ void Player::loadModels() {
 void Player::displayHUD()
 {
 	// TODO: Fill in IMGUI stuff.
+	// show an example window
+	/*ImGuiWindowFlags windowFlags = 0;
 
+	windowFlags |= ImGuiWindowFlags_NoTitleBar;
+	windowFlags |= ImGuiWindowFlags_NoScrollbar;
+	windowFlags |= ImGuiWindowFlags_NoMove;
+	windowFlags |= ImGuiWindowFlags_NoResize;
+	windowFlags |= ImGuiWindowFlags_NoCollapse;
+	windowFlags |= ImGuiWindowFlags_NoNav;
+	windowFlags |= ImGuiWindowFlags_NoBackground;
+	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	bool showUI = true;
+	ImGui::Begin("Health UI", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
+	ImGui::SetWindowSize(ImVec2(300, 100));*/
 }

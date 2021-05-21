@@ -7,7 +7,7 @@ ServerPlayer::ServerPlayer() {
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
 	pitch = 0.0f;
-	vVelocity = -0.1;
+	vVelocity = -0.1f;
 	hitbox = new Collider(ObjectType::PLAYER, pos, glm::vec3(1.0f));
 	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
@@ -24,7 +24,8 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
 	isColliding = false;
-	health -= 100.0f;
+	health = 100.0f;
+	vVelocity = -0.1f;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
@@ -36,6 +37,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	hitbox->setParentPlayer(this);
 	update(initPos, initYaw, initPitch);
 	health = 100.0f;
+	isColliding = false;
+	vVelocity = -0.1f;
+	animation = AnimationID::IDLE;
 }
 
 void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
@@ -70,5 +74,7 @@ void ServerPlayer::updateAnimations(const Event& e) {
 
 void ServerPlayer::decreaseHealth(float decAmount)
 {
+	std::cout << "Player about to take damage.\n\tHealth before damage: " << health;
 	health -= decAmount;
+	std::cout << "\n\tHealth after damage: " << health << std::endl;
 }

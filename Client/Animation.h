@@ -39,7 +39,7 @@ public:
 		childrenCount = ainode->mNumChildren;
 		nodeTransformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(ainode->mTransformation);
 
-		std::cout << "(animation.h 41) Node name: " << nodeName <<  " ParentNode: "<< parentNodeName <<std::endl;
+		//std::cout << "(animation.h 41) Node name: " << nodeName <<  " ParentNode: "<< parentNodeName <<std::endl;
 	}
 
 	~AssimpNodeData() {
@@ -89,7 +89,7 @@ public:
 	glm::mat4 m_LocalTransform; //the total transformation at a certain time in the animation (T * R * S)
 
 	void loadKeyFrames() {
-		std::cout << "Loading the key frame of the channel (animation.h)" << std::endl;
+		//std::cout << "Loading the key frame of the channel (animation.h)" << std::endl;
 		float timeStamp; //the time when the keyframe happen
 
 		for (int i = 0; i < m_NumPositions; i++) {

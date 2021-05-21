@@ -111,6 +111,8 @@ void Transform::create_transformation_matrix()
 
 void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 {
+	//cout << "\tInside " << name << endl;
+	//cout << "\tCurrently Drawing children" << endl;
 	for (Node* child : this->children)
 	{
 		child->draw(parent_transform * this->transform, view);
@@ -119,6 +121,8 @@ void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Transform::update(float deltaTime) 
 {
+	//cout << "\tInside " << name << endl;
+	//cout << "\tCurrently Updating children" << endl;
 	for (Node* child : this->children) 
 	{
 		child->update(deltaTime);

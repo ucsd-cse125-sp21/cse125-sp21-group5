@@ -30,12 +30,14 @@ Model::~Model()
 
 void Model::update(float deltaTime)
 {
+	//cout << "\tCurrently updating " << name << endl;
 	//get the new transform of the bones
 	if (animationPlayer != nullptr) animationPlayer->update(deltaTime);
 }
 
 void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 {
+	//cout << "\tCurrently drawing " << name << endl;
 	for (Mesh* mesh : meshes) 
 	{
 		Material* mat = materials[mesh->materialIdx];
@@ -118,8 +120,8 @@ void Model::loadModel(std::string modelPath)
 		meshes.push_back(mesh);
 
 		int numBone = aiMesh->mNumBones;
-		printf("nmesh %d\n", meshidx);
-		printf("numBone %d\n", numBone);
+		//printf("nmesh %d\n", meshidx);
+		//printf("numBone %d\n", numBone);
 
 		for (int boneIdx = 0; boneIdx < numBone; boneIdx++) {
 			//Each bone has a list of pair (vertexId, weight value). The vertex id
@@ -170,7 +172,7 @@ void Model::loadModel(std::string modelPath)
 
 	//printf("UH %d\n", scene->HasAnimations());
 	//printf("total unique bones %d\n", m_BoneInfoMap.size());
-	printf("total unique bones %d\n", m_BoneCounter);
+	//printf("total unique bones %d\n", m_BoneCounter);
 	//printf("number of Animation %d\n", scene->mNumAnimations);
 	aiNode* rootNode = scene->mRootNode;
 

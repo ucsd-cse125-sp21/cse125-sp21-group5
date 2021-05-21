@@ -7,7 +7,9 @@
 class ClientIDEvent {
 public:
 	int clientID;
-	ClientIDEvent() {}
+	ClientIDEvent() {
+		clientID = -1;
+	}
 	ClientIDEvent(int id) {
 		clientID = id;
 	}

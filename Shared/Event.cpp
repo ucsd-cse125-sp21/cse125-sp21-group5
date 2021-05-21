@@ -6,6 +6,7 @@ Event::Event() {
 	this->dYaw = 0;
 	this->dPitch = 0;
 	this->shooting = false;
+	this->jumping = false;
 }
 
 // Movement update

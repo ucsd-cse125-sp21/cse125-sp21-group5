@@ -6,6 +6,11 @@
 #include "Transform.h"
 #include "../Shared/GameState.h"
 
+// Import IMGui for Player HUD UI.
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 class Player : public Node
 {
 public:
@@ -33,4 +38,3 @@ public:
 
 	void displayHUD();
 };
-

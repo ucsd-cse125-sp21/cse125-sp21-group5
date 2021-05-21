@@ -24,12 +24,15 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Initialize transforms
 	worldT = new Transform();
-
+	worldT->setName("World Transform");
 	// Preload models
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
+	playerModel->setName("Player Model");
 	tileModel = new Model("res/models/tile.dae");
+	tileModel->setName("Tile Model");
 	treeModel = new Model("res/models/willowTrunk.dae");
+	treeModel->setName("Tree Model");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -285,7 +288,8 @@ void GameManager::render()
 	if (health < 0) direction = 1;
 
 	ImGui::Text("Super basic health bar");
-	ImGui::SliderFloat("Health", &health, 0, 1);
+	//ImGui::SliderFloat("Health", &health, 0, 1);
+	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::End();
 
 	// super basic crosshair, maybe move this somewhere else
@@ -321,6 +325,7 @@ void GameManager::updateMap(MapState& ms)
 		{
 			//Create the tile for the trees to rest on
 			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i - NUM_MAP_TILES / 2), 0, 20*(j - NUM_MAP_TILES / 2)));
+			tileT->setName("Tile ["  + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
@@ -330,7 +335,7 @@ void GameManager::updateMap(MapState& ms)
 			}
 
 			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
-			cerr << numTrees << endl;
+			//cerr << numTrees << endl;
 
 			for (int k = 0; k < numTrees; k++) {
 				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
@@ -340,6 +345,7 @@ void GameManager::updateMap(MapState& ms)
 				//genrate the position inside the tile
 				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));
 				treeT->add_child(treeModel);
+				treeT->setName("Tree [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 				tileT->add_child(treeT);
 			}
 		}
@@ -376,8 +382,10 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 
 	// Create new player with model
 	Transform* playerT = new Transform();
+	playerT->setName("Player " + std::to_string(playerId) + " Transform");
 	Player* player = new Player(playerT, playerId);
-
+	playerT->setName("Player " + std::to_string(playerId));
+	
 	playerT->add_child(player);
 	worldT->add_child(playerT);
 

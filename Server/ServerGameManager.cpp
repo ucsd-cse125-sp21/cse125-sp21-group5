@@ -69,6 +69,16 @@ MapState ServerGameManager::generateMap()
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
+	// TODO: Varying death timers 
+	if (players[playerId].isDead > 0) {
+		players[playerId].isDead--;
+		
+		if (players[playerId].isDead == 0) {
+			players[playerId].health = 100.0f;
+			cout << "health being reset" << endl;
+		}
+	}
+
 	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
@@ -132,7 +142,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			// TODO: maybe use pointers for players; for loops are pass by value
 			for (ServerPlayer& p : players) {
 				if (p.hitbox == closestCollider) {
-					p.decreaseHealth(10.0f);
+					p.decreaseHealth(100.0f);
+					break;
 				}
 			}
 
@@ -183,7 +194,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isGrounded, players[i].health);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isGrounded, players[i].health, players[i].isDead);
 
 		gs.addState(ps);
 	}

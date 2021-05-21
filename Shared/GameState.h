@@ -20,9 +20,10 @@ public:
 	float health;
 
 	bool isGrounded;
+	int isAlive;
 	AnimationID currentAnimation;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health);
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health, int isAlive);
 	PlayerState();
 
 	template <typename Archive>
@@ -37,6 +38,7 @@ public:
 		ar& currentAnimation;
 		ar& isGrounded;
 		ar& health;
+		ar& isAlive;
 	}
 };
 

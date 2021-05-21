@@ -23,7 +23,7 @@ public:
 	int playerId;
 
 	bool isGrounded;
-
+	int isDead;
 private:
 	bool mustLoadModels;
 

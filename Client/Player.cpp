@@ -21,6 +21,7 @@ Player::Player(Transform* transform, int playerId)
 	mustLoadModels = true;
 	this->model = NULL;
 	this->health = -1.0f;
+	this->isDead = 1;
 }
 
 Player::~Player() {
@@ -53,6 +54,7 @@ void Player::updatePlayer(PlayerState ps) {
 	cam->update(ps.pos + glm::vec3(0, 0.25, 0), ps.front);
 	transform->setTranslate(ps.pos);
 	isGrounded = ps.isGrounded;
+	isDead = ps.isAlive;
 
 	if (mustLoadModels) return;
 

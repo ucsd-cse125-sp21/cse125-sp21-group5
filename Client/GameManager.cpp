@@ -194,6 +194,16 @@ Event GameManager::handleInput()
 		shooting = true;
 	}
 
+	cout << "curent health is " << players[localPlayerId]->health << endl;
+	cout << "isAlive is " << players[localPlayerId]->isDead << endl;
+
+	// If the player is dead, yeet
+	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
+		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
+	}
+
+	cout << "player position is at a" << glm::to_string(players[localPlayerId]->cam->pos) << endl;
+
 	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
 
 	return Event(dPos, yaw, pitch, shooting, jumping);
@@ -307,6 +317,8 @@ void GameManager::render()
 	drawList->AddLine(ImVec2(p.x, p.y+20), ImVec2(p.x+40, p.y+20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
 	ImGui::End();
 
+	Renderer::get().setCamera(players[localPlayerId]->cam);
+
 	// Render the models
 	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
@@ -397,5 +409,4 @@ void GameManager::setLocalPlayerID(int playerId)
 {
 	this->localPlayerId = playerId;
 	Renderer::get().localPlayerId = playerId;
-	Renderer::get().setCamera(players[playerId]->cam);
 }

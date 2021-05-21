@@ -6,15 +6,17 @@ PlayerState::PlayerState() {
 	this->front = glm::vec3(0.0f);
 	this->health = -1.0f;
 	this->currentAnimation = AnimationID::IDLE;
+	this->isAlive = 1;
 }
 
-PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health) {
+PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health, int isAlive) {
 	this->playerId = playerId;
 	this->pos = pos;
 	this->front = front;
 	this->currentAnimation = currentAnimation;
 	this->isGrounded = isGrounded;
 	this->health = health;
+	this->isAlive = isAlive;
 }
 
 // Could be reference? 

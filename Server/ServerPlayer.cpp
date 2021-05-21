@@ -1,5 +1,6 @@
 #include "ServerPlayer.h"
 #include <glm/gtx/string_cast.hpp>
+#include "../Shared/Global_variables.h"
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 
@@ -15,6 +16,7 @@ ServerPlayer::ServerPlayer() {
 	isGrounded = false;
 	jumping = 0;
 	health = 100.0f;
+	isDead = 0;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
@@ -24,10 +26,12 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	pitch = 0.0f;
 	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	hitbox->setParentPlayer(this);
+	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
 	jumping = 0;
 	isGrounded = false;
 	health = 100.0f;
+	isDead = 0;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
@@ -41,6 +45,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	health = 100.0f;
 	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
+	isDead = 0;
 }
 
 void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
@@ -73,7 +78,12 @@ void ServerPlayer::updateAnimations(const Event& e) {
 	}
 }
 
+bool ServerPlayer::isDeadCheck() {
+	return (this->health <= 0.5f);
+}
+
 void ServerPlayer::decreaseHealth(float decAmount)
 {
 	health -= decAmount;
+	if (isDeadCheck()) this->isDead = DEATH_TICK_TIMER;
 }

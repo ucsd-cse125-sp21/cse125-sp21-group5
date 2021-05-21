@@ -23,6 +23,7 @@ public:
 	Collider* hitbox; 
 	bool isGrounded;
 	int jumping;
+	int isDead;
 
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos);
@@ -33,6 +34,8 @@ public:
 
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
 	void decreaseHealth(float decAmount);
+	bool isDeadCheck();
+	void respawn();
 	void updateAnimations(const Event& e);
 };
 

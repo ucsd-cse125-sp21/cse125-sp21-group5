@@ -56,25 +56,6 @@ void Mesh::setupOpenGL() {
 	// Bind to the VAO.
 	glBindVertexArray(VAO);
 
-	//// Bind to the first VBO - We will use it to store the vertices
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_positions);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * oldVertices.size(), oldVertices.data(), GL_STATIC_DRAW);
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-
-	//// Bind to the second VBO - We will use it to store the normals
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * normals.size(), normals.data(), GL_STATIC_DRAW);
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-
-	//// Bind the third VBO - We will use it to store the texture uv coordinates
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_texCoords);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * texCoords.size(), texCoords.data(), GL_STATIC_DRAW);
-	//glEnableVertexAttribArray(2);
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 

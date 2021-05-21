@@ -11,9 +11,9 @@ const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 boneMatrices[MAX_BONES];
 
 // Uniform variables
-uniform mat4 viewProj;
-uniform vec3 viewPos;
-uniform mat4 model;
+uniform mat4 aViewProj;
+uniform vec3 aViewPos;
+uniform mat4 aModel;
 
 out vec3 fragNormal;
 out vec2 texCoord;
@@ -48,15 +48,15 @@ void main()
 		}
     }
 
-    fragNormal = normalize(vec3(model * vec4(totalNormal, 0)));
-    fragPos = vec3(model * vec4(totalPosition, 1));
 	texCoord = aTexCoord;
-    gl_Position = viewProj * model * vec4(totalPosition, 1);
+    fragNormal = normalize(vec3(aModel * vec4(totalNormal, 0)));
+    fragPos = vec3(aModel * vec4(totalPosition, 1));
+    gl_Position = aViewProj * aModel * vec4(totalPosition, 1);
 
 	// calculate fog
 	float fogDensity = 0.05;
 	float fogGradient = 3;
-	visibility = calculateFog(length(fragPos - viewPos), fogDensity, fogGradient);
+	visibility = calculateFog(length(fragPos - aViewPos), fogDensity, fogGradient);
 }
 
 float calculateFog(float d, float density, float gradient) 

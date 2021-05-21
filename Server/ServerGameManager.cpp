@@ -112,8 +112,13 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				
 				// Handle Hit Damage
 				if (otherCollider->type == ObjectType::PLAYER) {
-					cout << "Bullet hit player with health " << otherCollider->parentPlayerObject->health << endl;
-					otherCollider->parentPlayerObject->decreaseHealth(10.0f);
+					// TODO: maybe use pointers for players; for loops are pass by value
+					for (ServerPlayer& p : players) {
+						if (p.hitbox == otherCollider) {
+							p.decreaseHealth(10.0f);
+						}
+					}
+					
 				}
 			}
 		}
@@ -126,29 +131,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f))
 			continue;
-
-		//// Reset player back to original position
-		//if (!reset)
-		//{
-		//	players[playerId].update(-e.dPos, 0.0f, 0.0f);
-		//	reset = true;
-		//}
-			
-
-		// Zero out the dir the plane is in
-		glm::vec3 newDir = e.dPos * plane;
-
-		// Edge case where the product is 0 (perfectly perpendicular collision)
-		if (newDir != glm::vec3(0.0f))
-			newDir = glm::normalize(newDir);
-
-		// calculate projection to determine how much to move in other plane
-		glm::vec3 newDelta = glm::length(e.dPos) * newDir;
-
-		// Move player backwards, then into new direction
-		// Across multiple collisions, the hope is that the newDeltas will cancel out
-		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
-		players[playerId].update(newDelta, 0.0f, 0.0f);
 	}
 }
 
@@ -157,7 +139,6 @@ GameState ServerGameManager::getGameState(int playerId) {
 
 	for (int i = 0; i < players.size(); i++) {
 		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding, players[i].health);
-
 		gs.addState(ps);
 	}
 

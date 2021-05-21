@@ -45,7 +45,7 @@ class GameState
 public:
 	std::vector<PlayerState> states;
 
-	void addState(PlayerState& ps);
+	void addState(PlayerState ps);
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {

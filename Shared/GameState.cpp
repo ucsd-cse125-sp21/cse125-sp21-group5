@@ -18,7 +18,7 @@ PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& fr
 	this->health = health;
 }
 
-void GameState::addState(PlayerState& ps)
+void GameState::addState(PlayerState ps)
 {
 	states.push_back(ps);
 }

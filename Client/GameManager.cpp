@@ -356,6 +356,8 @@ void GameManager::updateGameState(GameState& gs)
 {
 	for (const PlayerState& ps : gs.states)
 	{
+
+		// TODO: Decide what to do if player doesn't exist but update is received.
 		// Ignore update if player doesn't exist
 		if (players.find(ps.playerId) == players.end())
 			continue;

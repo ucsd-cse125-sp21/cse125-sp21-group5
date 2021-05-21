@@ -21,16 +21,12 @@ void Quadtree::insert(Collider* p) {
     }
     // if capacity of the quadtree is not full
     if (this->objects.size() < this->capacity) {
-        //std::cout << "Regular insertion" << std::endl;
         this->objects.push_back(p);
-        //cout << "objects size at " << this->objects.size() << endl;
     }
     // if it is full
     else {
-       // std::cout << "SHOULD NOT COME HERE " << std::endl;
         // check if it has been divided before 
         if (!this->hasDivided) {
-            //cout << "subdividing" << endl;
             subdivide();
             this->hasDivided = true;
         }
@@ -52,7 +48,6 @@ void Quadtree::subdivide() {
     glm::vec3 c = this->boundary.cen;
     glm::vec3 d = this->boundary.dim / 4.0f;
 
-    //cout << "new dim is " << glm::to_string(d) << endl;
     /*
    +--------+
   /   4  2 /|
@@ -103,8 +98,6 @@ vector<Collider*> Quadtree::query(Collider* range, vector<Collider*>& found) {
     else {
         // look for all the points in this quadtree 
         for (auto& point : this->objects) {
-            //std::cout << "lwh of range being queried is " << range->length << " " <<
-                //range->width << " " << range->height << std::endl;
             // checks if the point is within the boundary of the range
             // we're looking for 
             

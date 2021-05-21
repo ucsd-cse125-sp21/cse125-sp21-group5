@@ -54,20 +54,12 @@ MapState ServerGameManager::generateMap()
 		}
 	}
 
-	//Collider* boxFloor = new Collider(glm::vec3(-10.0f, 0, -10.0f), glm::vec3(1.0f));
-	//Collider* boxFloor1 = new Collider(glm::vec3(-11.0f, 0, -10.0f), glm::vec3(1.0f));
-	//Collider* boxFloor2 = new Collider(glm::vec3(-12.0f, 0, -10.0f), glm::vec3(1.0f));
-	//allColliders.push_back(boxFloor);
-	//allColliders.push_back(boxFloor1);
-	//allColliders.push_back(boxFloor2);
-
+	// Set up quadtree 
 	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
 	qt = new Quadtree(boundary, 4);
-	cout << "allColliders size is " << allColliders.size() << endl;
 	for (Collider* c : allColliders)
 	{
 		qt->insert(c);
-		//cout << to_string(c->cen) << endl;
 	}
 
 	// Create map state
@@ -108,6 +100,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
 
+	// Only run the fat loop when shootin
 	if (e.shooting)
 	{
 		// Check shooting against all other colliders before checking movement 
@@ -122,11 +115,9 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	}
 
 	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
-	//cout << "querying range centered at " << glm::to_string(queryRange->cen) << " with dimensions" << glm::to_string(queryRange->dim) << endl;
 	vector<Collider*> nearbyColliders;
 	nearbyColliders = qt->query(queryRange, nearbyColliders);
-	//nearbyColliders.push_back(tileC);
-	cout << "detected " << nearbyColliders.size() << " colliders" << endl;
+
 	// Movement for colliders 
 	for (Collider* otherCollider : nearbyColliders)
 	{
@@ -134,15 +125,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (playerCollider == otherCollider)
 			continue;
 
-		//cout << "otherCollider's center is " << glm::to_string(otherCollider->cen) << endl;
-
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
 		// For jumping
 		if (plane.y > 0.0f) {
 			players[playerId].isGrounded = true;
-			//cout << "players[playerId].isGrounded is " << players[playerId].isGrounded << endl;
 		}
 
 		players[playerId].update(plane, 0.0f, 0.0f);
@@ -163,7 +151,6 @@ void ServerGameManager::buildQuadtree() {
 	for (Collider* c : allColliders)
 	{
 		qt->insert(c);
-		//cout << to_string(c->cen) << endl;
 	}
 }
 

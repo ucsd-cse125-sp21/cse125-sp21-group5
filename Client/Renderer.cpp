@@ -4,6 +4,7 @@
 #include "Shader.h"
 
 #include <glm/gtx/string_cast.hpp>
+#include "Material.h"
 
 
 void Renderer::setCamera(Camera* camera)
@@ -27,45 +28,34 @@ void Renderer::addDirectionalLight(DirectionalLight light)
 	mDirectionalLight = light;
 }
 
-void Renderer::bindToShader(GLuint shader)
+void Renderer::bindToShader(Material* mat)
 {
-	// tell the shader where we're viewing from
-	SetShader3f(shader, "aViewPos", mCamera->pos);
-	SetShader3f(shader, "aViewDir", mCamera->front);
+	glUniform3fv(mat->viewPosLoc, 1, glm::value_ptr(mCamera->pos));
+	glUniform3fv(mat->viewDirLoc, 1, glm::value_ptr(mCamera->front));
 
-	SetShader3f(shader, "sunLight.direction", mDirectionalLight.mDirection);
-	SetShader3f(shader, "sunLight.color", mDirectionalLight.mColor);
+	glUniform3fv(mat->sunLightDir, 1, glm::value_ptr(mDirectionalLight.mDirection));
+	glUniform3fv(mat->sunLightColor, 1, glm::value_ptr(mDirectionalLight.mColor));
 
-	SetShader3f(shader, "aFogColor", fogColor);
-	
+	glUniform3fv(mat->fogColorLoc, 1, glm::value_ptr(fogColor));
+
+
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 
-		// default point light which shouldn't contribute to lighting
 		PointLight p = PointLight(glm::vec3(0), glm::vec3(0));
 
 		if (i < mPointLights.size()) {
 			p = mPointLights[i];
 		}
 
-		// write point light parameters to shader
-		char buff[256];
-		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "position");
-		SetShader3f(shader, buff, p.mPosition);
-
-		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "color");
-		SetShader3f(shader, buff, p.mColor);
-
-		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "constant");
-		SetShaderFloat(shader, buff, p.mConstant);
-
-		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "linear");
-		SetShaderFloat(shader, buff, p.mLinear);
-
-		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "quadratic");
-		SetShaderFloat(shader, buff, p.mQuadratic);
+		glUniform3fv(mat->pointLightPosLoc[i], 1, glm::value_ptr(p.mPosition));
+		glUniform3fv(mat->pointLightColorLoc[i], 1, glm::value_ptr(p.mColor));
+		glUniform1f(mat->pointLightAttenConstLoc[i], p.mConstant);
+		glUniform1f(mat->pointLightAttenLinearLoc[i], p.mLinear);
+		glUniform1f(mat->pointLightAttenQuadLoc[i], p.mQuadratic);
 	}
 
 	for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
+
 		// default point light which shouldn't contribute to lighting
 		SpotLight s = SpotLight(glm::vec3(0), glm::vec3(0, 0, 1), glm::vec3(0), 45);
 
@@ -73,29 +63,12 @@ void Renderer::bindToShader(GLuint shader)
 			s = mSpotLights[i];
 		}
 
-		// write point light parameters to shader
-		char buff[256];
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "position");
-		SetShader3f(shader, buff, s.mPosition);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "color");
-		SetShader3f(shader, buff, s.mColor);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "direction");
-		SetShader3f(shader, buff, s.mDirection);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "angle");
-		SetShaderFloat(shader, buff, s.mAngle);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "constant");
-		SetShaderFloat(shader, buff, s.mConstant);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "linear");
-		SetShaderFloat(shader, buff, s.mLinear);
-
-		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "quadratic");
-		SetShaderFloat(shader, buff, s.mQuadratic);
-
+		glUniform3fv(mat->spotLightPosLoc[i], 1, glm::value_ptr(s.mPosition));
+		glUniform3fv(mat->spotLightColorLoc[i], 1, glm::value_ptr(s.mColor));
+		glUniform1f(mat->spotLightAttenConstLoc[i], s.mConstant);
+		glUniform1f(mat->spotLightAttenLinearLoc[i], s.mLinear);
+		glUniform1f(mat->spotLightAttenQuadLoc[i], s.mQuadratic);
+		glUniform1f(mat->spotLightAngleLoc[i], s.mAngle);
 	}
 }
 

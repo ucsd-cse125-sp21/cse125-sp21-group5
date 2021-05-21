@@ -51,9 +51,9 @@ void Model::draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx)
 		}
 
 		// get the locations and send the uniforms to the shader 
-		SetShaderMat4(mat->shader, "viewProj", viewProjMtx);
-		SetShader3f(mat->shader, "viewPos", Renderer::get().mCamera->pos);
-		SetShaderMat4(mat->shader, "model", modelMtx);
+		SetShaderMat4(mat->shader, "aViewProj", viewProjMtx);
+		SetShader3f(mat->shader, "aViewPos", Renderer::get().mCamera->pos);
+		SetShaderMat4(mat->shader, "aModel", modelMtx);
 
 	    mesh->draw();
 		mat->release();

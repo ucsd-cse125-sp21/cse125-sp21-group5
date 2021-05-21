@@ -8,10 +8,41 @@
 #include <string>
 #include <assimp/material.h>
 
+#include "AnimationPlayer.h"
+#include "Renderer.h"
+
 class Material
 {
 public:
 	GLuint shader;
+
+	GLuint viewProjLoc;
+	GLuint viewPosLoc;
+	GLuint viewDirLoc;
+	GLuint modelLoc;
+
+	GLuint fogColorLoc;
+
+	GLuint sunLightDir;
+	GLuint sunLightColor;
+
+	GLuint numPointLights;
+	GLuint numSpotLights;
+
+	GLuint boneMatricesLoc[MAX_NUM_BONES];
+
+	GLuint pointLightPosLoc[NUM_POINT_LIGHTS];
+	GLuint pointLightColorLoc[NUM_POINT_LIGHTS];
+	GLuint pointLightAttenConstLoc[NUM_POINT_LIGHTS];
+	GLuint pointLightAttenLinearLoc[NUM_POINT_LIGHTS];
+	GLuint pointLightAttenQuadLoc[NUM_POINT_LIGHTS];
+
+	GLuint spotLightPosLoc[NUM_SPOT_LIGHTS];
+	GLuint spotLightColorLoc[NUM_SPOT_LIGHTS];
+	GLuint spotLightAttenConstLoc[NUM_SPOT_LIGHTS];
+	GLuint spotLightAttenLinearLoc[NUM_SPOT_LIGHTS];
+	GLuint spotLightAttenQuadLoc[NUM_SPOT_LIGHTS];
+	GLuint spotLightAngleLoc[NUM_SPOT_LIGHTS];
 
 	// sets this material as the currently active one
 	virtual void activate() = 0;
@@ -19,13 +50,15 @@ public:
 	// cleans up all bindings
 	virtual void release() = 0;
 
-	//Material(std::string vertShaderPath, std::string fragShaderPath, aiMaterial* aiMat);
+	void loadShaderLocations();
 };
 
 
 class TexturedMaterial : public Material
 {
 public:
+
+	// UNIFORMS
 	GLuint tex_diffuse;
 
 	// sets this material as the currently active one

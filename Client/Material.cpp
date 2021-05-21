@@ -6,6 +6,48 @@
 #include "stb_image.h"
 #include "Renderer.h"
 
+
+void Material::loadShaderLocations() {
+
+	viewProjLoc = glGetUniformLocation(shader, "aViewProj");
+	viewPosLoc = glGetUniformLocation(shader, "aViewPos");
+	viewDirLoc = glGetUniformLocation(shader, "aViewDir");
+
+	sunLightDir = glGetUniformLocation(shader, "sunLight.direction");
+	sunLightColor = glGetUniformLocation(shader, "sunLight.color");
+
+	fogColorLoc = glGetUniformLocation(shader, "aFogColor");
+
+	char buff[256];
+	for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
+		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "position");
+		pointLightPosLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "color");
+		pointLightColorLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "constant");
+		pointLightAttenConstLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "linear");
+		pointLightAttenLinearLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "pointlights[%d].%s", i, "quadratic");
+		pointLightAttenQuadLoc[i] = glGetUniformLocation(shader, buff);
+	}
+
+	for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "position");
+		spotLightPosLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "color");
+		spotLightColorLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "constant");
+		spotLightAttenConstLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "linear");
+		spotLightAttenLinearLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "quadratic");
+		spotLightAttenQuadLoc[i] = glGetUniformLocation(shader, buff);
+		snprintf(buff, sizeof(buff), "spotlights[%d].%s", i, "angle");
+		spotLightAngleLoc[i] = glGetUniformLocation(shader, buff);
+	}
+}
+
 TexturedMaterial::TexturedMaterial(aiMaterial* aiMat)
 {
 	shader = LoadShaders("res/shaders/texturedShader.vert", "res/shaders/texturedShader.frag");
@@ -38,6 +80,8 @@ TexturedMaterial::TexturedMaterial(aiMaterial* aiMat)
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
 	}
+
+	loadShaderLocations();
 }
 
 TexturedMaterial::~TexturedMaterial()
@@ -55,7 +99,7 @@ void TexturedMaterial::activate()
 	// activate the texture
 	glBindTexture(GL_TEXTURE_2D, tex_diffuse);
 
-	Renderer::get().bindToShader(shader);
+	Renderer::get().bindToShader(this);
 }
 
 
@@ -77,6 +121,7 @@ DiffuseMaterial::DiffuseMaterial(aiMaterial* aiMat)
 	std::cout << "Loaded diffuse material with color " << glm::to_string(diffuseColor) << std::endl;
 
 	colorLocation = glGetUniformLocation(shader, "aColor");
+	loadShaderLocations();
 }
 
 DiffuseMaterial::~DiffuseMaterial()
@@ -88,7 +133,7 @@ void DiffuseMaterial::activate()
 {
 	glUseProgram(shader);
 	glUniform3fv(colorLocation, 1, glm::value_ptr(diffuseColor));
-	Renderer::get().bindToShader(shader);
+	Renderer::get().bindToShader(this);
 }
 
 void DiffuseMaterial::release()

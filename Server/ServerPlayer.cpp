@@ -39,7 +39,6 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	hitbox->setParentPlayer(this);
 	update(initPos, initYaw, initPitch);
 	health = 100.0f;
-	isColliding = false;
 	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
 }

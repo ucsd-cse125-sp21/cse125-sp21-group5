@@ -106,12 +106,18 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	{
 		// Check shooting against all other colliders before checking movement 
 		for (Collider* otherCollider : allColliders) {
+
+			// Ignore collisions with yourself
+			if (playerCollider == otherCollider)
+				continue;
+
 			// Check for shooting stuff
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
 				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
-				
+
+
 				// Handle Hit Damage
 				if (otherCollider->type == ObjectType::PLAYER) {
 					// TODO: maybe use pointers for players; for loops are pass by value
@@ -120,10 +126,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 							p.decreaseHealth(10.0f);
 						}
 					}
-					
+
 				}
 			}
 		}
+	}
 
 	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
 	vector<Collider*> nearbyColliders;

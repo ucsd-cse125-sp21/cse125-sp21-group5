@@ -6,7 +6,6 @@ PlayerState::PlayerState() {
 	this->front = glm::vec3(0.0f);
 	this->health = -1.0f;
 	this->currentAnimation = AnimationID::IDLE;
-	this->isColliding = false;
 }
 
 PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health) {

@@ -12,6 +12,15 @@ Collider::Collider(ObjectType type, const glm::vec3& center, const glm::vec3& di
 	this->type = type;
 }
 
+Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
+{
+	// Define center
+	cen = center;
+	dim = dimensions;
+	min = cen - dim / 2.0f;
+	max = cen + dim / 2.0f;
+}
+
 void Collider::setParentPlayer(ServerPlayer* player)
 {
 	this->parentPlayerObject = player;

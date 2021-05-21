@@ -14,6 +14,7 @@ public:
 	glm::vec3 max;
 	
 	// Constructor
+	Collider() {}
 	Collider(const glm::vec3& center, const glm::vec3& dimensions);
 	
 	bool contains(Collider* other);

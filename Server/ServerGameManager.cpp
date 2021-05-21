@@ -8,13 +8,14 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -10.0f)));
+	players.push_back(ServerPlayer(glm::vec3(-10.0f, 3.0f, -10.0f)));
 	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -5.0f)));
 
 	// Add player hitboxes to all colliders
 	for (ServerPlayer p : players) {
 		allColliders.push_back(p.hitbox);
 	}
+
 
 	tileSeed = (int)time(NULL);
 }
@@ -24,7 +25,7 @@ MapState ServerGameManager::generateMap()
 	srand(tileSeed);
 
 	//Create the tile for the trees to rest on
-	Collider* tileC = new Collider(glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
+	tileC = new Collider(glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
 	allColliders.push_back(tileC);
 
 	for (int i = 0; i < NUM_MAP_TILES; i++)
@@ -53,10 +54,22 @@ MapState ServerGameManager::generateMap()
 		}
 	}
 
+	//Collider* boxFloor = new Collider(glm::vec3(-10.0f, 0, -10.0f), glm::vec3(1.0f));
+	//Collider* boxFloor1 = new Collider(glm::vec3(-11.0f, 0, -10.0f), glm::vec3(1.0f));
+	//Collider* boxFloor2 = new Collider(glm::vec3(-12.0f, 0, -10.0f), glm::vec3(1.0f));
+	//allColliders.push_back(boxFloor);
+	//allColliders.push_back(boxFloor1);
+	//allColliders.push_back(boxFloor2);
+
+	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	qt = new Quadtree(boundary, 4);
+	cout << "allColliders size is " << allColliders.size() << endl;
 	for (Collider* c : allColliders)
 	{
-		cout << to_string(c->cen) << endl;
+		qt->insert(c);
+		//cout << to_string(c->cen) << endl;
 	}
+
 	// Create map state
 	return MapState(tileSeed);
 }
@@ -86,28 +99,42 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		players[playerId].jumping--;
 	}
 
+	// Rebuild quadtree for collision after player movement is updated
+	buildQuadtree();
+
 	players[playerId].updateAnimations(e);
 	players[playerId].isGrounded = false;
 	//bool isColliding = false;
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
-	
-	for (Collider* otherCollider : allColliders)
-	{
-		// Ignore collisions with yourself
-		if (playerCollider == otherCollider)
-			continue;
 
+	// Check shooting against all other colliders before checking movement 
+	for (Collider* otherCollider : allColliders) {
 		// Check for shooting stuff
 		if (e.shooting)
 		{
-			//std::cout << "shooting" << std::endl;
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
 				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
 			}
 		}
+	}
+
+	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
+	cout << "querying range centered at " << glm::to_string(queryRange->cen) << " with dimensions" << glm::to_string(queryRange->dim) << endl;
+	vector<Collider*> nearbyColliders;
+	nearbyColliders = qt->query(queryRange, nearbyColliders);
+	//nearbyColliders.push_back(tileC);
+	cout << "detected " << nearbyColliders.size() << " colliders" << endl;
+	// Movement for colliders 
+	for (Collider* otherCollider : nearbyColliders)
+	{
+		// Ignore collisions with yourself
+		if (playerCollider == otherCollider)
+			continue;
+
+		//cout << "otherCollider's center is " << glm::to_string(otherCollider->cen) << endl;
 
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
@@ -124,6 +151,19 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (plane == glm::vec3(0.0f)) {
 			continue;
 		}
+	}
+
+	buildQuadtree();
+}
+
+void ServerGameManager::buildQuadtree() {
+	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	qt = new Quadtree(boundary, 4);
+
+	for (Collider* c : allColliders)
+	{
+		qt->insert(c);
+		//cout << to_string(c->cen) << endl;
 	}
 }
 

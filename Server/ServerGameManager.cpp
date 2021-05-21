@@ -1,7 +1,7 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/random.hpp>
-
+#include <limits> 
 #include "../Shared/Global_variables.h"
 
 ServerGameManager::ServerGameManager() {
@@ -97,10 +97,13 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 	players[playerId].updateAnimations(e);
 	players[playerId].isGrounded = false;
-	//bool isColliding = false;
+
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
 
+	// For calculating min distance
+	float minHitlength = std::numeric_limits<float>::infinity();
+	Collider* closestCollider = NULL;
 	// Only run the fat loop when shootin
 	if (e.shooting)
 	{
@@ -115,20 +118,24 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
+				float hitLength = glm::length(hitPos - players[playerId].hitbox->cen);
+				if (hitLength < minHitlength) {
+					minHitlength = hitLength;
+					closestCollider = otherCollider;
+				}
 				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
+			}
+		}
 
-
-				// Handle Hit Damage
-				if (otherCollider->type == ObjectType::PLAYER) {
-					// TODO: maybe use pointers for players; for loops are pass by value
-					for (ServerPlayer& p : players) {
-						if (p.hitbox == otherCollider) {
-							p.decreaseHealth(10.0f);
-						}
-					}
-
+		// Handle Hit Damage
+		if (closestCollider != NULL && closestCollider->type == ObjectType::PLAYER) {
+			// TODO: maybe use pointers for players; for loops are pass by value
+			for (ServerPlayer& p : players) {
+				if (p.hitbox == closestCollider) {
+					p.decreaseHealth(10.0f);
 				}
 			}
+
 		}
 	}
 

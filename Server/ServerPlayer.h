@@ -19,9 +19,10 @@ public:
 
 	AnimationID animation;
 
-	// Collision variables
+	// Collision/movement/jumping variables
 	Collider* hitbox; 
-	bool isColliding;
+	bool isGrounded;
+	int jumping;
 
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos);

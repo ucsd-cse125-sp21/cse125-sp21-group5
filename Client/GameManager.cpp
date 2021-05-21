@@ -165,7 +165,8 @@ Event GameManager::handleInput()
 	// TODO: Add Sam's Jump code
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
 	{
-		jumping = true;
+		if(players[localPlayerId]->isGrounded)
+			jumping = 5;
 	}
 
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))

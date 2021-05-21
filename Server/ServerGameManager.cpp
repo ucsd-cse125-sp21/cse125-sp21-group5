@@ -63,9 +63,6 @@ MapState ServerGameManager::generateMap()
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
-	// TODO: Predict player's intended position instead
-	bool reset = false;
-
 	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
@@ -76,19 +73,25 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	}
 	// Jumping 
 	else {
-		if (players[playerId].vVelocity < 0) {
-			players[playerId].vVelocity = 0.5;
-		}
-		// Why hold space when you can shoot your enemies? 
-		if (players[playerId].pos.y <= 1.0f)
-			players[playerId].update(e.dPos + glm::vec3(0, players[playerId].vVelocity, 0), e.dYaw, e.dPitch);
-
+		// 5 ticks of jumping in total
+		players[playerId].jumping = 10;
 	}
-	players[playerId].updateAnimations(e);
 
+	// Parabolic jumping
+	float jumpingSquared = players[playerId].jumping* players[playerId].jumping;
+	// Handle jumping tick by tick
+	if (players[playerId].jumping > 0) {
+		players[playerId].update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
+		// 5 ticks of jumping in total
+		players[playerId].jumping--;
+	}
+
+	players[playerId].updateAnimations(e);
+	players[playerId].isGrounded = false;
 	//bool isColliding = false;
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
+	
 	for (Collider* otherCollider : allColliders)
 	{
 		// Ignore collisions with yourself
@@ -109,6 +112,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
+		// For jumping
+		if (plane.y > 0.0f) {
+			players[playerId].isGrounded = true;
+			//cout << "players[playerId].isGrounded is " << players[playerId].isGrounded << endl;
+		}
+
 		players[playerId].update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
@@ -122,7 +131,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isGrounded);
 
 		gs.addState(ps);
 	}

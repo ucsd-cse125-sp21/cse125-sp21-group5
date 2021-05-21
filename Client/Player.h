@@ -17,6 +17,8 @@ public:
 
 	int playerId;
 
+	bool isGrounded;
+
 private:
 	bool mustLoadModels;
 

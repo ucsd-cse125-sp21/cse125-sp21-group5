@@ -12,7 +12,7 @@ public:
 	float dYaw, dPitch;
 	bool shooting;
 
-	bool jumping; 
+	bool jumping;
 
 	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping);
 	Event();

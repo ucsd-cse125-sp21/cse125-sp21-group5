@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <iostream>
+#include "ServerPlayer.h"
 
 // Forward declare class
 class ServerPlayer;
@@ -27,6 +28,7 @@ public:
 	ServerPlayer* parentPlayerObject;
 	
 	// Constructor
+	Collider() {}
 	Collider(ObjectType type, const glm::vec3& center, const glm::vec3& dimensions);
 	
 	bool contains(Collider* other);
@@ -38,5 +40,3 @@ public:
 
 	void setParentPlayer(ServerPlayer* player);
 };
-
-#include "ServerPlayer.h"

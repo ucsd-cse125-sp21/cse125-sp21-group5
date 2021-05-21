@@ -1,4 +1,5 @@
 #include "ServerPlayer.h"
+#include <glm/gtx/string_cast.hpp>
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 
@@ -11,7 +12,8 @@ ServerPlayer::ServerPlayer() {
 	hitbox = new Collider(ObjectType::PLAYER, pos, glm::vec3(1.0f));
 	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
-	isColliding = false;
+	isGrounded = false;
+	jumping = 0;
 	health = 100.0f;
 }
 
@@ -23,9 +25,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	hitbox->setParentPlayer(this);
 	animation = AnimationID::IDLE;
-	isColliding = false;
+	jumping = 0;
+	isGrounded = false;
 	health = 100.0f;
-	vVelocity = -0.1f;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,

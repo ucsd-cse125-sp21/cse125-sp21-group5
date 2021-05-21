@@ -17,6 +17,7 @@ public:
 
 	// Quadtree variable 
 	Quadtree* qt;
+	Collider* tileC;
 
 	vector<ServerPlayer> players;
 	ServerGameManager();

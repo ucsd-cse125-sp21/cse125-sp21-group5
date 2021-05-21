@@ -19,10 +19,10 @@ public:
 	glm::vec3 pos, front;
 	float health;
 
-	bool isColliding;
+	bool isGrounded;
 	AnimationID currentAnimation;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding, float health);
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health);
 	PlayerState();
 
 	template <typename Archive>
@@ -35,7 +35,7 @@ public:
 		ar& front.y;
 		ar& front.z;
 		ar& currentAnimation;
-		ar& isColliding;
+		ar& isGrounded;
 		ar& health;
 	}
 };

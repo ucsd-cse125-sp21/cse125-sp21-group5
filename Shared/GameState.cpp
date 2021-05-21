@@ -9,15 +9,16 @@ PlayerState::PlayerState() {
 	this->isColliding = false;
 }
 
-PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding, float health) {
+PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health) {
 	this->playerId = playerId;
 	this->pos = pos;
 	this->front = front;
-	this->isColliding = isColliding;
 	this->currentAnimation = currentAnimation;
+	this->isGrounded = isGrounded;
 	this->health = health;
 }
 
+// Could be reference? 
 void GameState::addState(PlayerState ps)
 {
 	states.push_back(ps);

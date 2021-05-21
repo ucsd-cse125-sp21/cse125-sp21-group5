@@ -52,6 +52,7 @@ void Player::update(float deltaTime)
 void Player::updatePlayer(PlayerState ps) {
 	cam->update(ps.pos + glm::vec3(0, 0.25, 0), ps.front);
 	transform->setTranslate(ps.pos);
+	isGrounded = ps.isGrounded;
 
 	if (mustLoadModels) return;
 

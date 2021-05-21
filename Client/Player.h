@@ -22,6 +22,8 @@ public:
 	float health;
 	int playerId;
 
+	bool isGrounded;
+
 private:
 	bool mustLoadModels;
 

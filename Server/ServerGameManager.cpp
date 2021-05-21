@@ -8,7 +8,7 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -10.0f)));
+	players.push_back(ServerPlayer(glm::vec3(-10.0f, 3.0f, -10.0f)));
 	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -5.0f)));
 
 	// Add player hitboxes to all colliders
@@ -16,6 +16,7 @@ ServerGameManager::ServerGameManager() {
 		cout << p.health << endl;
 		allColliders.push_back(p.hitbox);
 	}
+
 
 	tileSeed = (int)time(NULL);
 }
@@ -54,57 +55,58 @@ MapState ServerGameManager::generateMap()
 		}
 	}
 
+	// Set up quadtree 
+	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
+	qt = new Quadtree(boundary, 4);
 	for (Collider* c : allColliders)
 	{
-		cout << to_string(c->cen) << endl;
+		qt->insert(c);
 	}
+
 	// Create map state
 	return MapState(tileSeed);
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
-	// TODO: Predict player's intended position instead
-	bool reset = false;
-
 	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
-		//cout << "Not Jumping" << endl;
 		if (players[playerId].vVelocity >= 0) {
 			players[playerId].vVelocity -= 0.1f;
 		}
 		players[playerId].update(e.dPos + glm::vec3(0,players[playerId].vVelocity,0), e.dYaw, e.dPitch);
-
 	}
 	// Jumping 
 	else {
-		if (players[playerId].vVelocity < 0) {
-			players[playerId].vVelocity = 0.5f;
-		}
-		// Why hold space when you can shoot your enemies? 
-		if (players[playerId].pos.y <= 1.0f)
-			players[playerId].update(e.dPos + glm::vec3(0, players[playerId].vVelocity, 0), e.dYaw, e.dPitch);
+		// 5 ticks of jumping in total
+		players[playerId].jumping = 10;
 	}
 
-	players[playerId].updateAnimations(e);
+	// Parabolic jumping
+	float jumpingSquared = players[playerId].jumping* players[playerId].jumping;
+	// Handle jumping tick by tick
+	if (players[playerId].jumping > 0) {
+		players[playerId].update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
+		// 5 ticks of jumping in total
+		players[playerId].jumping--;
+	}
 
-	bool isColliding = false;
+	// Rebuild quadtree for collision after player movement is updated
+	buildQuadtree();
+
+	players[playerId].updateAnimations(e);
+	players[playerId].isGrounded = false;
+	//bool isColliding = false;
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
-	for (Collider* otherCollider : allColliders)
+
+	// Only run the fat loop when shootin
+	if (e.shooting)
 	{
-		// Ignore collisions with yourself
-		if (playerCollider == otherCollider)
-			continue;
-
-		// Check for shooting stuff
-		if (e.shooting)
-		{
-			//std::cout << "shooting" << std::endl;
-
-
-			// TODO: Implement nearest hit search
+		// Check shooting against all other colliders before checking movement 
+		for (Collider* otherCollider : allColliders) {
+			// Check for shooting stuff
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
@@ -123,14 +125,43 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			}
 		}
 
+	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
+	vector<Collider*> nearbyColliders;
+	nearbyColliders = qt->query(queryRange, nearbyColliders);
+
+	// Movement for colliders 
+	for (Collider* otherCollider : nearbyColliders)
+	{
+		// Ignore collisions with yourself
+		if (playerCollider == otherCollider)
+			continue;
+
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
+
+		// For jumping
+		if (plane.y > 0.0f) {
+			players[playerId].isGrounded = true;
+		}
 
 		players[playerId].update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
-		if (plane == glm::vec3(0.0f))
+		if (plane == glm::vec3(0.0f)) {
 			continue;
+		}
+	}
+
+	buildQuadtree();
+}
+
+void ServerGameManager::buildQuadtree() {
+	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	qt = new Quadtree(boundary, 4);
+
+	for (Collider* c : allColliders)
+	{
+		qt->insert(c);
 	}
 }
 
@@ -138,7 +169,8 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding, players[i].health);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isGrounded, players[i].health);
+
 		gs.addState(ps);
 	}
 

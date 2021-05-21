@@ -122,7 +122,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			reset = true;
 		}
 			
-
+		/*
 		// Zero out the dir the plane is in
 		glm::vec3 newDir = e.dPos * plane;
 

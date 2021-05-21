@@ -1,6 +1,6 @@
 #include "Collider.h"
 #include <glm/gtx/string_cast.hpp>
-
+using namespace std;
 Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
 {
 	// Define center
@@ -13,12 +13,24 @@ Collider::Collider(const glm::vec3& center, const glm::vec3& dimensions)
 // this functions checks if the box contains another box
 // this is only useful in the quadtree calculation of insertion 
 bool Collider::contains(Collider* p) {
-	return (p->cen.x >= this->cen.x - this->dim.x &&
-			p->cen.x <= this->cen.x + this->dim.x &&
-			p->cen.y >= this->cen.y - this->dim.y &&
-			p->cen.y <= this->cen.y + this->dim.y &&
-			p->cen.z >= this->cen.z - this->dim.z &&
-			p->cen.z <= this->cen.z + this->dim.z);
+	int pp = 5;
+	bool res = (p->cen.x >= this->cen.x - this->dim.x/2 &&
+		p->cen.x <= this->cen.x + this->dim.x/2 &&
+		p->cen.y >= this->cen.y - this->dim.y/2 &&
+		p->cen.y <= this->cen.y + this->dim.y/2 &&
+		p->cen.z >= this->cen.z - this->dim.z/2 &&
+		p->cen.z <= this->cen.z + this->dim.z/2);
+	/*std::cout << " here" << std::endl;
+	cout << "comparing collider cen at " << glm::to_string(p->cen) << " to boundary at " <<
+		glm::to_string(this->cen) << " with min " << glm::to_string(this->min) <<
+		" and max " << glm::to_string(this->max) << endl;
+	cout << "result is " << res << endl;*/
+	return (p->cen.x >= this->cen.x - this->dim.x/2 &&
+			p->cen.x <= this->cen.x + this->dim.x/2 &&
+			p->cen.y >= this->cen.y - this->dim.y/2 &&
+			p->cen.y <= this->cen.y + this->dim.y/2 &&
+			p->cen.z >= this->cen.z - this->dim.z/2 &&
+			p->cen.z <= this->cen.z + this->dim.z/2);
 }
 
 void Collider::set_center(const glm::vec3& cen)

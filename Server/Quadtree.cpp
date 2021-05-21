@@ -1,5 +1,7 @@
 #include "Quadtree.h"
 #include <iostream>
+#include <glm/gtx/string_cast.hpp>
+
 using namespace std;
 
 Quadtree::Quadtree(Collider boundary, int capacity) {
@@ -21,14 +23,14 @@ void Quadtree::insert(Collider* p) {
     if (this->objects.size() < this->capacity) {
         //std::cout << "Regular insertion" << std::endl;
         this->objects.push_back(p);
-        //std::cout << "lwh of box being inserted at " << p->length << " " <<
-           // p->width << " " << p->height << std::endl;
+        //cout << "objects size at " << this->objects.size() << endl;
     }
     // if it is full
     else {
        // std::cout << "SHOULD NOT COME HERE " << std::endl;
         // check if it has been divided before 
         if (!this->hasDivided) {
+            //cout << "subdividing" << endl;
             subdivide();
             this->hasDivided = true;
         }
@@ -48,7 +50,9 @@ void Quadtree::insert(Collider* p) {
 // four equal sizes 
 void Quadtree::subdivide() {
     glm::vec3 c = this->boundary.cen;
-    glm::vec3 d = this->boundary.dim / 2.0f;
+    glm::vec3 d = this->boundary.dim / 4.0f;
+
+    //cout << "new dim is " << glm::to_string(d) << endl;
     /*
    +--------+
   /   4  2 /|
@@ -60,28 +64,28 @@ void Quadtree::subdivide() {
 |  7  5  |/
 +--------+
     */
-    Collider one = Collider(glm::vec3(c.x - d.x, c.y - d.y, c.z - d.z), d);
+    Collider one = Collider(glm::vec3(c.x - d.x, c.y - d.y, c.z - d.z), d*2.0f);
     this->one = new Quadtree(one, capacity);
 
-    Collider two = Collider(glm::vec3(c.x - d.x, c.y - d.y, c.z + d.z), d);
+    Collider two = Collider(glm::vec3(c.x - d.x, c.y - d.y, c.z + d.z), d * 2.0f);
     this->two = new Quadtree(two, capacity);
 
-    Collider three = Collider(glm::vec3(c.x - d.x, c.y + d.y, c.z - d.z), d);
+    Collider three = Collider(glm::vec3(c.x - d.x, c.y + d.y, c.z - d.z), d * 2.0f);
     this->three = new Quadtree(three, capacity);
 
-    Collider four = Collider(glm::vec3(c.x - d.x, c.y + d.y, c.z + d.z), d);
+    Collider four = Collider(glm::vec3(c.x - d.x, c.y + d.y, c.z + d.z), d * 2.0f);
     this->four = new Quadtree(four, capacity);
 
-    Collider five = Collider(glm::vec3(c.x + d.x, c.y - d.y, c.z - d.z), d);
+    Collider five = Collider(glm::vec3(c.x + d.x, c.y - d.y, c.z - d.z), d * 2.0f);
     this->five = new Quadtree(five, capacity);
 
-    Collider six = Collider(glm::vec3(c.x + d.x, c.y - d.y, c.z + d.z), d);
+    Collider six = Collider(glm::vec3(c.x + d.x, c.y - d.y, c.z + d.z), d * 2.0f);
     this->six = new Quadtree(six, capacity);
 
-    Collider seven = Collider(glm::vec3(c.x + d.x, c.y + d.y, c.z - d.z), d);
+    Collider seven = Collider(glm::vec3(c.x + d.x, c.y + d.y, c.z - d.z), d * 2.0f);
     this->seven = new Quadtree(seven, capacity);
 
-    Collider eight = Collider(glm::vec3(c.x + d.x, c.y + d.y, c.z + d.z), d);
+    Collider eight = Collider(glm::vec3(c.x + d.x, c.y + d.y, c.z + d.z), d * 2.0f);
     this->eight = new Quadtree(eight, capacity);
 }
 

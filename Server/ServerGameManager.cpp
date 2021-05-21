@@ -61,7 +61,7 @@ MapState ServerGameManager::generateMap()
 	//allColliders.push_back(boxFloor1);
 	//allColliders.push_back(boxFloor2);
 
-	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
 	qt = new Quadtree(boundary, 4);
 	cout << "allColliders size is " << allColliders.size() << endl;
 	for (Collider* c : allColliders)
@@ -108,11 +108,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
 
-	// Check shooting against all other colliders before checking movement 
-	for (Collider* otherCollider : allColliders) {
-		// Check for shooting stuff
-		if (e.shooting)
-		{
+	if (e.shooting)
+	{
+		// Check shooting against all other colliders before checking movement 
+		for (Collider* otherCollider : allColliders) {
+			// Check for shooting stuff
 			glm::vec3 hitPos;
 			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
 			{
@@ -122,7 +122,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	}
 
 	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
-	cout << "querying range centered at " << glm::to_string(queryRange->cen) << " with dimensions" << glm::to_string(queryRange->dim) << endl;
+	//cout << "querying range centered at " << glm::to_string(queryRange->cen) << " with dimensions" << glm::to_string(queryRange->dim) << endl;
 	vector<Collider*> nearbyColliders;
 	nearbyColliders = qt->query(queryRange, nearbyColliders);
 	//nearbyColliders.push_back(tileC);

@@ -1,4 +1,5 @@
 #include "ServerPlayer.h"
+#include <glm/gtx/string_cast.hpp>
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 

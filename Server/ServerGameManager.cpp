@@ -73,7 +73,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			players[playerId].vVelocity -= 0.1f;
 		}
 		players[playerId].update(e.dPos + glm::vec3(0,players[playerId].vVelocity,0), e.dYaw, e.dPitch);
-
 	}
 	// Jumping 
 	else {
@@ -83,10 +82,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Why hold space when you can shoot your enemies? 
 		if (players[playerId].pos.y <= 1.0f)
 			players[playerId].update(e.dPos + glm::vec3(0, players[playerId].vVelocity, 0), e.dYaw, e.dPitch);
+
 	}
 	players[playerId].updateAnimations(e);
 
-	bool isColliding = false;
+	//bool isColliding = false;
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId].hitbox;
 	for (Collider* otherCollider : allColliders)
@@ -112,32 +112,9 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		players[playerId].update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
-		if (plane == glm::vec3(0.0f))
+		if (plane == glm::vec3(0.0f)) {
 			continue;
-
-		// Reset player back to original position
-		if (!reset)
-		{
-			players[playerId].update(-e.dPos, 0.0f, 0.0f);
-			reset = true;
 		}
-			
-
-		// Zero out the dir the plane is in
-		glm::vec3 newDir = e.dPos * plane;
-
-		// Edge case where the product is 0 (perfectly perpendicular collision)
-		if (newDir != glm::vec3(0.0f))
-			newDir = glm::normalize(newDir);
-
-		// calculate projection to determine how much to move in other plane
-		glm::vec3 newDelta = glm::length(e.dPos) * newDir;
-
-		// Move player backwards, then into new direction
-		// Across multiple collisions, the hope is that the newDeltas will cancel out
-		// It is a definite possibilty that simultaneous collisions can grant players speed boost (in-game mechanic?)
-		players[playerId].update(newDelta, 0.0f, 0.0f);
-		*/
 	}
 }
 
@@ -145,7 +122,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isColliding);
+		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation);
 
 		gs.addState(ps);
 	}

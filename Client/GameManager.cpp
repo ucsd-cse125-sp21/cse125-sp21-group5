@@ -140,8 +140,11 @@ Event GameManager::handleInput()
 	glm::vec3 dir(camera->front.x, 0.0f, camera->front.z);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
+		//cout << "before" << glm::to_string(dPos) << endl;
 		//dPos += camera->front;
 		dPos += glm::normalize(dir);
+		//cout << "after" << glm::to_string(dPos) << endl;
+
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 	{
@@ -355,12 +358,6 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
-
-		// Local colliding
-		if (ps.playerId == localPlayerId) {
-			localIsColliding = ps.isColliding;
-			//cout << "localisColliding is " << localIsColliding << endl;
-		}
 	}
 }
 

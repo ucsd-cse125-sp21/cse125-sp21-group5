@@ -21,7 +21,7 @@ public:
 	bool isColliding;
 	AnimationID currentAnimation;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isColliding);
+	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation);
 	PlayerState();
 
 	template <typename Archive>
@@ -34,7 +34,6 @@ public:
 		ar& front.y;
 		ar& front.z;
 		ar& currentAnimation;
-		ar& isColliding;
 	}
 };
 

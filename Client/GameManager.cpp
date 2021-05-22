@@ -193,16 +193,10 @@ Event GameManager::handleInput()
 		//cerr << "shoooting" << endl;
 		shooting = true;
 	}
-
-	cout << "curent health is " << players[localPlayerId]->health << endl;
-	cout << "isAlive is " << players[localPlayerId]->isDead << endl;
-
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
 		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
 	}
-
-	cout << "player position is at a" << glm::to_string(players[localPlayerId]->cam->pos) << endl;
 
 	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
 

@@ -33,6 +33,8 @@ GameManager::GameManager(GLFWwindow* window)
 	tileModel->setName("Tile Model");
 	treeModel = new Model("res/models/willowTrunk.dae");
 	treeModel->setName("Tree Model");
+	catModel = new Model("res/models/finalZombieFish.dae");
+	dogModel = new Model("res/models/finalHuskyRun.dae");
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -274,6 +276,7 @@ void GameManager::render()
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
+		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingFlag);
 		ImGui::End();
 	}
 	
@@ -307,8 +310,23 @@ void GameManager::updateMap(MapState& ms)
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
-			//Skip the two flag tiles
-			if ((i == 0 && j == NUM_MAP_TILES / 2) || (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+			// Cat flag
+			if (i == 0 && j == NUM_MAP_TILES / 2)
+			{
+				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
+				cout << "cat at: " << glm::to_string(catT->translation) << endl;
+				catT->setName("catT");
+				catT->add_child(catModel);
+				worldT->add_child(catT);
+				continue;
+			}
+			// Dog flag
+			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2) {
+				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
+				cout << "dog at: " << glm::to_string(dogT->translation) << endl;
+				dogT->setName("dogT");
+				dogT->add_child(dogModel);
+				worldT->add_child(dogT);
 				continue;
 			}
 
@@ -318,7 +336,6 @@ void GameManager::updateMap(MapState& ms)
 			for (int k = 0; k < numTrees; k++) {
 				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
-
 			    
 				//genrate the position inside the tile
 				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));
@@ -341,7 +358,19 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
+		if (ps.carryingFlag && (ps.playerId % 2) == (int) (PlayerTeam::CAT_LOVER))
+		{
+			Transform* playerT = players[ps.playerId]->transform;
+			catT->setTranslate(playerT->translation + 2.0f * players[ps.playerId]->cam->front);
+		}
+		else if (ps.carryingFlag && (ps.playerId % 2) == (int)PlayerTeam::DOG_LOVER)
+		{
+			Transform* playerT = players[ps.playerId]->transform;
+			dogT->setTranslate(playerT->translation + 2.0f * players[ps.playerId]->cam->front);
+		}
 	}
+
+
 }
 
 // TODO: Model* should be a string or int to what kind of model should be used to render player

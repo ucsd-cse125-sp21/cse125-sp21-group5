@@ -1,6 +1,5 @@
 #include "ServerPlayer.h"
 #include <glm/gtx/string_cast.hpp>
-#include "../Shared/Global_variables.h"
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 
@@ -85,5 +84,9 @@ bool ServerPlayer::isDeadCheck() {
 void ServerPlayer::decreaseHealth(float decAmount)
 {
 	health -= decAmount;
-	if (isDeadCheck()) this->isDead = DEATH_TICK_TIMER;
+	if (isDeadCheck())
+	{
+		this->isDead = DEATH_TICK_TIMER;
+		hitbox->isActive = false;
+	}
 }

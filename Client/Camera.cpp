@@ -11,7 +11,7 @@
 Camera::Camera()
 {
 	// Camera movement
-	speed = 2.5f;
+	speed = 10.0f;
 	sensitivity = 0.1f;
 
 	// Camera rotation

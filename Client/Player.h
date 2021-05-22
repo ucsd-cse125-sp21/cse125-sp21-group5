@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Transform.h"
+#include "Renderer.h"
 #include "../Shared/GameState.h"
 
 // Import IMGui for Player HUD UI.
@@ -24,6 +25,8 @@ public:
 
 	bool isGrounded;
 	int isDead;
+
+	bool isCarryingFlag;
 private:
 	bool mustLoadModels;
 

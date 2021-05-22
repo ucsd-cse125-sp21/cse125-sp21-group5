@@ -15,7 +15,7 @@ Quadtree::Quadtree(Collider boundary, int capacity) {
 // Inserts a new Collider into the tree 
 void Quadtree::insert(Collider* p) {
     // check if the quadtree can house the point, if it can't, don't do anything
-    //TODO subclass/sueprclass 
+    //TODO subclass/superclass 
     if (!this->boundary.contains(p)) {
         return;
     }

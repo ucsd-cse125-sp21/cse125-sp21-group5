@@ -2,7 +2,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/random.hpp>
 #include <limits> 
-#include "../Shared/Global_variables.h"
 
 ServerGameManager::ServerGameManager() {
 
@@ -33,10 +32,12 @@ MapState ServerGameManager::generateMap()
 			//Add the flag to the colliders
 			if ((i == 0 && j == NUM_MAP_TILES / 2)) {
 				flagCat = new Collider(ObjectType::FLAG_CAT, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
+				allColliders.push_back(flagCat);
 				continue;
 			}
 			else if ((i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
 				flagDog = new Collider(ObjectType::FLAG_DOG, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
+				allColliders.push_back(flagDog);
 				continue;
 			}
 
@@ -74,11 +75,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		
 		if (players[playerId]->isDead == 0) {
 			players[playerId]->health = 100.0f;
+			players[playerId]->hitbox->isActive = true;
 			cout << "health being reset" << endl;
 		}
 	}
 
-	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
 		if (players[playerId]->vVelocity >= 0) {
@@ -88,7 +89,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	}
 	// Jumping 
 	else {
-		// 5 ticks of jumping in total
+		// 10 ticks of jumping in total
 		players[playerId]->jumping = 10;
 	}
 
@@ -146,9 +147,15 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 					//Drop flag if the player is dead
 					if (p.second->isDead && flagCatCarrierId == p.first ) {
 						flagCatCarrierId = -1;
+						flagCat->isActive = true;
+						flagCat->set_center(p.second->pos + 2.0f * p.second->front);
+						buildQuadtree();
 					}
 					else if (p.second->isDead && flagDogCarrierId == p.first) {
 						flagDogCarrierId = -1;
+						flagDog->isActive = true;
+						flagDog->set_center(p.second->pos + 2.0f * p.second->front);
+						buildQuadtree();
 					}
 
 					break;
@@ -172,9 +179,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Flag collision
 		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == 0) {
 			flagCatCarrierId = playerId;
+			flagCat->isActive = false;
 		}
 		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == 1) {
 			flagDogCarrierId = playerId;
+			flagDog->isActive = false;
 		}
 
 		// Determine which plane collision happened on

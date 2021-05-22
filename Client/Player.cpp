@@ -1,7 +1,5 @@
 #include "Player.h"
 
-#include "Renderer.h"
-
 // TODO: Used for yourself?
 /*
 Player::Player(Transform* transform)
@@ -22,6 +20,7 @@ Player::Player(Transform* transform, int playerId)
 	this->model = NULL;
 	this->health = -1.0f;
 	this->isDead = 1;
+	this->isCarryingFlag = false;
 }
 
 Player::~Player() {
@@ -55,6 +54,7 @@ void Player::updatePlayer(PlayerState ps) {
 	transform->setTranslate(ps.pos);
 	isGrounded = ps.isGrounded;
 	isDead = ps.isAlive;
+	isCarryingFlag = ps.carryingFlag;
 
 	if (mustLoadModels) return;
 

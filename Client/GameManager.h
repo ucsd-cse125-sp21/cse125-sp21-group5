@@ -45,6 +45,11 @@ public:
 	Model* tileModel;
 	Model* treeModel;
 
+	Transform* catT;
+	Model* catModel;
+	Transform* dogT;
+	Model* dogModel;
+
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;
 

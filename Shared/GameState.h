@@ -25,7 +25,14 @@ public:
 
 	bool carryingFlag;
 
-	PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health, int isAlive, int carryingFlag);
+	PlayerState(int playerId, 
+				const glm::vec3& pos,
+				const glm::vec3& front,
+				AnimationID currentAnimation,
+				bool isGrounded,
+				float health,
+				int isAlive,
+				bool carryingFlag);
 	PlayerState();
 
 	template <typename Archive>

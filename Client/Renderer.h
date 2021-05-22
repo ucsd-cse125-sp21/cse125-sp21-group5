@@ -76,6 +76,7 @@ public:
 	Camera* mCamera;
 
 	double gameTime;
+	bool debug;
 
 	// fog parameters
 	float fogDensity;

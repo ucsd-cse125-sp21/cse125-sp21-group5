@@ -107,7 +107,6 @@ Event GameManager::update()
 // Handle Keyboard Input
 Event GameManager::handleInput()
 {
-	// TODO: movement forward only happens on xz plane
 	// Get current mouse position
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
@@ -164,23 +163,20 @@ Event GameManager::handleInput()
 		//dPos += glm::normalize(glm::cross(camera->front, camera->up));
 		dPos += glm::normalize(glm::cross(dir, camera->up));
 	}
-
-	// TODO: Add Sam's Jump code
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
 	{
 		if(players[localPlayerId]->isGrounded)
 			jumping = 5;
 	}
-
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
 	{
 		dPos -= camera->up;
 	}
 
+	// Accumulate direction, and convert to offset
 	if (dPos != glm::vec3(0.0f))
 		dPos = glm::normalize(dPos);
 	dPos *= camera->speed * deltaTime;
-
 
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
@@ -190,7 +186,6 @@ Event GameManager::handleInput()
 	bool shooting = false;
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
 	{
-		//cerr << "shoooting" << endl;
 		shooting = true;
 	}
 	// If the player is dead, yeet
@@ -198,56 +193,22 @@ Event GameManager::handleInput()
 		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
 	}
 
-	//bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
-
 	return Event(dPos, yaw, pitch, shooting, jumping);
 }
 
 // Use for one-time key presses
 void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+	{
+		cerr << "asdfasdf" << endl;
+		Renderer::get().debug = !Renderer::get().debug;
+	}
 }
 
 // Detect mouse clicks
 void GameManager::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	/*
-	switch (button)
-	{
-		case GLFW_MOUSE_BUTTON_LEFT:
-			switch (action)
-			{
-			case GLFW_PRESS:
-				fprintf(stderr, "Left Mouse Pressed\n");
-
-				break;
-			case GLFW_RELEASE:
-				fprintf(stderr, "Left Mouse Released\n");
-				break;
-			default:
-				fprintf(stderr, "Left Mouse Default Action?\n");
-				break;
-			}
-			break;
-		case GLFW_MOUSE_BUTTON_RIGHT:
-			switch (action)
-			{
-			case GLFW_PRESS:
-				fprintf(stderr, "Right Mouse Pressed\n");
-				break;
-			case GLFW_RELEASE:
-				fprintf(stderr, "Right Mouse Released\n");
-				break;
-			default:
-				fprintf(stderr, "Right Mouse Default Action?\n");
-				break;
-			}
-			break;
-		default:
-			fprintf(stderr, "Default Mouse Button?\n");
-			break;
-	}
-	*/
 }
 
 // Detect mouse position
@@ -275,28 +236,19 @@ void GameManager::render()
 	ImGuiWindowFlags windowFlags = 0;
 
 	windowFlags |= ImGuiWindowFlags_NoTitleBar;
-    windowFlags |= ImGuiWindowFlags_NoScrollbar;
-    windowFlags |= ImGuiWindowFlags_NoMove;
-    windowFlags |= ImGuiWindowFlags_NoResize;
-    windowFlags |= ImGuiWindowFlags_NoCollapse;
-    windowFlags |= ImGuiWindowFlags_NoNav;
-    windowFlags |= ImGuiWindowFlags_NoBackground;
-    windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+	windowFlags |= ImGuiWindowFlags_NoScrollbar;
+	windowFlags |= ImGuiWindowFlags_NoMove;
+	windowFlags |= ImGuiWindowFlags_NoResize;
+	windowFlags |= ImGuiWindowFlags_NoCollapse;
+	windowFlags |= ImGuiWindowFlags_NoNav;
+	windowFlags |= ImGuiWindowFlags_NoBackground;
+	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 	bool showUI = true;
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
 	ImGui::SetWindowSize(ImVec2(300, 100));
-
-	static float health = 0;
-	static float direction = 1;
-	health += 0.001 * direction;
-
-	if (health > 1) direction = -1;
-	if (health < 0) direction = 1;
-
 	ImGui::Text("Super basic health bar");
-	//ImGui::SliderFloat("Health", &health, 0, 1);
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::End();
 
@@ -307,11 +259,26 @@ void GameManager::render()
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	ImVec2 p = ImGui::GetCursorScreenPos();
-	drawList->AddLine(ImVec2(p.x+20, p.y), ImVec2(p.x+20, p.y+40), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
-	drawList->AddLine(ImVec2(p.x, p.y+20), ImVec2(p.x+40, p.y+20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	drawList->AddLine(ImVec2(p.x + 20, p.y), ImVec2(p.x + 20, p.y + 40), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
+	drawList->AddLine(ImVec2(p.x, p.y + 20), ImVec2(p.x + 40, p.y + 20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
 	ImGui::End();
 
-	Renderer::get().setCamera(players[localPlayerId]->cam);
+	// Debug UI Information
+	if (Renderer::get().debug)
+	{
+		ImGui::Begin("Debug UI", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(0, 0));
+		ImGui::SetWindowSize(ImVec2(1000, 500));
+		Player* p = players[localPlayerId];
+		ImGui::Text("Player ID: %d", localPlayerId);
+		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
+		ImGui::Text("Player isDead: %d", p->isDead);
+		ImGui::Text("Player isDead: %d", p->isGrounded);
+		ImGui::End();
+	}
+	
+
+	//Renderer::get().setCamera(players[localPlayerId]->cam);
 
 	// Render the models
 	Renderer::get().setCamera(players[localPlayerId]->cam);

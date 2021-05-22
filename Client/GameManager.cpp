@@ -273,7 +273,7 @@ void GameManager::render()
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
 		ImGui::Text("Player isDead: %d", p->isDead);
-		ImGui::Text("Player isDead: %d", p->isGrounded);
+		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::End();
 	}
 	

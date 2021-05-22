@@ -320,6 +320,7 @@ void GameManager::render()
 	Renderer::get().setCamera(players[localPlayerId]->cam);
 
 	// Render the models
+	Renderer::get().setCamera(players[localPlayerId]->cam);
 	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
 	// call ImGUI render to actually render the ui to opengl
@@ -407,6 +408,7 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 
 void GameManager::setLocalPlayerID(int playerId)
 {
+	std::cout << "Local player id is " << playerId << std::endl;
 	this->localPlayerId = playerId;
 	Renderer::get().localPlayerId = playerId;
 }

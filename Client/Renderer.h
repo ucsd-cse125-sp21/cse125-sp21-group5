@@ -1,14 +1,16 @@
 #pragma once
 
+#define NUM_POINT_LIGHTS 8
+#define NUM_SPOT_LIGHTS 8
+
 #include <vector>
 #include <glm/glm.hpp>
 #include <gl/glew.h>
 
 #include "Camera.h"
 
+class Material;
 
-#define NUM_POINT_LIGHTS 32
-#define NUM_SPOT_LIGHTS 32
 
 class PointLight {
 public:
@@ -90,7 +92,7 @@ public:
 	void addPointLight(PointLight light);
 	void addSpotLight(SpotLight light);
 	void addDirectionalLight(DirectionalLight light);
-	void bindToShader(GLuint shader);
+	void bindToShader(Material* mat);
 
 	// let renderer update anything it needs
 	void update(double deltaTime);

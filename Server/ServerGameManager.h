@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <unordered_map>
 #include "ServerPlayer.h"
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
@@ -18,13 +19,16 @@ public:
 	// Quadtree variable 
 	Quadtree* qt;
 	Collider* tileC;
+	Collider* flagCat, *flagDog;
+	int flagCatCarrierId, flagDogCarrierId;
 
-	vector<ServerPlayer> players;
+	unordered_map<int, ServerPlayer*> players;
 	ServerGameManager();
 	void handleEvent(Event& e, int playerId);
 	void buildQuadtree();
 	GameState getGameState(int playerId);
 	MapState generateMap();
+	void createNewPlayer(int playerId);
 
 	int tileSeed;
 };

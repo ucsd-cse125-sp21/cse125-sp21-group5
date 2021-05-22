@@ -8,17 +8,11 @@ ServerGameManager::ServerGameManager() {
 
 	// TODO: remove, hardcoded initPos
 	// TODO: add new player colliders as players connect
-	players.push_back(ServerPlayer(glm::vec3(-10.0f, 3.0f, -10.0f)));
-	players.push_back(ServerPlayer(glm::vec3(-10.0f, 15.0f, -5.0f)));
-
-	// Add player hitboxes to all colliders
-	for (ServerPlayer p : players) {
-		cout << p.health << endl;
-		allColliders.push_back(p.hitbox);
-	}
-
-
 	tileSeed = (int)time(NULL);
+
+	//Tile and flags are unintialized
+	flagCatCarrierId = -1;
+	flagDogCarrierId = -1;
 }
 
 MapState ServerGameManager::generateMap()
@@ -36,8 +30,13 @@ MapState ServerGameManager::generateMap()
 			glm::vec3 tileCenter = glm::vec3(20 * (i - NUM_MAP_TILES / 2), -5.0f, 20 * (j - NUM_MAP_TILES / 2));
 
 			//Skip the two flag tiles
-			// TODO:can't skip here
-			if ((i == 0 && j == NUM_MAP_TILES / 2) || (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+			//Add the flag to the colliders
+			if ((i == 0 && j == NUM_MAP_TILES / 2)) {
+				flagCat = new Collider(ObjectType::FLAG_CAT, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
+				continue;
+			}
+			else if ((i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+				flagDog = new Collider(ObjectType::FLAG_DOG, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
 				continue;
 			}
 
@@ -70,11 +69,11 @@ MapState ServerGameManager::generateMap()
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
 	// TODO: Varying death timers 
-	if (players[playerId].isDead > 0) {
-		players[playerId].isDead--;
+	if (players[playerId]->isDead > 0) {
+		players[playerId]->isDead--;
 		
-		if (players[playerId].isDead == 0) {
-			players[playerId].health = 100.0f;
+		if (players[playerId]->isDead == 0) {
+			players[playerId]->health = 100.0f;
 			cout << "health being reset" << endl;
 		}
 	}
@@ -82,34 +81,34 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Calculate where player wants to be
 	// Not jumping
 	if (!e.jumping) {
-		if (players[playerId].vVelocity >= 0) {
-			players[playerId].vVelocity -= 0.1f;
+		if (players[playerId]->vVelocity >= 0) {
+			players[playerId]->vVelocity -= 0.1f;
 		}
-		players[playerId].update(e.dPos + glm::vec3(0,players[playerId].vVelocity,0), e.dYaw, e.dPitch);
+		players[playerId]->update(e.dPos + glm::vec3(0,players[playerId]->vVelocity,0), e.dYaw, e.dPitch);
 	}
 	// Jumping 
 	else {
 		// 5 ticks of jumping in total
-		players[playerId].jumping = 10;
+		players[playerId]->jumping = 10;
 	}
 
 	// Parabolic jumping
-	float jumpingSquared = players[playerId].jumping* players[playerId].jumping;
+	float jumpingSquared = players[playerId]->jumping* players[playerId]->jumping;
 	// Handle jumping tick by tick
-	if (players[playerId].jumping > 0) {
-		players[playerId].update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
+	if (players[playerId]->jumping > 0) {
+		players[playerId]->update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
 		// 5 ticks of jumping in total
-		players[playerId].jumping--;
+		players[playerId]->jumping--;
 	}
 
 	// Rebuild quadtree for collision after player movement is updated
 	buildQuadtree();
 
-	players[playerId].updateAnimations(e);
-	players[playerId].isGrounded = false;
+	players[playerId]->updateAnimations(e);
+	players[playerId]->isGrounded = false;
 
 	// Naive collision (for now)
-	Collider* playerCollider = players[playerId].hitbox;
+	Collider* playerCollider = players[playerId]->hitbox;
 
 	// For calculating min distance
 	float minHitlength = std::numeric_limits<float>::infinity();
@@ -126,23 +125,32 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 			// Check for shooting stuff
 			glm::vec3 hitPos;
-			if (otherCollider->check_ray_collision(players[playerId].hitbox->cen, players[playerId].front, hitPos))
+			if (otherCollider->check_ray_collision(players[playerId]->hitbox->cen, players[playerId]->front, hitPos))
 			{
-				float hitLength = glm::length(hitPos - players[playerId].hitbox->cen);
+				float hitLength = glm::length(hitPos - players[playerId]->hitbox->cen);
 				if (hitLength < minHitlength) {
 					minHitlength = hitLength;
 					closestCollider = otherCollider;
 				}
-				std::cout << "hit" << glm::length(hitPos - players[playerId].hitbox->cen) << std::endl;
+				std::cout << "hit" << glm::length(hitPos - players[playerId]->hitbox->cen) << std::endl;
 			}
 		}
 
 		// Handle Hit Damage
 		if (closestCollider != NULL && closestCollider->type == ObjectType::PLAYER) {
 			// TODO: maybe use pointers for players; for loops are pass by value
-			for (ServerPlayer& p : players) {
-				if (p.hitbox == closestCollider) {
-					p.decreaseHealth(100.0f);
+			for (auto p : players) {
+				if (p.second->hitbox == closestCollider) {
+					p.second->decreaseHealth(100.0f);
+					
+					//Drop flag if the player is dead
+					if (p.second->isDead && flagCatCarrierId == p.first ) {
+						flagCatCarrierId = -1;
+					}
+					else if (p.second->isDead && flagDogCarrierId == p.first) {
+						flagDogCarrierId = -1;
+					}
+
 					break;
 				}
 			}
@@ -150,7 +158,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 	}
 
-	Collider* queryRange = new Collider(players[playerId].hitbox->cen, players[playerId].hitbox->dim * 10.0f);
+	Collider* queryRange = new Collider(players[playerId]->hitbox->cen, players[playerId]->hitbox->dim * 10.0f);
 	vector<Collider*> nearbyColliders;
 	nearbyColliders = qt->query(queryRange, nearbyColliders);
 
@@ -161,15 +169,23 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (playerCollider == otherCollider)
 			continue;
 
+		// Flag collision
+		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == 0) {
+			flagCatCarrierId = playerId;
+		}
+		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == 1) {
+			flagDogCarrierId = playerId;
+		}
+
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
 		// For jumping
 		if (plane.y > 0.0f) {
-			players[playerId].isGrounded = true;
+			players[playerId]->isGrounded = true;
 		}
 
-		players[playerId].update(plane, 0.0f, 0.0f);
+		players[playerId]->update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f)) {
@@ -194,10 +210,23 @@ GameState ServerGameManager::getGameState(int playerId) {
 	GameState gs;
 
 	for (int i = 0; i < players.size(); i++) {
-		PlayerState ps(i, players[i].pos, players[i].front, players[i].animation, players[i].isGrounded, players[i].health, players[i].isDead);
+		//Update whether or not this player is carrying the flag
+		bool carryingFlag = false;
+		if (flagCatCarrierId == i) {
+			carryingFlag = true;
+		}
+
+		PlayerState ps(i, players[i]->pos, players[i]->front, players[i]->animation, players[i]->isGrounded, players[i]->health, players[i]->isDead, carryingFlag);
 
 		gs.addState(ps);
 	}
 
 	return gs;
+}
+
+void ServerGameManager::createNewPlayer(int playerId) {
+	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? glm::vec3(-10.0f, 3.0f, -10.0f) : glm::vec3(-10.0f, 15.0f, -5.0f);
+	players[playerId] = new ServerPlayer(playerSpawnPos);
+	// Add player hitboxes to all colliders
+	allColliders.push_back(players[playerId]->hitbox);
 }

@@ -12,6 +12,8 @@ enum class ObjectType
 	ENVIRONMENT = 0,
 	PLAYER = 1,
 	GROUND = 2,
+	FLAG_CAT = 3,
+	FLAG_DOG = 4,
 };
 
 class Collider

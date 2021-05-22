@@ -118,6 +118,9 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
 
         connections[playerId]->handle_write(msHeadBuf, mshBuf);
 
+        //Spawn new player
+        gm.createNewPlayer(playerId);
+
         //Add client id and start reading from them
         vector<int> ids;
         for (int i = 0; i < connections.size(); i++) {

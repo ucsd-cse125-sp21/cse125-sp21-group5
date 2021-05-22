@@ -9,7 +9,7 @@ PlayerState::PlayerState() {
 	this->isAlive = 1;
 }
 
-PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health, int isAlive) {
+PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& front, AnimationID currentAnimation, bool isGrounded, float health, int isAlive, bool carryingFlag) {
 	this->playerId = playerId;
 	this->pos = pos;
 	this->front = front;
@@ -17,6 +17,7 @@ PlayerState::PlayerState(int playerId, const glm::vec3& pos, const glm::vec3& fr
 	this->isGrounded = isGrounded;
 	this->health = health;
 	this->isAlive = isAlive;
+	this->carryingFlag = carryingFlag;
 }
 
 // Could be reference? 

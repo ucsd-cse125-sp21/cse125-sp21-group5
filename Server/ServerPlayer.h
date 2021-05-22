@@ -6,6 +6,7 @@
 #include "Collider.h"
 #include "../Shared/GameState.h"
 #include "../Shared/Event.h"
+#include "../Shared/Global_variables.h"
 
 class ServerPlayer
 {
@@ -16,6 +17,9 @@ public:
 	float yaw, pitch;
 	float health;
 	float vVelocity;
+
+	//Team
+	PlayerTeam team;
 
 	AnimationID animation;
 

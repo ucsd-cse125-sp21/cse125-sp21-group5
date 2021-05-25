@@ -34,11 +34,13 @@ private:
 	static float offsetX, offsetY, lastX, lastY;
 	static float fov;
 
+	// Keyboard variables
+	bool showScoreboard;
+
 public:
 	// Track players in the world
 	unordered_map<int, Player*> players;
 	int localPlayerId;
-	bool localIsColliding;
 
 	// Models used in the environment
 	Model* playerModel;

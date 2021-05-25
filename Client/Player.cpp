@@ -32,7 +32,6 @@ Player::~Player() {
 
 void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 {
-	//cout << "\tCurrently drawing " << name << endl;
 	// don't draw null model anything if model is null
 	if (mustLoadModels) return;
 	if (playerId == Renderer::get().localPlayerId) return;
@@ -41,7 +40,6 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Player::update(float deltaTime)
 {
-	//cout << "\tCurrently updating " << name << endl;
 	if (mustLoadModels) {
 		loadModels();
 		mustLoadModels = false;
@@ -50,26 +48,39 @@ void Player::update(float deltaTime)
 	model->update(deltaTime);
 }
 
-void Player::updatePlayer(PlayerState ps) {
-	cam->update(ps.pos + glm::vec3(0, 0.25, 0), ps.front);
+void Player::updatePlayer(PlayerState ps)
+{
+	// TODO: players should be able to pick their own name
+	// Update Rendering information
+	cam->update(ps.pos + glm::vec3(0.0f, 0.25f, 0.0f), ps.front);
 	transform->setTranslate(ps.pos);
+
+	// Update Movement information
 	isGrounded = ps.isGrounded;
-	isDead = ps.isAlive;
+	isDead = ps.isDead;
 	isCarryingCatFlag = ps.carryingCatFlag;
 	isCarryingDogFlag = ps.carryingDogFlag;
 
-	if (mustLoadModels) return;
+	// Update Score information
+	kills = ps.kills;
+	deaths = ps.deaths;
+	captures = ps.captures;
 
-	if (ps.currentAnimation == AnimationID::WALK) {
-		model = models[1];
-	}
-	else {
-		model = models[0];
-	}
-
-	// TODO: transform->setRotate(ps.front);
 	// Health update
 	health = ps.health;
+
+	// Don't waste time animating
+	if (mustLoadModels) return;
+
+	// Choose which animation to play
+	if (ps.currentAnimation == AnimationID::WALK)
+	{
+		model = models[1];
+	}
+	else 
+	{
+		model = models[0];
+	}
 }
 
 

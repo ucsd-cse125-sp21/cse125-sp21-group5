@@ -16,6 +16,9 @@ ServerPlayer::ServerPlayer() {
 	jumping = 0;
 	health = 100.0f;
 	isDead = 0;
+	kills = 0;
+	deaths = 0;
+	captures = 0;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId) {
@@ -31,6 +34,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId) {
 	isGrounded = false;
 	health = 100.0f;
 	isDead = 0;
+	kills = 0;
+	deaths = 0;
+	captures = 0;
 
 	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
 		this->team = PlayerTeam::CAT_LOVER;
@@ -52,6 +58,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
 	isDead = 0;
+	kills = 0;
+	deaths = 0;
+	captures = 0;
 }
 
 void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
@@ -93,8 +102,12 @@ void ServerPlayer::decreaseHealth(float decAmount)
 	health -= decAmount;
 	if (isDeadCheck())
 	{
+		// Set death timer
 		this->isDead = DEATH_TICK_TIMER;
-		//hitbox->isActive = false;
+		hitbox->isActive = false;
+
+		// Increase death amount
+		deaths++;
 
 		// TP to cat base
 		if (team == PlayerTeam::CAT_LOVER) {

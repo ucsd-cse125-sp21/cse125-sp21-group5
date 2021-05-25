@@ -18,38 +18,41 @@ MapState ServerGameManager::generateMap()
 {
 	srand(tileSeed);
 
-	//Create the tile for the trees to rest on
-	Collider* tileC = new Collider(ObjectType::GROUND, glm::vec3(0, -5.0f, 0), glm::vec3(20.0f * NUM_MAP_TILES, 10.0f, 20.0f * NUM_MAP_TILES));
+	// Create one massive tile for entirety of map
+	Collider* tileC = new Collider(ObjectType::GROUND, glm::vec3(0.0f), glm::vec3(TILE_SIZE * NUM_MAP_TILES, 0.1f, TILE_SIZE * NUM_MAP_TILES));
 	allColliders.push_back(tileC);
 
 	for (int i = 0; i < NUM_MAP_TILES; i++)
 	{
-		for (int j = 0; j < NUM_MAP_TILES; j++) {
+		for (int j = 0; j < NUM_MAP_TILES; j++)
+		{
+			// Center point of the tile
+			glm::vec3 tileCenter = glm::vec3(TILE_SIZE * (i - NUM_MAP_TILES / 2), 0.0f, TILE_SIZE * (j - NUM_MAP_TILES / 2));
 
-			glm::vec3 tileCenter = glm::vec3(20 * (i - NUM_MAP_TILES / 2), -5.0f, 20 * (j - NUM_MAP_TILES / 2));
-
-			//Skip the two flag tiles
-			//Add the flag to the colliders
-			if ((i == 0 && j == 0)) {
-				flagCat = new Collider(ObjectType::FLAG_CAT, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
+			// Special case for flags
+			if (i == 0 && j == 0)
+			{
+				flagCat = new Collider(ObjectType::FLAG_CAT, tileCenter, glm::vec3(1.0f));
 				allColliders.push_back(flagCat);
 				continue;
 			}
-			else if ((i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)) {
-				flagDog = new Collider(ObjectType::FLAG_DOG, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
+			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
+			{
+				flagDog = new Collider(ObjectType::FLAG_DOG, tileCenter, glm::vec3(1.0f));
 				allColliders.push_back(flagDog);
 				continue;
 			}
 
+			// Generate Trees
 			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
-			cerr << numTrees << endl;
-
-			for (int k = 0; k < numTrees; k++) {
+			for (int k = 0; k < numTrees; k++)
+			{
+				// Pick random position within tile
 				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
 
-				//generate the position inside the tile
-				Collider* treeC = new Collider(ObjectType::ENVIRONMENT, glm::vec3(x, 5.0f, z) + glm::vec3(tileCenter.x, 0.0f, tileCenter.z), glm::vec3(1.0f, 10.0f, 1.0f));
+				// Make tree collider
+				Collider* treeC = new Collider(ObjectType::ENVIRONMENT, glm::vec3(x, 5.0f, z) + tileCenter, glm::vec3(1.0f, 10.0f, 1.0f));
 				allColliders.push_back(treeC);
 			}
 		}
@@ -149,13 +152,16 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 
 		// Handle Hit Damage
-		if (closestCollider != NULL && closestCollider->type == ObjectType::PLAYER) {
+		if (closestCollider != nullptr && closestCollider->type == ObjectType::PLAYER)
+		{
 			// TODO: maybe use pointers for players; for loops are pass by value
-			for (auto p : players) {
-				if (p.second->hitbox == closestCollider) {
-					p.second->decreaseHealth(100.0f);
+			for (auto p : players)
+			{
+				if (p.second->hitbox == closestCollider)
+				{
+					p.second->decreaseHealth(10.0f);
 					
-					//Drop flag if the player is dead
+					// Drop flag if the player is dead
 					if (p.second->isDead && flagCatCarrierId == p.first ) {
 						flagCatCarrierId = -1;
 						flagCat->isActive = true;
@@ -169,10 +175,28 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 						buildQuadtree();
 					}
 
+					// Check if player died
+					if (p.second->isDead)
+					{
+						// Drop corresponding flag
+						if (flagCatCarrierId == p.first) {
+							flagCatCarrierId = -1;
+							flagCat->isActive = true;
+							flagCat->set_center(p.second->pos + 2.0f * p.second->front);
+						}
+						else if (flagDogCarrierId == p.first) {
+							flagDogCarrierId = -1;
+							flagDog->isActive = true;
+							flagDog->set_center(p.second->pos + 2.0f * p.second->front);
+						}
+						buildQuadtree();
+
+						// Increment kill count
+						players[playerId]->kills++;
+					}
 					break;
 				}
 			}
-
 		}
 	}
 
@@ -202,17 +226,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			continue;
 		}
 
-		if (otherCollider == flagDog) {
-			cout << "Collided with dog " << playerId << " mod is " << playerId % 2 << " curr carrier id is " << flagDogCarrierId << endl;
-		}
-
 		// Flag collision
 		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
 			flagCatCarrierId = playerId;
 			flagCat->isActive = false;
 		}
 		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
-			cout << "Setting dog carrier id" << endl;
 			flagDogCarrierId = playerId;
 			flagDog->isActive = false;
 		}
@@ -245,7 +264,33 @@ GameState ServerGameManager::getGameState(int playerId) {
 			carryingDogFlag = true;
 		}
 
-		PlayerState ps(i, players[i]->pos, players[i]->front, players[i]->animation, players[i]->isGrounded, players[i]->health, players[i]->isDead, carryingCatFlag, carryingDogFlag);
+		PlayerState ps(i,
+			           players[i]->pos,
+			           players[i]->front,
+			           players[i]->animation,
+			           players[i]->isGrounded,
+			           players[i]->health,
+			           players[i]->isDead,
+			           carryingCatFlag,
+			           carryingDogFlag,
+			           players[i]->kills,
+			           players[i]->deaths,
+			           players[i]->captures);
+
+		/*
+		PlayerState ps;
+		ps.pos = players[i]->pos;
+		ps.front = players[i]->front;
+		ps.currentAnimation = players[i]->animation;
+		ps.isGrounded = players[i]->isGrounded;
+		ps.health = players[i]->health;
+		ps.isDead = players[i]->isDead;
+		ps.carryingCatFlag = (flagCatCarrierId == i);
+		ps.carryingDogFlag = (flagDogCarrierId == i);
+		ps.kills = players[i]->kills;
+		ps.deaths = players[i]->deaths;
+		ps.captures = players[i]->captures;
+		*/
 
 		gs.addState(ps);
 	}

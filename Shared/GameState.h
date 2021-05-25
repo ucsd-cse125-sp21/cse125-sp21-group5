@@ -17,15 +17,19 @@ class PlayerState
 public:
 	int playerId;
 	glm::vec3 pos, front;
-	float health;
+	
 
-	bool isGrounded;
-	int isAlive;
 	AnimationID currentAnimation;
-
+	bool isGrounded;
+	float health;
+	int isDead;
+	
 	bool carryingCatFlag;
 	bool carryingDogFlag;
 
+	unsigned int kills, deaths, captures;
+
+	PlayerState();
 	PlayerState(int playerId, 
 				const glm::vec3& pos,
 				const glm::vec3& front,
@@ -34,8 +38,11 @@ public:
 				float health,
 				int isAlive,
 				bool carryingCatFlag,
-				bool carryingDogFlag);
-	PlayerState();
+				bool carryingDogFlag,
+				unsigned int kills,
+				unsigned int deaths,
+				unsigned int captures);
+	
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
@@ -49,9 +56,12 @@ public:
 		ar& currentAnimation;
 		ar& isGrounded;
 		ar& health;
-		ar& isAlive;
+		ar& isDead;
 		ar& carryingCatFlag;
 		ar& carryingDogFlag;
+		ar& kills;
+		ar& deaths;
+		ar& captures;
 	}
 };
 

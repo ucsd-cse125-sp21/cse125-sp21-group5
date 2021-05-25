@@ -18,10 +18,13 @@ public:
 	float health;
 	float vVelocity;
 
-	//Team
+	// Team
 	PlayerTeam team;
 
 	AnimationID animation;
+
+	// Score variables
+	unsigned int kills, deaths, captures;
 
 	// Collision/movement/jumping variables
 	Collider* hitbox; 
@@ -32,9 +35,9 @@ public:
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos, int playerId);
 	ServerPlayer(const glm::vec3& initPos,
-		   const glm::vec3& hitboxSize,
-		   float initYaw,
-		   float initPitch);
+		  	     const glm::vec3& hitboxSize,
+			     float initYaw,
+			     float initPitch);
 
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
 	void decreaseHealth(float decAmount);

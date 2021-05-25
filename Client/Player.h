@@ -14,25 +14,27 @@
 
 class Player : public Node
 {
+private:
+	bool mustLoadModels;
+
 public:
 	Camera* cam;
 	Transform* transform;
 
 	Model* model;
 	std::vector<Model*> models;
-	float health;
+
 	int playerId;
 
-	bool isGrounded;
+	float health;
 	int isDead;
-
+	
+	bool isGrounded;
 	bool isCarryingCatFlag;
 	bool isCarryingDogFlag;
 
-private:
-	bool mustLoadModels;
+	unsigned int kills, deaths, captures;
 
-public:
 	Player(Transform* transform, int playerId);
 	~Player();
 
@@ -40,7 +42,6 @@ public:
 	void update(float deltaTime);
 
 	void loadModels();
-	// Update Camera attributes
 	void updatePlayer(PlayerState ps);
 
 	void displayHUD();

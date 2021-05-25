@@ -33,8 +33,13 @@ GameManager::GameManager(GLFWwindow* window)
 	tileModel->setName("Tile Model");
 	treeModel = new Model("res/models/willowTrunk.dae");
 	treeModel->setName("Tree Model");
+	catT = nullptr;
+	dogT = nullptr;
 	catModel = new Model("res/models/finalZombieFish.dae");
 	dogModel = new Model("res/models/finalHuskyRun.dae");
+
+	// Initialize variables
+	showScoreboard = false;
 
 	// Add a test point light
 	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
@@ -175,6 +180,17 @@ Event GameManager::handleInput()
 		dPos -= camera->up;
 	}
 
+	// Show scoreboard
+	if (glfwGetKey(window, GLFW_KEY_TAB))
+	{
+		cerr << "showing scoreboard" << endl;
+		showScoreboard = true;
+	}
+	else
+	{
+		showScoreboard = false;
+	}
+
 	// Accumulate direction, and convert to offset
 	if (dPos != glm::vec3(0.0f))
 		dPos = glm::normalize(dPos);
@@ -203,7 +219,6 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 {
 	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
-		cerr << "asdfasdf" << endl;
 		Renderer::get().debug = !Renderer::get().debug;
 	}
 }
@@ -272,11 +287,31 @@ void GameManager::render()
 		ImGui::SetWindowPos(ImVec2(0, 0));
 		ImGui::SetWindowSize(ImVec2(1000, 500));
 		Player* p = players[localPlayerId];
+		ImGui::Text("Number of Players: %d", players.size());
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
+		ImGui::End();
+	}
+
+	// Scoreboard UI
+	if (showScoreboard)
+	{
+		ImGui::Begin("Debug UI", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width/2 - 250, Window::height/2 - 250));
+		ImGui::SetWindowSize(ImVec2(500, 500));
+
+		for (auto& p : players)
+		{
+			//ImGui::Begin("test");
+			ImGui::Text("Player ID: %d", p.first);
+			ImGui::Text("Kills: %d", p.second->kills);
+			ImGui::Text("Deaths: %d", p.second->deaths);
+			ImGui::Text("Captures: %d", p.second->captures);
+			//ImGui::End();
+		}
 		ImGui::End();
 	}
 	
@@ -304,8 +339,11 @@ void GameManager::updateMap(MapState& ms)
 	{
 		for (int j = 0; j < NUM_MAP_TILES; j++)
 		{
-			//Create the tile for the trees to rest on
-			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20*(i - NUM_MAP_TILES / 2), 0, 20*(j - NUM_MAP_TILES / 2)));
+			// Define center of tile
+			glm::vec3 tileCenter = glm::vec3(TILE_SIZE * (i - NUM_MAP_TILES / 2), 0, TILE_SIZE * (j - NUM_MAP_TILES / 2));
+
+			// Create tile transform
+			Transform* tileT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter);
 			tileT->setName("Tile ["  + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
@@ -313,8 +351,7 @@ void GameManager::updateMap(MapState& ms)
 			// Cat flag
 			if (i == 0 && j == 0)
 			{
-				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
-				//catT->rescale(glm::vec3(0.25f));
+				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
 				cout << "cat at: " << glm::to_string(catT->translation) << endl;
 				catT->setName("catT");
 				catT->add_child(catModel);
@@ -322,9 +359,9 @@ void GameManager::updateMap(MapState& ms)
 				continue;
 			}
 			// Dog flag
-			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1) {
-				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
-				//dogT->rescale(glm::vec3(0.25f));
+			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
+			{
+				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
 				cout << "dog at: " << glm::to_string(dogT->translation) << endl;
 				dogT->setName("dogT");
 				dogT->add_child(dogModel);
@@ -332,15 +369,15 @@ void GameManager::updateMap(MapState& ms)
 				continue;
 			}
 
+			// Generate Trees
 			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
-			//cerr << numTrees << endl;
-
 			for (int k = 0; k < numTrees; k++) {
-				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
-				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
+				// Pick random tree position
+				float x = TILE_SIZE * (rand() / (float)RAND_MAX) - 10.0f;
+				float z = TILE_SIZE * (rand() / (float)RAND_MAX) - 10.0f;
 			    
-				//genrate the position inside the tile
-				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0), glm::vec3(x, 0, z));
+				// Generate the position inside the tile
+				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(x, 0.0f, z));
 				treeT->add_child(treeModel);
 				treeT->setName("Tree [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 				tileT->add_child(treeT);
@@ -353,23 +390,23 @@ void GameManager::updateGameState(GameState& gs)
 {
 	for (const PlayerState& ps : gs.states)
 	{
-
 		// TODO: Decide what to do if player doesn't exist but update is received.
 		// Ignore update if player doesn't exist
 		if (players.find(ps.playerId) == players.end())
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
+		// TODO: stop flags from floating?
 		if (ps.carryingCatFlag)
 		{
 			Transform* playerT = players[ps.playerId]->transform;
-			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0, players[ps.playerId]->cam->front.z));
+			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0.1f, players[ps.playerId]->cam->front.z));
 			catT->setTranslate(playerT->translation - 2.5f * directionalTrans);
 		}
 		else if (ps.carryingDogFlag)
 		{
 			Transform* playerT = players[ps.playerId]->transform;
-			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0, players[ps.playerId]->cam->front.z));
+			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0.1f, players[ps.playerId]->cam->front.z));
 			dogT->setTranslate(playerT->translation - 2.5f * directionalTrans);
 		}
 	}

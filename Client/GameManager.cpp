@@ -28,11 +28,16 @@ GameManager::GameManager(GLFWwindow* window)
 	// Preload models
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
-	playerModel->setName("Player Model");
 	tileModel = new Model("res/models/finalTileZY.dae");
+	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+
+	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
-	treeModel = new Model("res/models/willowTrunk.dae");
-	treeModel->setName("Tree Model");
+
 	catT = nullptr;
 	dogT = nullptr;
 	catModel = new Model("res/models/cat.dae");
@@ -367,7 +372,6 @@ void GameManager::updateMap(MapState& ms)
 			if (i == 0 && j == 0)
 			{
 				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
-				cout << "cat at: " << glm::to_string(catT->translation) << endl;
 				catT->setName("catT");
 				catT->add_child(catModel);
 				worldT->add_child(catT);
@@ -377,7 +381,6 @@ void GameManager::updateMap(MapState& ms)
 			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
 			{
 				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
-				cout << "dog at: " << glm::to_string(dogT->translation) << endl;
 				dogT->setName("dogT");
 				dogT->add_child(dogModel);
 				worldT->add_child(dogT);
@@ -393,7 +396,8 @@ void GameManager::updateMap(MapState& ms)
 			    
 				// Generate the position inside the tile
 				Transform* treeT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(x, 0.0f, z));
-				treeT->add_child(treeModel);
+				treeT->rotate(360.0f * (rand() / (float)RAND_MAX), glm::vec3(0.0f, 1.0f, 0.0f));
+				treeT->add_child(treeModels[rand() % treeModels.size()]);
 				treeT->setName("Tree [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 				tileT->add_child(treeT);
 			}
@@ -411,21 +415,6 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
-		// TODO: stop flags from floating?
-		/*
-		if (ps.carryingCatFlag)
-		{
-			Transform* playerT = players[ps.playerId]->transform;
-			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0.1f, players[ps.playerId]->cam->front.z));
-			catT->setTranslate(playerT->translation - 2.5f * directionalTrans);
-		}
-		else if (ps.carryingDogFlag)
-		{
-			Transform* playerT = players[ps.playerId]->transform;
-			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0.1f, players[ps.playerId]->cam->front.z));
-			dogT->setTranslate(playerT->translation - 2.5f * directionalTrans);
-		}
-		*/
 	}
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);

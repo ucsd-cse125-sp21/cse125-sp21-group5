@@ -54,6 +54,8 @@ MapState ServerGameManager::generateMap()
 
 				// Make tree collider
 				Collider* treeC = new Collider(ObjectType::ENVIRONMENT, glm::vec3(x, 5.0f, z) + tileCenter, glm::vec3(1.0f, 10.0f, 1.0f));
+				rand(); // for random tree models on client
+				rand(); // for rotations on client
 				allColliders.push_back(treeC);
 			}
 

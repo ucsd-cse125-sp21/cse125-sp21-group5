@@ -254,7 +254,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 }
 
 void ServerGameManager::createNewPlayer(int playerId) {
-	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? glm::vec3(-10.0f, 3.0f, -10.0f) : glm::vec3(-10.0f, 15.0f, -5.0f);
+	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? CAT_SPAWN : DOG_SPAWN;
 	players[playerId] = new ServerPlayer(playerSpawnPos, playerId);
 	// Add player hitboxes to all colliders
 	allColliders.push_back(players[playerId]->hitbox);

@@ -154,6 +154,7 @@ glm::vec3 Collider::check_collision(Collider* other) {
 
 bool Collider::check_ray_collision(glm::vec3 origin, glm::vec3 dir, glm::vec3& hitPosition)
 {
+	// Can't shoot inactive colliders
 	if (!isActive)
 		return false;
 	// pos = origin + k * dir

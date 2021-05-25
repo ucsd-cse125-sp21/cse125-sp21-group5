@@ -58,8 +58,6 @@ MapState ServerGameManager::generateMap()
 				rand(); // for rotations on client
 				allColliders.push_back(treeC);
 			}
-
-			
 		}
 	}
 
@@ -84,18 +82,30 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// TODO: Varying death timers 
 	if (players[playerId]->isDead > 0)
 	{
+		// Update animation for death
+		players[playerId]->animation = AnimationID::DEATH;
 		players[playerId]->isDead--;
 		
+		// Reset variables when they are alive again
 		if (players[playerId]->isDead == 0)
 		{
 			players[playerId]->health = 100.0f;
 			players[playerId]->hitbox->isActive = true;
-			cout << "health being reset" << endl;
-		}
 
-		//If the player is dead, we don't let them move or do anything
+			// TP to cat base
+			if (players[playerId]->team == PlayerTeam::CAT_LOVER) {
+				players[playerId]->pos = CAT_SPAWN;
+			}
+			else if (players[playerId]->team == PlayerTeam::DOG_LOVER) {
+				players[playerId]->pos = DOG_SPAWN;
+			}
+		}
+		// If the player is dead, we don't let them move or do anything
 		return;
 	}
+
+	// Pick animation
+	players[playerId]->updateAnimations(e);
 
 	// Check if player has fallen off map
 	if (players[playerId]->pos.y < -10.0f)
@@ -149,8 +159,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 	// Rebuild quadtree for collision after player movement is updated
 	buildQuadtree();
-
-	players[playerId]->updateAnimations(e);
 	
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId]->hitbox;
@@ -178,7 +186,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 					minHitlength = hitLength;
 					closestCollider = otherCollider;
 				}
-				std::cout << "hit" << glm::length(hitPos - players[playerId]->hitbox->cen) << std::endl;
 			}
 		}
 
@@ -192,8 +199,17 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 					p.second->decreaseHealth(10.0f);
 
 					// Check if player died
-					if (p.second->isDead)
+					if (p.second->isDeadCheck())
 					{
+						// Set death timer
+						p.second->isDead = DEATH_TICK_TIMER;
+
+						// Disable hitbox
+						p.second->hitbox->isActive = false;
+
+						// Increase death count
+						p.second->deaths++;
+
 						// Drop corresponding flag
 						if (flagCatCarrierId == p.first) {
 							flagCatCarrierId = -1;

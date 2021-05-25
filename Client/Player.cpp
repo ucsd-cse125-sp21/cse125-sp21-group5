@@ -72,23 +72,18 @@ void Player::updatePlayer(PlayerState ps)
 	// Don't waste time animating
 	if (mustLoadModels) return;
 
-	// Choose which animation to play
-	if (ps.currentAnimation == AnimationID::WALK)
-	{
-		model = models[1];
-	}
-	else 
-	{
-		model = models[0];
-	}
+	model = models[(int)ps.currentAnimation];
 }
 
 
 // loads the model files and sets up shaders
 void Player::loadModels() {
 
-	models.push_back(new Model("res/models/finalToxicDab.dae"));
+	models.push_back(new Model("res/models/finalIdle.dae"));
 	models.push_back(new Model("res/models/finalWalk.dae"));
+	models.push_back(new Model("res/models/finalShoot.dae"));
+	models.push_back(new Model("res/models/finalToxicDab.dae"));
+	models.push_back(new Model("res/models/finalDeath200.dae"));
 
 	model = models[0];
 }

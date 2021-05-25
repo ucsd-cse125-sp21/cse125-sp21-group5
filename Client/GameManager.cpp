@@ -30,10 +30,10 @@ GameManager::GameManager(GLFWwindow* window)
 	playerModel = new Model("res/models/unitCube.dae");
 	tileModel = new Model("res/models/finalTileZY.dae");
 	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
-	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
-	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
-	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
-	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
+	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
+	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
+	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
 
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");

@@ -84,7 +84,11 @@ void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float d
 
 void ServerPlayer::updateAnimations(const Event& e) {
 	// choose the animation to play on the client
-	if (glm::length(e.dPos) > 0) {
+	if (e.shooting)
+	{
+		animation = AnimationID::SHOOT;
+	}
+	else if (glm::length(e.dPos) > 0) {
 		// the player is moving, play the run animation
 		animation = AnimationID::WALK;
 	}
@@ -100,21 +104,5 @@ bool ServerPlayer::isDeadCheck() {
 void ServerPlayer::decreaseHealth(float decAmount)
 {
 	health -= decAmount;
-	if (isDeadCheck())
-	{
-		// Set death timer
-		this->isDead = DEATH_TICK_TIMER;
-		hitbox->isActive = false;
-
-		// Increase death amount
-		deaths++;
-
-		// TP to cat base
-		if (team == PlayerTeam::CAT_LOVER) {
-			this->pos = CAT_SPAWN;
-		}
-		else if (team == PlayerTeam::DOG_LOVER) {
-			this->pos = DOG_SPAWN;
-		}
-	}
+	
 }

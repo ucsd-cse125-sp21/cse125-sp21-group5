@@ -9,7 +9,9 @@
 enum class AnimationID {
 	IDLE = 0,
 	WALK = 1,
-	SHOOT = 2
+	SHOOT = 2,
+	DAB = 3,
+	DEATH = 4,
 };
 
 class PlayerState
@@ -17,7 +19,6 @@ class PlayerState
 public:
 	int playerId;
 	glm::vec3 pos, front;
-	
 
 	AnimationID currentAnimation;
 	bool isGrounded;

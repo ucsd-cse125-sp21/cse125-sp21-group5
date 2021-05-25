@@ -30,7 +30,7 @@ public:
 	int isDead;
 
 	ServerPlayer();
-	ServerPlayer(const glm::vec3& initPos);
+	ServerPlayer(const glm::vec3& initPos, int playerId);
 	ServerPlayer(const glm::vec3& initPos,
 		   const glm::vec3& hitboxSize,
 		   float initYaw,

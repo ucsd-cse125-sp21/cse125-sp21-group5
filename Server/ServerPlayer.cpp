@@ -18,7 +18,7 @@ ServerPlayer::ServerPlayer() {
 	isDead = 0;
 }
 
-ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
+ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId) {
 	pos = initPos;
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
@@ -31,6 +31,13 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos) {
 	isGrounded = false;
 	health = 100.0f;
 	isDead = 0;
+
+	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
+		this->team = PlayerTeam::CAT_LOVER;
+	}
+	else {
+		this->team = PlayerTeam::DOG_LOVER;
+	}
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
@@ -87,6 +94,15 @@ void ServerPlayer::decreaseHealth(float decAmount)
 	if (isDeadCheck())
 	{
 		this->isDead = DEATH_TICK_TIMER;
-		hitbox->isActive = false;
+		//hitbox->isActive = false;
+
+		// TP to cat base
+		if (team == PlayerTeam::CAT_LOVER) {
+			this->pos = CAT_SPAWN;
+		}
+		else if (team == PlayerTeam::DOG_LOVER) {
+			this->pos = DOG_SPAWN;
+		}
+
 	}
 }

@@ -78,6 +78,10 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			players[playerId]->hitbox->isActive = true;
 			cout << "health being reset" << endl;
 		}
+
+
+		//If the player is dead, we don't let them move or do anything
+		return;
 	}
 
 	// Not jumping
@@ -244,7 +248,7 @@ GameState ServerGameManager::getGameState(int playerId) {
 
 void ServerGameManager::createNewPlayer(int playerId) {
 	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? glm::vec3(-10.0f, 3.0f, -10.0f) : glm::vec3(-10.0f, 15.0f, -5.0f);
-	players[playerId] = new ServerPlayer(playerSpawnPos);
+	players[playerId] = new ServerPlayer(playerSpawnPos, playerId);
 	// Add player hitboxes to all colliders
 	allColliders.push_back(players[playerId]->hitbox);
 }

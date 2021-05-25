@@ -94,7 +94,7 @@ void ServerPlayer::updateAnimations(const Event& e) {
 }
 
 bool ServerPlayer::isDeadCheck() {
-	return (this->health <= 0.5f);
+	return (this->health <= 0.0f);
 }
 
 void ServerPlayer::decreaseHealth(float decAmount)
@@ -116,6 +116,5 @@ void ServerPlayer::decreaseHealth(float decAmount)
 		else if (team == PlayerTeam::DOG_LOVER) {
 			this->pos = DOG_SPAWN;
 		}
-
 	}
 }

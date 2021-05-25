@@ -299,24 +299,39 @@ void GameManager::render()
 	// Scoreboard UI
 	if (showScoreboard)
 	{
-		ImGui::Begin("Debug UI", &showUI, windowFlags);
-		ImGui::SetWindowPos(ImVec2(Window::width/2 - 250, Window::height/2 - 250));
+		// Show first team (left)
+		ImGui::Begin("Scoreboard1", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width/2 - 500, Window::height/2 - 250));
 		ImGui::SetWindowSize(ImVec2(500, 500));
-
+		ImGui::Text("CAT TEAM");
+		ImGui::Text("Player ID\tKills\tDeaths\tCaptures");
 		for (auto& p : players)
 		{
-			//ImGui::Begin("test");
-			ImGui::Text("Player ID: %d", p.first);
-			ImGui::Text("Kills: %d", p.second->kills);
-			ImGui::Text("Deaths: %d", p.second->deaths);
-			ImGui::Text("Captures: %d", p.second->captures);
-			//ImGui::End();
+			if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
+			ImGui::Text("%d\t\t\t\t%d\t\t\t%d\t\t\t%d", p.first,
+										  p.second->kills,
+										  p.second->deaths,
+										  p.second->captures);
 		}
 		ImGui::End();
-	}
-	
 
-	//Renderer::get().setCamera(players[localPlayerId]->cam);
+		// Show second team (right)
+		ImGui::Begin("Scoreboard2", &showUI, windowFlags);
+		ImGui::Text("CAT TEAM");
+		ImGui::Text("Player ID\tKills\tDeaths\tCaptures");
+		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
+		ImGui::SetWindowSize(ImVec2(500, 500));
+		for (auto& p : players)
+		{
+			if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
+			ImGui::Text("%d\t%d\t%d\t%d", p.first,
+										  p.second->kills,
+				  						  p.second->deaths,
+										  p.second->captures);
+		}
+		ImGui::End();
+
+	}
 
 	// Render the models
 	Renderer::get().setCamera(players[localPlayerId]->cam);

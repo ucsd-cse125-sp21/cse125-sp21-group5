@@ -154,7 +154,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Handle Hit Damage
 		if (closestCollider != nullptr && closestCollider->type == ObjectType::PLAYER)
 		{
-			// TODO: maybe use pointers for players; for loops are pass by value
 			for (auto p : players)
 			{
 				if (p.second->hitbox == closestCollider)

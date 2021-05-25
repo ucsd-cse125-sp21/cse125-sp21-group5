@@ -84,6 +84,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		return;
 	}
 
+	// Check if player has fallen off map
+	if (players[playerId]->pos.y < -10.0f)
+	{
+		players[playerId]->decreaseHealth(10.0f);
+	}
+
 	// Not jumping
 	if (!e.jumping) {
 		if (players[playerId]->vVelocity >= 0) {
@@ -96,6 +102,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// 10 ticks of jumping in total
 		players[playerId]->jumping = 10;
 	}
+
 
 	// Parabolic jumping
 	float jumpingSquared = players[playerId]->jumping* players[playerId]->jumping;

@@ -29,7 +29,7 @@ GameManager::GameManager(GLFWwindow* window)
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
 	playerModel->setName("Player Model");
-	tileModel = new Model("res/models/tile.dae");
+	tileModel = new Model("res/models/finalTileZY.dae");
 	tileModel->setName("Tile Model");
 	treeModel = new Model("res/models/willowTrunk.dae");
 	treeModel->setName("Tree Model");

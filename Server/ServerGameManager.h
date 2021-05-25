@@ -1,11 +1,14 @@
 #pragma once
 #include <vector>
+#include <limits>
 #include <unordered_map>
+
 #include "ServerPlayer.h"
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/MapState.h"
 #include "Quadtree.h"
+
 
 using namespace std;
 
@@ -23,13 +26,21 @@ public:
 	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
+	// Track all players
 	unordered_map<int, ServerPlayer*> players;
+
 	ServerGameManager();
+
+	void createNewPlayer(int playerId);
+
 	void handleEvent(Event& e, int playerId);
-	void buildQuadtree();
+	void handleShoot(ServerPlayer* player);
+
 	GameState getGameState(int playerId);
 	MapState generateMap();
-	void createNewPlayer(int playerId);
+	void buildQuadtree();
+
+	
 
 	int tileSeed;
 };

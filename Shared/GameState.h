@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
+
+#include "../Shared/Gun.h"
 
 enum class AnimationID {
 	IDLE = 0,
@@ -30,6 +33,9 @@ public:
 
 	unsigned int kills, deaths, captures;
 
+	int gun_idx;
+	Gun curr_gun;
+
 	PlayerState();
 	PlayerState(int playerId, 
 				const glm::vec3& pos,
@@ -42,7 +48,9 @@ public:
 				bool carryingDogFlag,
 				unsigned int kills,
 				unsigned int deaths,
-				unsigned int captures);
+				unsigned int captures,
+				int gun_idx,
+				const Gun& curr_gun);
 	
 
 	template <typename Archive>
@@ -63,6 +71,8 @@ public:
 		ar& kills;
 		ar& deaths;
 		ar& captures;
+		ar& gun_idx;
+		ar& curr_gun;
 	}
 };
 

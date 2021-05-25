@@ -1,15 +1,5 @@
 #include "Player.h"
 
-// TODO: Used for yourself?
-/*
-Player::Player(Transform* transform)
-{
-	this->transform = transform;
-	this->model = nullptr;
-	cam = new Camera();
-}
-*/
-
 // Used for other players
 Player::Player(Transform* transform, int playerId)
 {
@@ -17,15 +7,26 @@ Player::Player(Transform* transform, int playerId)
 	this->transform = transform;
 	cam = new Camera();
 	mustLoadModels = true;
-	this->model = NULL;
+	this->model = nullptr;
 	this->health = -1.0f;
 	this->isDead = 1;
+	this->isGrounded = false;
 	this->isCarryingCatFlag = false;
 	this->isCarryingDogFlag = false;
+	this->kills = 0;
+	this->deaths = 0;
+	this->captures = 0;
+
+	this->gun_idx = 1;
+	this->guns.push_back(new Pistol());
+	this->guns.push_back(new Shotgun());
+	this->guns.push_back(new Rifle());
 }
 
-Player::~Player() {
-	for (Model* m : models) {
+Player::~Player()
+{
+	for (Model* m : models)
+	{
 		delete m;
 	}
 }
@@ -68,6 +69,11 @@ void Player::updatePlayer(PlayerState ps)
 
 	// Health update
 	health = ps.health;
+
+	// Update whichever gun you are holding
+	gun_idx = ps.gun_idx;
+	guns[gun_idx]->clip_size = ps.curr_gun.clip_size;
+	guns[gun_idx]->reload_time = ps.curr_gun.reload_time;
 
 	// Don't waste time animating
 	if (mustLoadModels) return;

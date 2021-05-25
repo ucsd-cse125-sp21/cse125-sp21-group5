@@ -31,9 +31,9 @@ GameManager::GameManager(GLFWwindow* window)
 	tileModel = new Model("res/models/finalTileZY.dae");
 	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
 	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
-	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
-	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
-	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
+	treeModels.push_back(new Model("res/models/basicTree.dae"));
+	treeModels.push_back(new Model("res/models/fiboTree.dae"));
+	treeModels.push_back(new Model("res/models/deadTree.dae"));
 
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
@@ -106,17 +106,13 @@ Event GameManager::update()
 	// Process keyboard input
 	Event e = handleInput();
 
-	// Process gravity
-	//cout << glm::to_string(players[localPlayerId]->cam->pos) << endl;
-
-	// Update camera position
 	// TODO: necessary?
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 	return e;
 }
 
-// Handle Keyboard Input
+// Handle Keyboard and Mouse Input
 Event GameManager::handleInput()
 {
 	// Get current mouse position
@@ -146,7 +142,7 @@ Event GameManager::handleInput()
 	// Get Player Camera
 	Camera* camera = players[localPlayerId]->cam;
 
-	// Jumping control 
+	// Jumping control
 	bool jumping = false;
 
 	// Player Controls
@@ -154,11 +150,7 @@ Event GameManager::handleInput()
 	glm::vec3 dir(camera->front.x, 0.0f, camera->front.z);
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		//cout << "before" << glm::to_string(dPos) << endl;
-		//dPos += camera->front;
 		dPos += glm::normalize(dir);
-		//cout << "after" << glm::to_string(dPos) << endl;
-
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S))
 	{
@@ -185,16 +177,24 @@ Event GameManager::handleInput()
 		dPos -= camera->up;
 	}
 
+	// Weapon 1
+	if (glfwGetKey(window, GLFW_KEY_1))
+	{
+		players[localPlayerId]->gun_idx = 0;
+	}
+	// Weapon 2
+	else if (glfwGetKey(window, GLFW_KEY_2))
+	{
+		players[localPlayerId]->gun_idx = 1;
+	}
+	// Weapon 3
+	else if (glfwGetKey(window, GLFW_KEY_3))
+	{
+		players[localPlayerId]->gun_idx = 2;
+	}
+
 	// Show scoreboard
-	if (glfwGetKey(window, GLFW_KEY_TAB))
-	{
-		cerr << "showing scoreboard" << endl;
-		showScoreboard = true;
-	}
-	else
-	{
-		showScoreboard = false;
-	}
+	showScoreboard = glfwGetKey(window, GLFW_KEY_TAB);
 
 	// Accumulate direction, and convert to offset
 	if (dPos != glm::vec3(0.0f))
@@ -206,17 +206,14 @@ Event GameManager::handleInput()
 	float pitch = camera->sensitivity * offsetY;
 
 	// Detect mouse presses
-	bool shooting = false;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
-	{
-		shooting = true;
-	}
+	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
+
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
 		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping);
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->gun_idx);
 }
 
 // Use for one-time key presses
@@ -295,6 +292,7 @@ void GameManager::render()
 		ImGui::Text("Number of Players: %d", players.size());
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
+		ImGui::Text("Player gun name: %s", p->guns[p->gun_idx]->name);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
@@ -305,6 +303,7 @@ void GameManager::render()
 	if (showScoreboard)
 	{
 		// Show first team (left)
+		// TODO: Deal with tabbing
 		ImGui::Begin("Scoreboard1", &showUI, windowFlags);
 		ImGui::SetWindowPos(ImVec2(Window::width/2 - 500, Window::height/2 - 250));
 		ImGui::SetWindowSize(ImVec2(500, 500));

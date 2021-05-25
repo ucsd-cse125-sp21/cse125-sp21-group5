@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "Renderer.h"
 #include "../Shared/GameState.h"
+#include "../Shared/Gun.h"
 
 // Import IMGui for Player HUD UI.
 #include "imgui.h"
@@ -34,6 +35,9 @@ public:
 	bool isCarryingDogFlag;
 
 	unsigned int kills, deaths, captures;
+
+	int gun_idx;
+	vector<Gun*> guns;
 
 	Player(Transform* transform, int playerId);
 	~Player();

@@ -21,7 +21,8 @@ ServerPlayer::ServerPlayer() {
 	captures = 0;
 }
 
-ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId) {
+ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
+{
 	pos = initPos;
 	front = glm::vec3(0.0f, 0.0f, 1.0f);
 	yaw = 0.0f;
@@ -38,12 +39,15 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId) {
 	deaths = 0;
 	captures = 0;
 
-	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
-		this->team = PlayerTeam::CAT_LOVER;
-	}
-	else {
-		this->team = PlayerTeam::DOG_LOVER;
-	}
+	gun_idx = 0;
+	guns.push_back(new Pistol());
+	guns.push_back(new Shotgun());
+	guns.push_back(new Rifle());
+
+	this->team =
+		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
+			? PlayerTeam::CAT_LOVER
+			: PlayerTeam::DOG_LOVER;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
@@ -63,7 +67,8 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	captures = 0;
 }
 
-void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch) {
+void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch)
+{
 	// Calculate new pitch and yaw
 	yaw += dYaw;
 	pitch += dPitch;
@@ -104,5 +109,4 @@ bool ServerPlayer::isDeadCheck() {
 void ServerPlayer::decreaseHealth(float decAmount)
 {
 	health -= decAmount;
-	
 }

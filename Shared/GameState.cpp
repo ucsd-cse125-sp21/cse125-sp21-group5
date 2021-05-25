@@ -1,4 +1,5 @@
 #include "GameState.h"
+#include <iostream>
 
 PlayerState::PlayerState()
 {
@@ -16,6 +17,7 @@ PlayerState::PlayerState()
 	this->captures = 0;
 }
 
+// TODO: why is this not a shared player?
 PlayerState::PlayerState(int playerId, 
 						 const glm::vec3& pos,
 						 const glm::vec3& front,
@@ -27,7 +29,9 @@ PlayerState::PlayerState(int playerId,
 						 bool carryingDogFlag,
 						 unsigned int kills,
 						 unsigned int deaths,
-						 unsigned int captures)
+						 unsigned int captures,
+						 int gun_idx,
+						 const Gun& curr_gun)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -41,6 +45,8 @@ PlayerState::PlayerState(int playerId,
 	this->kills = kills;
 	this->deaths = deaths;
 	this->captures = captures;
+	this->gun_idx = gun_idx;
+	this->curr_gun = curr_gun;
 }
 
 // Could be reference? 

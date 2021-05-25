@@ -3,10 +3,12 @@
 #include <GL/glew.h>
 #include "glm/glm.hpp"
 #include <iostream>
+
 #include "Collider.h"
 #include "../Shared/GameState.h"
 #include "../Shared/Event.h"
 #include "../Shared/Global_variables.h"
+#include "../Shared/Gun.h"
 
 class ServerPlayer
 {
@@ -15,6 +17,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 pos;
 	float yaw, pitch;
+
 	float health;
 	float vVelocity;
 
@@ -31,6 +34,10 @@ public:
 	bool isGrounded;
 	int jumping;
 	int isDead;
+
+	// Guns
+	int gun_idx;
+	std::vector<Gun*> guns;
 
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos, int playerId);

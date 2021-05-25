@@ -9,8 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E1012B95-EF44-4770-9DFF-4274EC24262C}"
 	ProjectSection(SolutionItems) = preProject
-		Shared\Camera.cpp = Shared\Camera.cpp
-		Shared\Camera.h = Shared\Camera.h
 		Shared\Event.cpp = Shared\Event.cpp
 		Shared\Event.h = Shared\Event.h
 		Shared\GameState.cpp = Shared\GameState.cpp

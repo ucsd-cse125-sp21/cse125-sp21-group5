@@ -1,7 +1,6 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
-#include <glm/gtc/random.hpp>
-#include <limits> 
+
 
 ServerGameManager::ServerGameManager() {
 
@@ -77,10 +76,98 @@ MapState ServerGameManager::generateMap()
 	return MapState(tileSeed);
 }
 
+void ServerGameManager::handleShoot(ServerPlayer* player)
+{
+	// Select current gun
+	Gun* gun = player->guns[player->gun_idx];
+
+	// Check gun stuff
+	if (!gun->fire())
+	{
+		return;
+	}
+
+	// Trace each bullet
+	for (int i = 0; i < gun->bullets_per_shot; i++)
+	{
+		// For calculating min distance
+		float minHitlength = std::numeric_limits<float>::infinity();
+		Collider* closestCollider = nullptr;
+
+		// Check shooting against all other colliders before checking movement 
+		for (Collider* otherCollider : allColliders)
+		{
+			// Ignore collisions with yourself
+			if (player->hitbox == otherCollider)
+				continue;
+
+			// Check for shooting stuff
+			glm::vec3 hitPos;
+			if (otherCollider->check_ray_collision(player->hitbox->cen, player->front, hitPos))
+			{
+				float hitLength = glm::length(hitPos - player->hitbox->cen);
+				if (hitLength < minHitlength)
+				{
+					minHitlength = hitLength;
+					closestCollider = otherCollider;
+				}
+			}
+		}
+
+		// Handle Hit Damage
+		if (closestCollider != nullptr && closestCollider->type == ObjectType::PLAYER)
+		{
+			// TODO: maybe find constant time way to do this
+			for (auto p : players)
+			{
+				if (p.second->hitbox == closestCollider)
+				{
+					p.second->decreaseHealth(gun->damage_per_bullet);
+
+					// Check if player died
+					if (p.second->isDeadCheck())
+					{
+						// Set death timer
+						p.second->isDead = DEATH_TICK_TIMER;
+
+						// Disable hitbox
+						p.second->hitbox->isActive = false;
+
+						// Increase death count
+						p.second->deaths++;
+
+						// Drop corresponding flag
+						if (flagCatCarrierId == p.first)
+						{
+							flagCatCarrierId = -1;
+							flagCat->isActive = true;
+							flagCat->set_center(p.second->pos - 2.0f * p.second->front);
+						}
+						else if (flagDogCarrierId == p.first)
+						{
+							flagDogCarrierId = -1;
+							flagDog->isActive = true;
+							flagDog->set_center(p.second->pos - 2.0f * p.second->front);
+						}
+						buildQuadtree();
+
+						// Increment kill count
+						player->kills++;
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
+	// Get the current player
+	ServerPlayer* curr_player = players[playerId];
+
 	// TODO: Varying death timers 
-	if (players[playerId]->isDead > 0)
+	if (curr_player->isDead > 0)
 	{
 		// Update animation for death
 		players[playerId]->animation = AnimationID::DEATH;
@@ -89,6 +176,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// Reset variables when they are alive again
 		if (players[playerId]->isDead == 0)
 		{
+			// TODO: Reset player (including gun variables)
 			players[playerId]->health = 100.0f;
 			players[playerId]->hitbox->isActive = true;
 
@@ -104,18 +192,30 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		return;
 	}
 
+	// Switch weapons
+	curr_player->gun_idx = e.gun_idx;
+
 	// Pick animation
-	players[playerId]->updateAnimations(e);
+	curr_player->updateAnimations(e);
 
 	// Check if player has fallen off map
-	if (players[playerId]->pos.y < -10.0f)
+	if (curr_player->pos.y < -10.0f)
 	{
 		// Slowly decrement health
-		players[playerId]->decreaseHealth(10.0f);
+		curr_player->decreaseHealth(10.0f);
 	
 		// If player dies, return flag back to area
-		if (players[playerId]->isDeadCheck())
+		if (curr_player->isDeadCheck())
 		{
+			// Set death timer
+			curr_player->isDead = DEATH_TICK_TIMER;
+
+			// Disable hitbox
+			curr_player->hitbox->isActive = false;
+
+			// Increase death count
+			curr_player->deaths++;
+
 			if (flagCatCarrierId == playerId)
 			{
 				flagCatCarrierId = -1;
@@ -134,126 +234,65 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Not jumping
 	if (!e.jumping)
 	{
-		if (players[playerId]->vVelocity >= 0.0f)
+		if (curr_player->vVelocity >= 0.0f)
 		{
-			players[playerId]->vVelocity -= 0.1f;
+			curr_player->vVelocity -= 0.1f;
 		}
-		players[playerId]->update(e.dPos + glm::vec3(0.0f, players[playerId]->vVelocity, 0.0f), e.dYaw, e.dPitch);
+		curr_player->update(e.dPos + glm::vec3(0.0f, curr_player->vVelocity, 0.0f), e.dYaw, e.dPitch);
 	}
 	// Jumping 
 	else {
 		// 10 ticks of jumping in total
-		players[playerId]->jumping = 10;
+		curr_player->jumping = 10;
 	}
 
-
 	// Parabolic jumping
-	float jumpingSquared = players[playerId]->jumping* players[playerId]->jumping;
+	float jumpingSquared = curr_player->jumping * curr_player->jumping;
 	// Handle jumping tick by tick
-	if (players[playerId]->jumping > 0)
+	if (curr_player->jumping > 0)
 	{
-		players[playerId]->update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
+		curr_player->update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
 		// 5 ticks of jumping in total
-		players[playerId]->jumping--;
+		curr_player->jumping--;
 	}
 
 	// Rebuild quadtree for collision after player movement is updated
 	buildQuadtree();
-	
-	// Naive collision (for now)
-	Collider* playerCollider = players[playerId]->hitbox;
 
-	// For calculating min distance
-	float minHitlength = std::numeric_limits<float>::infinity();
-	Collider* closestCollider = NULL;
-
-	// Only run the fat loop when shooting
-	if (e.shooting)
+	// Update gun ticks
+	for (Gun* g : curr_player->guns)
 	{
-		// Check shooting against all other colliders before checking movement 
-		for (Collider* otherCollider : allColliders) {
-
-			// Ignore collisions with yourself
-			if (playerCollider == otherCollider)
-				continue;
-
-			// Check for shooting stuff
-			glm::vec3 hitPos;
-			if (otherCollider->check_ray_collision(players[playerId]->hitbox->cen, players[playerId]->front, hitPos))
-			{
-				float hitLength = glm::length(hitPos - players[playerId]->hitbox->cen);
-				if (hitLength < minHitlength) {
-					minHitlength = hitLength;
-					closestCollider = otherCollider;
-				}
-			}
-		}
-
-		// Handle Hit Damage
-		if (closestCollider != nullptr && closestCollider->type == ObjectType::PLAYER)
-		{
-			for (auto p : players)
-			{
-				if (p.second->hitbox == closestCollider)
-				{
-					p.second->decreaseHealth(10.0f);
-
-					// Check if player died
-					if (p.second->isDeadCheck())
-					{
-						// Set death timer
-						p.second->isDead = DEATH_TICK_TIMER;
-
-						// Disable hitbox
-						p.second->hitbox->isActive = false;
-
-						// Increase death count
-						p.second->deaths++;
-
-						// Drop corresponding flag
-						if (flagCatCarrierId == p.first) {
-							flagCatCarrierId = -1;
-							flagCat->isActive = true;
-							flagCat->set_center(p.second->pos - 2.0f * p.second->front);
-						}
-						else if (flagDogCarrierId == p.first) {
-							flagDogCarrierId = -1;
-							flagDog->isActive = true;
-							flagDog->set_center(p.second->pos - 2.0f * p.second->front);
-						}
-						buildQuadtree();
-
-						// Increment kill count
-						players[playerId]->kills++;
-					}
-					break;
-				}
-			}
-		}
+		g->decrement_fire_rate();
+		g->decrement_reload_time();
 	}
 
-	Collider* queryRange = new Collider(players[playerId]->hitbox->cen, players[playerId]->hitbox->dim * 10.0f);
-	vector<Collider*> nearbyColliders;
-	nearbyColliders = qt->query(queryRange, nearbyColliders);
+	// Handle shooting
+	if (e.shooting)
+	{
+		handleShoot(curr_player);
+	}
 
 	// Movement for colliders 
-	players[playerId]->isGrounded = false;
+	Collider* queryRange = new Collider(curr_player->hitbox->cen, curr_player->hitbox->dim * 10.0f);
+	vector<Collider*> nearbyColliders;
+	nearbyColliders = qt->query(queryRange, nearbyColliders);
+	curr_player->isGrounded = false;
 	for (Collider* otherCollider : nearbyColliders)
 	{
 		// Ignore collisions with yourself
-		if (playerCollider == otherCollider)
+		if (curr_player->hitbox == otherCollider)
 			continue;
 
 		// Determine which plane collision happened on
-		glm::vec3 plane = playerCollider->check_collision(otherCollider);
+		glm::vec3 plane = curr_player->hitbox->check_collision(otherCollider);
 
 		// For jumping
 		if (plane.y > 0.0f)
 		{
-			players[playerId]->isGrounded = true;
+			curr_player->isGrounded = true;
 		}
 
-		players[playerId]->update(plane, 0.0f, 0.0f);
+		curr_player->update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f))
@@ -283,12 +322,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	}
 
 	// Detect score for Cat team
-	if (flagCatCarrierId == playerId && players[playerId]->team == PlayerTeam::CAT_LOVER)
+	if (flagCatCarrierId == playerId && curr_player->team == PlayerTeam::CAT_LOVER)
 	{
-		glm::vec3 plane = players[playerId]->hitbox->check_collision(catWinArea);
+		glm::vec3 plane = curr_player->hitbox->check_collision(catWinArea);
 		if (plane != glm::vec3(0.0f))
 		{
-			players[playerId]->captures++;
+			curr_player->captures++;
 
 			// Reset cat flag
 			flagCatCarrierId = -1;
@@ -296,12 +335,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 			
 	}
-	else if(flagDogCarrierId == playerId && players[playerId]->team == PlayerTeam::DOG_LOVER)
+	else if(flagDogCarrierId == playerId && curr_player->team == PlayerTeam::DOG_LOVER)
 	{
-		glm::vec3 plane = players[playerId]->hitbox->check_collision(dogWinArea);
+		glm::vec3 plane = curr_player->hitbox->check_collision(dogWinArea);
 		if (plane != glm::vec3(0.0f))
 		{
-			players[playerId]->captures++;
+			curr_player->captures++;
 
 			// Reset dog flag
 			flagDogCarrierId = -1;
@@ -340,7 +379,9 @@ GameState ServerGameManager::getGameState(int playerId)
 					   (flagDogCarrierId == i),
 			           players[i]->kills,
 			           players[i]->deaths,
-			           players[i]->captures);
+			           players[i]->captures,
+					   players[i]->gun_idx,
+					   *(players[i]->guns[players[i]->gun_idx]));
 
 		gs.addState(ps);
 	}
@@ -356,6 +397,8 @@ void ServerGameManager::createNewPlayer(int playerId)
 {
 	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? CAT_SPAWN : DOG_SPAWN;
 	players[playerId] = new ServerPlayer(playerSpawnPos, playerId);
+
+
 	// Add player hitboxes to all colliders
 	allColliders.push_back(players[playerId]->hitbox);
 }

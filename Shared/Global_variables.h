@@ -1,7 +1,7 @@
 // Control Map Generation
 #define TILE_SIZE 20
 #define NUM_MAP_TILES 5
-#define MAX_NUM_TREES_PER_TILE 5
+#define MAX_NUM_TREES_PER_TILE 20
 
 // Control Player Properties
 #define DEATH_TICK_TIMER 100

@@ -13,8 +13,9 @@ public:
 	bool shooting;
 
 	bool jumping;
+	int gun_idx;
 
-	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping);
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int gun_idx);
 	Event();
 
 	template <typename Archive>
@@ -26,5 +27,6 @@ public:
 		ar& dPitch;
 		ar& shooting;
 		ar& jumping;
+		ar& gun_idx;
 	}
 };

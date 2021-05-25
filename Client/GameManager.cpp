@@ -28,7 +28,7 @@ GameManager::GameManager(GLFWwindow* window)
 	// Preload models
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
-	tileModel = new Model("res/models/finalTileZY.dae");
+	tileModel = new Model("res/models/tile.dae");
 	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
 	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
 	treeModels.push_back(new Model("res/models/basicTree.dae"));

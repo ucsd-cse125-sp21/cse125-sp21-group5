@@ -35,7 +35,7 @@ GameManager::GameManager(GLFWwindow* window)
 	treeModel->setName("Tree Model");
 	catT = nullptr;
 	dogT = nullptr;
-	catModel = new Model("res/models/finalZombieFish.dae");
+	catModel = new Model("res/models/cat.dae");
 	dogModel = new Model("res/models/finalHuskyRun.dae");
 
 	// Initialize variables
@@ -412,6 +412,7 @@ void GameManager::updateGameState(GameState& gs)
 
 		players[ps.playerId]->updatePlayer(ps);
 		// TODO: stop flags from floating?
+		/*
 		if (ps.carryingCatFlag)
 		{
 			Transform* playerT = players[ps.playerId]->transform;
@@ -424,7 +425,10 @@ void GameManager::updateGameState(GameState& gs)
 			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0.1f, players[ps.playerId]->cam->front.z));
 			dogT->setTranslate(playerT->translation - 2.5f * directionalTrans);
 		}
+		*/
 	}
+	catT->setTranslate(gs.catLocation);
+	dogT->setTranslate(gs.dogLocation);
 }
 
 // TODO: Model* should be a string or int to what kind of model should be used to render player

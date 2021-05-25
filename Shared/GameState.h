@@ -25,7 +25,7 @@ public:
 	int isDead;
 	
 	bool carryingCatFlag;
-	bool carryingDogFlag;
+	bool carryingDogFlag;	
 
 	unsigned int kills, deaths, captures;
 
@@ -69,12 +69,20 @@ class GameState
 {
 public:
 	std::vector<PlayerState> states;
+	glm::vec3 catLocation;
+	glm::vec3 dogLocation;
 
 	void addState(PlayerState ps);
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
 		ar& states;
+		ar& catLocation.x;
+		ar& catLocation.y;
+		ar& catLocation.z;
+		ar& dogLocation.x;
+		ar& dogLocation.y;
+		ar& dogLocation.z;
 	}
 
 };

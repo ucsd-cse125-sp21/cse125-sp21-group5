@@ -20,6 +20,7 @@ public:
 	Quadtree* qt;
 	Collider* tileC;
 	Collider* flagCat, *flagDog;
+	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
 	unordered_map<int, ServerPlayer*> players;

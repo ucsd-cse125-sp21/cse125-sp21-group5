@@ -16,6 +16,7 @@ ServerGameManager::ServerGameManager() {
 
 MapState ServerGameManager::generateMap()
 {
+	// Set the random seed, so thing generate the same way
 	srand(tileSeed);
 
 	// Create one massive tile for entirety of map
@@ -32,13 +33,13 @@ MapState ServerGameManager::generateMap()
 			// Special case for flags
 			if (i == 0 && j == 0)
 			{
-				flagCat = new Collider(ObjectType::FLAG_CAT, tileCenter, glm::vec3(1.0f));
+				flagCat = new Collider(ObjectType::FLAG_CAT, tileCenter + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f));
 				allColliders.push_back(flagCat);
 				continue;
 			}
 			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
 			{
-				flagDog = new Collider(ObjectType::FLAG_DOG, tileCenter, glm::vec3(1.0f));
+				flagDog = new Collider(ObjectType::FLAG_DOG, tileCenter + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f));
 				allColliders.push_back(flagDog);
 				continue;
 			}
@@ -48,15 +49,21 @@ MapState ServerGameManager::generateMap()
 			for (int k = 0; k < numTrees; k++)
 			{
 				// Pick random position within tile
-				float x = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
-				float z = 20.0f * (rand() / (float)RAND_MAX) - 10.0f;
+				float x = TILE_SIZE * (rand() / (float)RAND_MAX) - 10.0f;
+				float z = TILE_SIZE * (rand() / (float)RAND_MAX) - 10.0f;
 
 				// Make tree collider
 				Collider* treeC = new Collider(ObjectType::ENVIRONMENT, glm::vec3(x, 5.0f, z) + tileCenter, glm::vec3(1.0f, 10.0f, 1.0f));
 				allColliders.push_back(treeC);
 			}
+
+			
 		}
 	}
+
+	// Create capture areas at opposite corners
+	dogWinArea = new Collider(ObjectType::ENVIRONMENT, flagCat->cen, flagCat->dim + glm::vec3(1.0f));
+	catWinArea = new Collider(ObjectType::ENVIRONMENT, flagDog->cen, flagDog->dim + glm::vec3(1.0f));
 
 	// Set up quadtree 
 	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
@@ -73,15 +80,16 @@ MapState ServerGameManager::generateMap()
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
 	// TODO: Varying death timers 
-	if (players[playerId]->isDead > 0) {
+	if (players[playerId]->isDead > 0)
+	{
 		players[playerId]->isDead--;
 		
-		if (players[playerId]->isDead == 0) {
+		if (players[playerId]->isDead == 0)
+		{
 			players[playerId]->health = 100.0f;
 			players[playerId]->hitbox->isActive = true;
 			cout << "health being reset" << endl;
 		}
-
 
 		//If the player is dead, we don't let them move or do anything
 		return;
@@ -90,15 +98,35 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Check if player has fallen off map
 	if (players[playerId]->pos.y < -10.0f)
 	{
+		// Slowly decrement health
 		players[playerId]->decreaseHealth(10.0f);
+	
+		// If player dies, return flag back to area
+		if (players[playerId]->isDeadCheck())
+		{
+			if (flagCatCarrierId == playerId)
+			{
+				flagCatCarrierId = -1;
+				flagCat->set_center(CAT_FLAG_SPAWN);
+			}
+			else if (flagDogCarrierId == playerId)
+			{
+				flagDogCarrierId = -1;
+				flagDog->set_center(DOG_FLAG_SPAWN);
+			}
+
+			buildQuadtree();
+		}
 	}
 
 	// Not jumping
-	if (!e.jumping) {
-		if (players[playerId]->vVelocity >= 0) {
+	if (!e.jumping)
+	{
+		if (players[playerId]->vVelocity >= 0.0f)
+		{
 			players[playerId]->vVelocity -= 0.1f;
 		}
-		players[playerId]->update(e.dPos + glm::vec3(0,players[playerId]->vVelocity,0), e.dYaw, e.dPitch);
+		players[playerId]->update(e.dPos + glm::vec3(0.0f, players[playerId]->vVelocity, 0.0f), e.dYaw, e.dPitch);
 	}
 	// Jumping 
 	else {
@@ -110,7 +138,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Parabolic jumping
 	float jumpingSquared = players[playerId]->jumping* players[playerId]->jumping;
 	// Handle jumping tick by tick
-	if (players[playerId]->jumping > 0) {
+	if (players[playerId]->jumping > 0)
+	{
 		players[playerId]->update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
 		// 5 ticks of jumping in total
 		players[playerId]->jumping--;
@@ -120,15 +149,15 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	buildQuadtree();
 
 	players[playerId]->updateAnimations(e);
-	players[playerId]->isGrounded = false;
-
+	
 	// Naive collision (for now)
 	Collider* playerCollider = players[playerId]->hitbox;
 
 	// For calculating min distance
 	float minHitlength = std::numeric_limits<float>::infinity();
 	Collider* closestCollider = NULL;
-	// Only run the fat loop when shootin
+
+	// Only run the fat loop when shooting
 	if (e.shooting)
 	{
 		// Check shooting against all other colliders before checking movement 
@@ -159,20 +188,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				if (p.second->hitbox == closestCollider)
 				{
 					p.second->decreaseHealth(10.0f);
-					
-					// Drop flag if the player is dead
-					if (p.second->isDead && flagCatCarrierId == p.first ) {
-						flagCatCarrierId = -1;
-						flagCat->isActive = true;
-						flagCat->set_center(p.second->pos + 2.0f * p.second->front);
-						buildQuadtree();
-					}
-					else if (p.second->isDead && flagDogCarrierId == p.first) {
-						flagDogCarrierId = -1;
-						flagDog->isActive = true;
-						flagDog->set_center(p.second->pos + 2.0f * p.second->front);
-						buildQuadtree();
-					}
 
 					// Check if player died
 					if (p.second->isDead)
@@ -181,12 +196,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 						if (flagCatCarrierId == p.first) {
 							flagCatCarrierId = -1;
 							flagCat->isActive = true;
-							flagCat->set_center(p.second->pos + 2.0f * p.second->front);
+							flagCat->set_center(p.second->pos - 2.0f * p.second->front);
 						}
 						else if (flagDogCarrierId == p.first) {
 							flagDogCarrierId = -1;
 							flagDog->isActive = true;
-							flagDog->set_center(p.second->pos + 2.0f * p.second->front);
+							flagDog->set_center(p.second->pos - 2.0f * p.second->front);
 						}
 						buildQuadtree();
 
@@ -204,6 +219,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	nearbyColliders = qt->query(queryRange, nearbyColliders);
 
 	// Movement for colliders 
+	players[playerId]->isGrounded = false;
 	for (Collider* otherCollider : nearbyColliders)
 	{
 		// Ignore collisions with yourself
@@ -214,18 +230,18 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
 		// For jumping
-		if (plane.y > 0.0f) {
+		if (plane.y > 0.0f)
+		{
 			players[playerId]->isGrounded = true;
 		}
 
 		players[playerId]->update(plane, 0.0f, 0.0f);
 
 		// If it happened on no plane
-		if (plane == glm::vec3(0.0f)) {
+		if (plane == glm::vec3(0.0f))
 			continue;
-		}
 
-		// Flag collision
+		// Pick up flag
 		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
 			flagCatCarrierId = playerId;
 			flagCat->isActive = false;
@@ -236,10 +252,50 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 	}
 
+	// Move cat with player
+	if (flagCatCarrierId != -1)
+	{
+		flagCat->set_center(players[flagCatCarrierId]->pos - 2.0f * players[flagCatCarrierId]->front);
+	}
+
+	// Move dog with player
+	if (flagDogCarrierId != -1)
+	{
+		flagDog->set_center(players[flagDogCarrierId]->pos - 2.0f * players[flagDogCarrierId]->front);
+	}
+
+	// Detect score for Cat team
+	if (flagCatCarrierId == playerId && players[playerId]->team == PlayerTeam::CAT_LOVER)
+	{
+		glm::vec3 plane = players[playerId]->hitbox->check_collision(catWinArea);
+		if (plane != glm::vec3(0.0f))
+		{
+			players[playerId]->captures++;
+
+			// Reset cat flag
+			flagCatCarrierId = -1;
+			flagCat->set_center(CAT_FLAG_SPAWN);
+		}
+			
+	}
+	else if(flagDogCarrierId == playerId && players[playerId]->team == PlayerTeam::DOG_LOVER)
+	{
+		glm::vec3 plane = players[playerId]->hitbox->check_collision(dogWinArea);
+		if (plane != glm::vec3(0.0f))
+		{
+			players[playerId]->captures++;
+
+			// Reset dog flag
+			flagDogCarrierId = -1;
+			flagDog->set_center(DOG_FLAG_SPAWN);
+		}
+	}
+
 	buildQuadtree();
 }
 
-void ServerGameManager::buildQuadtree() {
+void ServerGameManager::buildQuadtree()
+{
 	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
 	qt = new Quadtree(boundary, 4);
 
@@ -249,20 +305,12 @@ void ServerGameManager::buildQuadtree() {
 	}
 }
 
-GameState ServerGameManager::getGameState(int playerId) {
+GameState ServerGameManager::getGameState(int playerId)
+{
 	GameState gs;
 
-	for (int i = 0; i < players.size(); i++) {
-		//Update whether or not this player is carrying the flag
-		bool carryingCatFlag = false;
-		bool carryingDogFlag = false;
-		if (flagCatCarrierId == i) {
-			carryingCatFlag = true;
-		}
-		if (flagDogCarrierId == i) {
-			carryingDogFlag = true;
-		}
-
+	for (int i = 0; i < players.size(); i++)
+	{
 		PlayerState ps(i,
 			           players[i]->pos,
 			           players[i]->front,
@@ -270,34 +318,24 @@ GameState ServerGameManager::getGameState(int playerId) {
 			           players[i]->isGrounded,
 			           players[i]->health,
 			           players[i]->isDead,
-			           carryingCatFlag,
-			           carryingDogFlag,
+					   (flagCatCarrierId == i),
+					   (flagDogCarrierId == i),
 			           players[i]->kills,
 			           players[i]->deaths,
 			           players[i]->captures);
 
-		/*
-		PlayerState ps;
-		ps.pos = players[i]->pos;
-		ps.front = players[i]->front;
-		ps.currentAnimation = players[i]->animation;
-		ps.isGrounded = players[i]->isGrounded;
-		ps.health = players[i]->health;
-		ps.isDead = players[i]->isDead;
-		ps.carryingCatFlag = (flagCatCarrierId == i);
-		ps.carryingDogFlag = (flagDogCarrierId == i);
-		ps.kills = players[i]->kills;
-		ps.deaths = players[i]->deaths;
-		ps.captures = players[i]->captures;
-		*/
-
 		gs.addState(ps);
 	}
+
+	// Send back flag locations
+	gs.catLocation = flagCat->cen;
+	gs.dogLocation = flagDog->cen;
 
 	return gs;
 }
 
-void ServerGameManager::createNewPlayer(int playerId) {
+void ServerGameManager::createNewPlayer(int playerId)
+{
 	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? CAT_SPAWN : DOG_SPAWN;
 	players[playerId] = new ServerPlayer(playerSpawnPos, playerId);
 	// Add player hitboxes to all colliders

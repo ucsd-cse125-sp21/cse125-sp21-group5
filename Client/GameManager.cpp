@@ -276,7 +276,7 @@ void GameManager::render()
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
-		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingFlag);
+		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
 		ImGui::End();
 	}
 	
@@ -311,9 +311,10 @@ void GameManager::updateMap(MapState& ms)
 			worldT->add_child(tileT);
 
 			// Cat flag
-			if (i == 0 && j == NUM_MAP_TILES / 2)
+			if (i == 0 && j == 0)
 			{
 				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
+				//catT->rescale(glm::vec3(0.25f));
 				cout << "cat at: " << glm::to_string(catT->translation) << endl;
 				catT->setName("catT");
 				catT->add_child(catModel);
@@ -321,8 +322,9 @@ void GameManager::updateMap(MapState& ms)
 				continue;
 			}
 			// Dog flag
-			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2) {
+			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1) {
 				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1.0f, 20 * (j - NUM_MAP_TILES / 2)));
+				//dogT->rescale(glm::vec3(0.25f));
 				cout << "dog at: " << glm::to_string(dogT->translation) << endl;
 				dogT->setName("dogT");
 				dogT->add_child(dogModel);
@@ -358,19 +360,19 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
-		if (ps.carryingFlag && (ps.playerId % 2) == (int) (PlayerTeam::CAT_LOVER))
+		if (ps.carryingCatFlag)
 		{
 			Transform* playerT = players[ps.playerId]->transform;
-			catT->setTranslate(playerT->translation + 2.0f * players[ps.playerId]->cam->front);
+			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0, players[ps.playerId]->cam->front.z));
+			catT->setTranslate(playerT->translation - 2.5f * directionalTrans);
 		}
-		else if (ps.carryingFlag && (ps.playerId % 2) == (int)PlayerTeam::DOG_LOVER)
+		else if (ps.carryingDogFlag)
 		{
 			Transform* playerT = players[ps.playerId]->transform;
-			dogT->setTranslate(playerT->translation + 2.0f * players[ps.playerId]->cam->front);
+			glm::vec3 directionalTrans = glm::normalize(glm::vec3(players[ps.playerId]->cam->front.x, 0, players[ps.playerId]->cam->front.z));
+			dogT->setTranslate(playerT->translation - 2.5f * directionalTrans);
 		}
 	}
-
-
 }
 
 // TODO: Model* should be a string or int to what kind of model should be used to render player

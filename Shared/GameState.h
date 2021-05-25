@@ -23,7 +23,8 @@ public:
 	int isAlive;
 	AnimationID currentAnimation;
 
-	bool carryingFlag;
+	bool carryingCatFlag;
+	bool carryingDogFlag;
 
 	PlayerState(int playerId, 
 				const glm::vec3& pos,
@@ -32,7 +33,8 @@ public:
 				bool isGrounded,
 				float health,
 				int isAlive,
-				bool carryingFlag);
+				bool carryingCatFlag,
+				bool carryingDogFlag);
 	PlayerState();
 
 	template <typename Archive>
@@ -48,7 +50,8 @@ public:
 		ar& isGrounded;
 		ar& health;
 		ar& isAlive;
-		ar& carryingFlag;
+		ar& carryingCatFlag;
+		ar& carryingDogFlag;
 	}
 };
 

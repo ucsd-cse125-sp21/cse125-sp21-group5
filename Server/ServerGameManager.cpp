@@ -30,12 +30,12 @@ MapState ServerGameManager::generateMap()
 
 			//Skip the two flag tiles
 			//Add the flag to the colliders
-			if ((i == 0 && j == NUM_MAP_TILES / 2)) {
+			if ((i == 0 && j == 0)) {
 				flagCat = new Collider(ObjectType::FLAG_CAT, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
 				allColliders.push_back(flagCat);
 				continue;
 			}
-			else if ((i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES / 2)) {
+			else if ((i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)) {
 				flagDog = new Collider(ObjectType::FLAG_DOG, glm::vec3(20 * (i - NUM_MAP_TILES / 2), 1, 20 * (j - NUM_MAP_TILES / 2)), glm::vec3(1));
 				allColliders.push_back(flagDog);
 				continue;
@@ -176,16 +176,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (playerCollider == otherCollider)
 			continue;
 
-		// Flag collision
-		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == 0) {
-			flagCatCarrierId = playerId;
-			flagCat->isActive = false;
-		}
-		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == 1) {
-			flagDogCarrierId = playerId;
-			flagDog->isActive = false;
-		}
-
 		// Determine which plane collision happened on
 		glm::vec3 plane = playerCollider->check_collision(otherCollider);
 
@@ -199,6 +189,21 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// If it happened on no plane
 		if (plane == glm::vec3(0.0f)) {
 			continue;
+		}
+
+		if (otherCollider == flagDog) {
+			cout << "Collided with dog " << playerId << " mod is " << playerId % 2 << " curr carrier id is " << flagDogCarrierId << endl;
+		}
+
+		// Flag collision
+		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
+			flagCatCarrierId = playerId;
+			flagCat->isActive = false;
+		}
+		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
+			cout << "Setting dog carrier id" << endl;
+			flagDogCarrierId = playerId;
+			flagDog->isActive = false;
 		}
 	}
 
@@ -220,12 +225,16 @@ GameState ServerGameManager::getGameState(int playerId) {
 
 	for (int i = 0; i < players.size(); i++) {
 		//Update whether or not this player is carrying the flag
-		bool carryingFlag = false;
+		bool carryingCatFlag = false;
+		bool carryingDogFlag = false;
 		if (flagCatCarrierId == i) {
-			carryingFlag = true;
+			carryingCatFlag = true;
+		}
+		if (flagDogCarrierId == i) {
+			carryingDogFlag = true;
 		}
 
-		PlayerState ps(i, players[i]->pos, players[i]->front, players[i]->animation, players[i]->isGrounded, players[i]->health, players[i]->isDead, carryingFlag);
+		PlayerState ps(i, players[i]->pos, players[i]->front, players[i]->animation, players[i]->isGrounded, players[i]->health, players[i]->isDead, carryingCatFlag, carryingDogFlag);
 
 		gs.addState(ps);
 	}

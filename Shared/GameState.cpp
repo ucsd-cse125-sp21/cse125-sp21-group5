@@ -17,7 +17,8 @@ PlayerState::PlayerState(int playerId,
 						 bool isGrounded,
 						 float health,
 						 int isAlive,
-						 bool carryingFlag)
+						 bool carryingCatFlag,
+						 bool carryingDogFlag)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -26,7 +27,8 @@ PlayerState::PlayerState(int playerId,
 	this->isGrounded = isGrounded;
 	this->health = health;
 	this->isAlive = isAlive;
-	this->carryingFlag = carryingFlag;
+	this->carryingCatFlag = carryingCatFlag;
+	this->carryingDogFlag = carryingDogFlag;
 }
 
 // Could be reference? 

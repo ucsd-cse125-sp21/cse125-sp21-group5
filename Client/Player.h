@@ -26,7 +26,9 @@ public:
 	bool isGrounded;
 	int isDead;
 
-	bool isCarryingFlag;
+	bool isCarryingCatFlag;
+	bool isCarryingDogFlag;
+
 private:
 	bool mustLoadModels;
 

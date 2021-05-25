@@ -20,7 +20,8 @@ Player::Player(Transform* transform, int playerId)
 	this->model = NULL;
 	this->health = -1.0f;
 	this->isDead = 1;
-	this->isCarryingFlag = false;
+	this->isCarryingCatFlag = false;
+	this->isCarryingDogFlag = false;
 }
 
 Player::~Player() {
@@ -54,7 +55,8 @@ void Player::updatePlayer(PlayerState ps) {
 	transform->setTranslate(ps.pos);
 	isGrounded = ps.isGrounded;
 	isDead = ps.isAlive;
-	isCarryingFlag = ps.carryingFlag;
+	isCarryingCatFlag = ps.carryingCatFlag;
+	isCarryingDogFlag = ps.carryingDogFlag;
 
 	if (mustLoadModels) return;
 

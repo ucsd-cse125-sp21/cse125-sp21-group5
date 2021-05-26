@@ -218,6 +218,7 @@ Event GameManager::handleInput()
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
+	//if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
 
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {

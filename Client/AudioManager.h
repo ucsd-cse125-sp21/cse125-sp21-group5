@@ -6,6 +6,7 @@
 #define SOUND_WOOF "./res/sounds/woof.ogg"
 #define SOUND_MEOW "./res/sounds/meow.ogg"
 #define SOUND_STEP "./res/sounds/step.ogg"
+#define SOUND_SHOOT "./res/sounds/shoot.ogg"
 
 class AudioManager
 {

@@ -20,6 +20,7 @@ void AudioManager::init() {
 	loadSound(SOUND_MEOW);
 	loadSound(SOUND_WOOF);
 	loadSound(SOUND_STEP);
+	loadSound(SOUND_SHOOT);
 }
 
 

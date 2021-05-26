@@ -168,6 +168,36 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
 
+	// If game didn't start yet, allow players to change class but not move
+	if (!gameStarted) {
+		if (e.playerClass == 0) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Pistol());
+		}
+		else if (e.playerClass == 1) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Shotgun());
+		}
+		else if (e.playerClass == 2) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Rifle());
+		}
+	}
+
+	if (gameCountDown > 0) {
+		gameCountDown--;
+
+		// If game did not start, don't let the players move
+		if (gameCountDown == 0) {
+			//TP
+		}
+
+		return;
+	}
+	else {
+		gameStarted = true;
+	}
+
 	// TODO: Varying death timers 
 	if (curr_player->isDead > 0)
 	{

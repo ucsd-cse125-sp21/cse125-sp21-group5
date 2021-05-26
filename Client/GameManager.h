@@ -59,6 +59,7 @@ public:
 	~GameManager();
 
 	void render();
+	void renderUI();
 
 	Event handleInput();
 	Event update();

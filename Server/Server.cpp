@@ -20,6 +20,7 @@ Server::Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 i
 void Server::accept_new_connection()
 {
     if (nextClientID >= NUM_PLAYERS) {
+        gm.gameCountDown = 300;
         return;
     }
 
@@ -133,8 +134,6 @@ void Server::handle_accept(int playerId, boost::system::error_code error) {
         do_read(playerId);
         accept_new_connection();
     }
-
-    
 }
 
 void Server::broadcast_send(ClientConnectEvent ev, int ignore_clientID) {

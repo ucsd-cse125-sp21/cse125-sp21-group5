@@ -39,6 +39,8 @@ public:
 	int gun_idx;
 	vector<Gun*> guns;
 
+	int playerClass;
+
 	Player(Transform* transform, int playerId);
 	~Player();
 

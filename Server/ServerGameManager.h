@@ -26,6 +26,9 @@ public:
 	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
+	bool gameStarted = false;
+	int gameCountDown = 0;
+
 	// Track all players
 	unordered_map<int, ServerPlayer*> players;
 

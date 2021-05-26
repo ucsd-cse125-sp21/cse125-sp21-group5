@@ -80,7 +80,7 @@ public:
 
 	int nextClientID;
 
-	Server(boost::asio::io_context& ioContext);
+	Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 inputIp);
 
 	void start_server();
 	void do_read(int playerId);

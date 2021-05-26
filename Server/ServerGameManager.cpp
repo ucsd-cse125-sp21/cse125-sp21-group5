@@ -19,7 +19,7 @@ MapState ServerGameManager::generateMap()
 	srand(tileSeed);
 
 	// Create one massive tile for entirety of map
-	Collider* tileC = new Collider(ObjectType::GROUND, glm::vec3(0.0f), glm::vec3(TILE_SIZE * NUM_MAP_TILES, 0.1f, TILE_SIZE * NUM_MAP_TILES));
+	Collider* tileC = new Collider(ObjectType::GROUND, glm::vec3(0.0f, -2.5f, 0.0f), glm::vec3(TILE_SIZE * NUM_MAP_TILES, 5.0f, TILE_SIZE * NUM_MAP_TILES));
 	allColliders.push_back(tileC);
 
 	for (int i = 0; i < NUM_MAP_TILES; i++)
@@ -220,11 +220,13 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			{
 				flagCatCarrierId = -1;
 				flagCat->set_center(CAT_FLAG_SPAWN);
+				flagCat->isActive = true;
 			}
 			else if (flagDogCarrierId == playerId)
 			{
 				flagDogCarrierId = -1;
 				flagDog->set_center(DOG_FLAG_SPAWN);
+				flagDog->isActive = true;
 			}
 
 			buildQuadtree();

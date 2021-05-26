@@ -9,6 +9,8 @@ Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window)
     string port = "13";
     string host = boost::asio::ip::address_v4::loopback().to_string();
 
+
+    cout << "Connecting client to: " << host << endl;
     boost::asio::ip::tcp::resolver resolver(ioContext);
     boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(
         host,

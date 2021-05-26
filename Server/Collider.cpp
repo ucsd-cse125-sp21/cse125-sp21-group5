@@ -61,7 +61,7 @@ glm::vec3 Collider::check_collision(Collider* other) {
 	bool z = ((this->cen.z - this->dim.z / 2.0f) < (other->cen.z + other->dim.z / 2.0f)) &&
 			 ((this->cen.z + this->dim.z / 2.0f) > (other->cen.z - other->dim.z / 2.0f));
 	*/
-	if (!isActive)
+	if (!other->isActive || !isActive)
 		return glm::vec3(0.0f);
 
 	bool isColliding = glm::all(glm::lessThanEqual(this->min, other->max)) &&

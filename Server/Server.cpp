@@ -3,12 +3,11 @@
 
 using namespace std;
 
-Server::Server(boost::asio::io_context& ioContext) :
+Server::Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 inputIp) :
     bufs(NUM_PLAYERS),
     ioContext(ioContext)
 {
-    boost::asio::ip::address_v4 addrV4(boost::asio::ip::address_v4::loopback());
-    acceptor = std::make_shared<tcp::acceptor>(ioContext, tcp::endpoint(addrV4, 13));
+    acceptor = std::make_shared<tcp::acceptor>(ioContext, tcp::endpoint(inputIp, 13));
 
     cout << "Starting server on local port 13" << endl;
 
@@ -198,11 +197,19 @@ void Server::broadcast_send(GameState gs, int ignore_clientID) {
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    boost::asio::ip::address_v4 inputIp;
+    if (argc < 2) {
+        inputIp = boost::asio::ip::address_v4::loopback();
+    }
+    else {
+        inputIp = boost::asio::ip::make_address_v4(argv[1]);
+    }
+    cout << "Server address is at: " << inputIp.to_string() << endl;
     boost::asio::io_context ioContext;
 
-    Server server(ioContext);
+    Server server(ioContext, inputIp);
 
     boost::thread_group worker_threads;
     worker_threads.create_thread(

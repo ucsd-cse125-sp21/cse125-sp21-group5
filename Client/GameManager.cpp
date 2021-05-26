@@ -41,7 +41,7 @@ GameManager::GameManager(GLFWwindow* window)
 	catT = nullptr;
 	dogT = nullptr;
 	catModel = new Model("res/models/cat.dae");
-	dogModel = new Model("res/models/finalHuskyRun.dae");
+	dogModel = new Model("res/models/finalHuskyIdle.dae");
 
 	// Initialize variables
 	showScoreboard = false;
@@ -304,35 +304,93 @@ void GameManager::render()
 	{
 		// Show first team (left)
 		// TODO: Deal with tabbing
-		ImGui::Begin("Scoreboard1", &showUI, windowFlags);
-		ImGui::SetWindowPos(ImVec2(Window::width/2 - 500, Window::height/2 - 250));
-		ImGui::SetWindowSize(ImVec2(500, 500));
-		ImGui::Text("CAT TEAM");
-		ImGui::Text("Player ID\tKills\tDeaths\tCaptures");
-		for (auto& p : players)
-		{
-			if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
-			ImGui::Text("%d\t\t\t\t%d\t\t\t%d\t\t\t%d", p.first,
-										  p.second->kills,
-										  p.second->deaths,
-										  p.second->captures);
-		}
-		ImGui::End();
 
-		// Show second team (right)
-		ImGui::Begin("Scoreboard2", &showUI, windowFlags);
+		ImGui::Begin("Scoreboard", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - 500, Window::height / 2 - 250));
+		ImGui::SetWindowSize(ImVec2(1000, 1000));
+		ImGui::Columns(2, "Scoreboard1");
+		ImGui::SetColumnWidth(0, 500.0f);
+		ImGui::SetColumnWidth(1, 500.0f);
+		// START OF CAT TEAM UI 
 		ImGui::Text("CAT TEAM");
-		ImGui::Text("Player ID\tKills\tDeaths\tCaptures");
-		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
-		ImGui::SetWindowSize(ImVec2(500, 500));
-		for (auto& p : players)
-		{
-			if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
-			ImGui::Text("%d\t%d\t%d\t%d", p.first,
-										  p.second->kills,
-				  						  p.second->deaths,
-										  p.second->captures);
-		}
+		ImGui::BeginChild("inner1");
+			ImGui::Columns(4, "Stats");
+			ImGui::SetColumnWidth(0, 125.0f);
+			ImGui::SetColumnWidth(1, 125.0f);
+			ImGui::SetColumnWidth(2, 125.0f);
+			ImGui::SetColumnWidth(3, 125.0f);
+			ImGui::Text("PlayerID");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
+				ImGui::Text("%d", p.first);
+			}
+			
+			ImGui::NextColumn();
+			ImGui::Text("Kills");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
+				ImGui::Text("%d", p.second->kills);
+			}
+			
+			ImGui::NextColumn();
+			ImGui::Text("Deaths");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
+				ImGui::Text("%d", p.second->deaths);
+			}
+		
+			ImGui::NextColumn();
+			ImGui::Text("Captures");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::DOG_LOVER) continue;
+				ImGui::Text("%d", p.second->captures);
+			}
+			ImGui::EndChild();
+			ImGui::NextColumn();
+
+		// START OF DOG TEAM UI
+		ImGui::BeginChild("inner2");
+		ImGui::Text("DOG TEAM");
+			ImGui::Columns(4, "Stats");
+			ImGui::SetColumnWidth(0, 125.0f);
+			ImGui::SetColumnWidth(1, 125.0f);
+			ImGui::SetColumnWidth(2, 125.0f);
+			ImGui::SetColumnWidth(3, 125.0f);
+			ImGui::Text("PlayerID");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
+				ImGui::Text("%d", p.first);
+			}
+
+			ImGui::NextColumn();
+			ImGui::Text("Kills");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
+				ImGui::Text("%d", p.second->kills);
+			}
+
+			ImGui::NextColumn();
+			ImGui::Text("Deaths");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
+				ImGui::Text("%d", p.second->deaths);
+			}
+
+			ImGui::NextColumn();
+			ImGui::Text("Captures");
+			for (auto& p : players)
+			{
+				if (p.first % 2 == (int)PlayerTeam::CAT_LOVER) continue;
+				ImGui::Text("%d", p.second->captures);
+			}
+			ImGui::EndChild();
 		ImGui::End();
 	}
 

@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #define SOUND_WOOF "./res/sounds/woof.ogg"
-#define SOUND_MEOW "./res/sounds/meow.mp3"
+#define SOUND_MEOW "./res/sounds/meow.ogg"
 
 class AudioManager
 {

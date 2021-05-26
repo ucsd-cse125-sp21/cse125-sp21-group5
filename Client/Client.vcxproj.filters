@@ -118,6 +118,9 @@
     <ClCompile Include="..\Shared\Global_variables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -247,6 +250,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\NetworkEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

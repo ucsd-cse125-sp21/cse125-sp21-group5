@@ -7,6 +7,7 @@
 #include "../Shared/Global_variables.h"
 
 #include "Renderer.h"
+#include "AudioManager.h"
 
 // TODO: possibly move these as well
 // Track mouse movements
@@ -55,6 +56,9 @@ GameManager::GameManager(GLFWwindow* window)
 	Renderer::get().fogDensity = 0.0001;
 
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
+
+	AudioManager::get().init();
+	AudioManager::get().playSound(SOUND_WOOF);
 
 	// Initialize time variables
 	deltaTime = 0.0f;

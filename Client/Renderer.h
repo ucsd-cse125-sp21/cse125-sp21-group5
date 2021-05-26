@@ -52,6 +52,7 @@ public:
 	SpotLight(glm::vec3 position, glm::vec3 direction, glm::vec3 color, float angle);
 };
 
+
 /*
  * The global renderer. Right now this just needs to keep track of the scene lights that will
  * be applied to all the different shaders.

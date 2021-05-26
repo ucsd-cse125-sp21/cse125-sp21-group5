@@ -80,7 +80,7 @@ public:
 
 	int nextClientID;
 
-	int gameCountDown = 0;
+
 
 	Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 inputIp);
 

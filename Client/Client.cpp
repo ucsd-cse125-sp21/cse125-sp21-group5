@@ -3,11 +3,11 @@
 //Increase if too large
 #define PACKET_SIZE 1024
 
-Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window)
+Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window, boost::asio::ip::address_v4 inputIp)
     : io_context_(ioContext) , gm(window)
 {
     string port = "13";
-    string host = boost::asio::ip::address_v4::loopback().to_string();
+    string host = inputIp.to_string();
 
 
     cout << "Connecting client to: " << host << endl;

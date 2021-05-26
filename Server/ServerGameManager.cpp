@@ -141,13 +141,15 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 						{
 							flagCatCarrierId = -1;
 							flagCat->isActive = true;
-							flagCat->set_center(p.second->pos - 2.0f * p.second->front);
+							glm::vec3 offsetVec = p.second->pos - (2.0f * glm::normalize(glm::vec3(p.second->front.x, 0, p.second->front.z)));
+							flagCat->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
 						}
 						else if (flagDogCarrierId == p.first)
 						{
 							flagDogCarrierId = -1;
 							flagDog->isActive = true;
-							flagDog->set_center(p.second->pos - 2.0f * p.second->front);
+							glm::vec3 offsetVec = p.second->pos - 2.0f * glm::normalize(glm::vec3(p.second->front.x, 0, p.second->front.z));
+							flagDog->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
 						}
 						buildQuadtree();
 
@@ -314,13 +316,15 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Move cat with player
 	if (flagCatCarrierId != -1)
 	{
-		flagCat->set_center(players[flagCatCarrierId]->pos - 2.0f * players[flagCatCarrierId]->front);
+		glm::vec3 offsetVec = players[flagCatCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagCatCarrierId]->front.x, 0, players[flagCatCarrierId]->front.z));
+		flagCat->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
 	}
 
 	// Move dog with player
 	if (flagDogCarrierId != -1)
 	{
-		flagDog->set_center(players[flagDogCarrierId]->pos - 2.0f * players[flagDogCarrierId]->front);
+		glm::vec3 offsetVec = players[flagDogCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagDogCarrierId]->front.x, 0, players[flagDogCarrierId]->front.z));
+		flagDog->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
 	}
 
 	// Detect score for Cat team

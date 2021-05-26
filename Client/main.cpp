@@ -75,7 +75,16 @@ int main(int argc, char** argv)
 
 	// Forever game loop
 	boost::asio::io_context ioContext;
-	Client client(ioContext, window);
+
+	string inputIp;
+	if (argc < 2) {
+		inputIp = boost::asio::ip::address_v4::loopback().to_string();
+	}
+	else {
+		inputIp = argv[1];
+	}
+
+	Client client(ioContext, window, boost::asio::ip::make_address_v4(inputIp));
 
 	boost::thread_group worker_threads;
 	worker_threads.create_thread(                            

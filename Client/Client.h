@@ -70,7 +70,7 @@ public:
 
 	void callServer();
 
-	Client(boost::asio::io_context& ioContext, GLFWwindow* window);
+	Client(boost::asio::io_context& ioContext, GLFWwindow* window, boost::asio::ip::address_v4 inputIp);
 
 	void start_client() {
 		do_read_header();

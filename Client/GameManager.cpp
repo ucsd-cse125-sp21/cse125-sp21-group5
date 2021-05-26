@@ -334,7 +334,22 @@ void GameManager::render()
 										  p.second->captures);
 		}
 		ImGui::End();
+	}
 
+	// UI for game end 
+	if (catTeamWin) {
+		ImGui::Begin("GAME OVER", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
+		ImGui::SetWindowSize(ImVec2(500, 500));
+		ImGui::Text("Cat Team Won");
+		ImGui::End();
+	}
+	else if (dogTeamWin) {
+		ImGui::Begin("GAME OVER", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
+		ImGui::SetWindowSize(ImVec2(500, 500));
+		ImGui::Text("Dog Team Won");
+		ImGui::End();
 	}
 
 	// Render the models
@@ -415,6 +430,8 @@ void GameManager::updateGameState(GameState& gs)
 
 		players[ps.playerId]->updatePlayer(ps);
 	}
+	catTeamWin = gs.catTeamWin;
+	dogTeamWin = gs.dogTeamWin;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);
 }

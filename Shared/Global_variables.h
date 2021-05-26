@@ -10,6 +10,8 @@
 #define CAT_SPAWN glm::vec3(TILE_SIZE * (NUM_MAP_TILES / 2) + 5, 1.5f, TILE_SIZE * (NUM_MAP_TILES / 2) + 5)
 #define DOG_SPAWN glm::vec3(TILE_SIZE * (-NUM_MAP_TILES / 2) - 5, 1.5f, TILE_SIZE * (-NUM_MAP_TILES / 2) - 5)
 
+// Game properties 
+#define NUM_CAPTURES_TO_WIN 1
 
 enum class PlayerTeam
 {

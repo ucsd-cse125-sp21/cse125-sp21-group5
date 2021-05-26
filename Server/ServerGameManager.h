@@ -26,6 +26,10 @@ public:
 	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
+	// Win condition bools 
+	bool dogTeamWin = false;
+	bool catTeamWin = false;
+
 	// Track all players
 	unordered_map<int, ServerPlayer*> players;
 
@@ -39,7 +43,8 @@ public:
 	GameState getGameState(int playerId);
 	MapState generateMap();
 	void buildQuadtree();
-
+	void checkWinCondition();
+	void gameOver();
 	
 
 	int tileSeed;

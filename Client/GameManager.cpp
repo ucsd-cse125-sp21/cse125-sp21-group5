@@ -94,9 +94,6 @@ Event GameManager::update()
 	// Rendering of objects is done here. (Draw)
 	render();
 
-	// Renderingof UI is done here.
-	renderUI();
-
 	// Listen for any events (keyboard input, mouse input, etc)
 	glfwPollEvents();
 
@@ -255,6 +252,8 @@ void GameManager::render()
 	Renderer::get().setCamera(players[localPlayerId]->cam);
 	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
+	renderUI();
+
 	// Swap buffers
 	glfwSwapBuffers(window);
 }
@@ -285,6 +284,8 @@ void GameManager::renderUI()
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
 	ImGui::SetWindowSize(ImVec2(300, 100));
 	ImGui::Text("Super basic health bar");
+	// Change Health Bar color.
+	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::End();
 
@@ -302,8 +303,17 @@ void GameManager::renderUI()
 	// Gun info
 	ImGui::Begin("Gun Info", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
-	ImGui::SetWindowSize(ImVec2(400, 200));
-	ImGui::Text(players[localPlayerId]->guns[gun_idx]->name);
+	ImGui::SetWindowSize(ImVec2(400, 300));
+	ImGui::SetWindowFontScale(2);
+	ImGui::Text(players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->name.c_str());
+	ImGui::SetWindowFontScale(1);
+	if (players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->reload_time > 0) {
+		ImGui::TextDisabled("%i", players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->clip_size);
+	}
+	else {
+		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->clip_size);
+	}
+	ImGui::End();
 
 	// Debug UI Information
 	if (Renderer::get().debug)

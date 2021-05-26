@@ -37,6 +37,10 @@ private:
 	// Keyboard variables
 	bool showScoreboard;
 
+	// Global bool for win condition
+	bool catTeamWin;
+	bool dogTeamWin;
+
 public:
 	// Track players in the world
 	unordered_map<int, Player*> players;

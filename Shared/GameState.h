@@ -83,6 +83,9 @@ public:
 	glm::vec3 catLocation;
 	glm::vec3 dogLocation;
 
+	bool catTeamWin;
+	bool dogTeamWin;
+
 	void addState(PlayerState ps);
 
 	template <typename Archive>
@@ -94,6 +97,8 @@ public:
 		ar& dogLocation.x;
 		ar& dogLocation.y;
 		ar& dogLocation.z;
+		ar& catTeamWin;
+		ar& dogTeamWin;
 	}
 
 };

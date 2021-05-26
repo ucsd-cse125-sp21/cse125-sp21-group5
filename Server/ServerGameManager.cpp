@@ -165,6 +165,28 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
+	// Game is over 
+	if (catTeamWin) {
+		// Changes win animation
+		for (auto player : players) {
+			// For cat players 
+			if (player.first % 2 == (int)PlayerTeam::CAT_LOVER) {
+				player.second->animation = AnimationID::DAB;
+			}
+		}
+		return;
+	}
+	else if (dogTeamWin) {
+		// Changes win animation
+		for (auto player : players) {
+			// For cat players 
+			if (player.first % 2 == (int)PlayerTeam::DOG_LOVER) {
+				player.second->animation = AnimationID::DAB;
+			}
+		}
+		return;
+	}
+
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
 
@@ -338,6 +360,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			// Reset cat flag
 			flagCatCarrierId = -1;
 			flagCat->set_center(CAT_FLAG_SPAWN);
+			flagCat->isActive = true;
+			checkWinCondition();
 		}
 			
 	}
@@ -351,6 +375,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			// Reset dog flag
 			flagDogCarrierId = -1;
 			flagDog->set_center(DOG_FLAG_SPAWN);
+			flagDog->isActive = true;
+			checkWinCondition();
 		}
 	}
 
@@ -365,6 +391,35 @@ void ServerGameManager::buildQuadtree()
 	for (Collider* c : allColliders)
 	{
 		qt->insert(c);
+	}
+}
+
+void ServerGameManager::checkWinCondition() 
+{
+	int dogTeamPoints = 0;
+	int catTeamPoints = 0;
+	
+	// Loop to calculate scores 
+	for (auto player : players) {
+
+		// For cat players 
+		if (player.first % 2 == (int)PlayerTeam::CAT_LOVER) {
+			catTeamPoints += player.second->captures;
+		}
+		// For dog players 
+		else if (player.first % 2 == (int)PlayerTeam::DOG_LOVER) {
+			dogTeamPoints += player.second->captures;
+		}
+	}
+
+	// Check cat team points 
+	if (catTeamPoints == NUM_CAPTURES_TO_WIN) {
+		// end the gmae 
+		catTeamWin = true;
+	}
+	if (dogTeamPoints == NUM_CAPTURES_TO_WIN) {
+		// end the game 
+		dogTeamWin = true;
 	}
 }
 
@@ -395,6 +450,10 @@ GameState ServerGameManager::getGameState(int playerId)
 	// Send back flag locations
 	gs.catLocation = flagCat->cen;
 	gs.dogLocation = flagDog->cen;
+
+	// Sends back game-winning variables 
+	gs.catTeamWin = catTeamWin; 
+	gs.dogTeamWin = dogTeamWin;
 
 	return gs;
 }

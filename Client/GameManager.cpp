@@ -78,6 +78,9 @@ GameManager::~GameManager()
 
 Event GameManager::update()
 {
+	// Hopefully doesn't break audio
+	AudioManager::get().system->update();
+
 	if (localPlayerId == -1) {
 		// Client has not yet connected to the server.
 		cout << "Local Player ID not received yet... Waiting to connect to Server..." << endl;
@@ -209,6 +212,9 @@ Event GameManager::handleInput()
 	// Update mouse movements
 	float yaw = camera->sensitivity * offsetX;
 	float pitch = camera->sensitivity * offsetY;
+
+	// Plays step sound if dPos is 0 // VERY CURSED 
+	//if (dPos != glm:: vec3(0.0f)) AudioManager::get().playSound(SOUND_STEP);
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);

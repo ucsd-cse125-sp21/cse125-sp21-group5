@@ -67,6 +67,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Uninitialized playerID
 	localPlayerId = -1;
+	
 } 
 
 GameManager::~GameManager()

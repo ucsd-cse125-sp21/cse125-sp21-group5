@@ -131,8 +131,8 @@
       <AdditionalDependencies>opengl32.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H
-xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H</Command>
+      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H/Y
+xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,8 +154,8 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H</Command>
       <AdditionalDependencies>opengl32.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H
-xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H</Command>
+      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H/Y
+xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

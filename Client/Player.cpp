@@ -76,7 +76,6 @@ void Player::updatePlayer(PlayerState ps)
 	if (mustLoadModels) return;
 
 	//model = modelsPistol[(int)ps.currentAnimation];
-
 	model = gunTypeModels[gun_idx][(int)ps.currentAnimation];
 }
 

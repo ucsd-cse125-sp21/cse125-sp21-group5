@@ -411,6 +411,10 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 	}
 
+	// Dab god damnit sheila 
+	if (e.dab) {
+		players[playerId]->animation = AnimationID::DAB;
+	}
 	buildQuadtree();
 }
 
@@ -474,7 +478,6 @@ GameState ServerGameManager::getGameState(int playerId)
 			           players[i]->captures,
 					   players[i]->gun_idx,
 					   *(players[i]->guns[players[i]->gun_idx]));
-
 		gs.addState(ps);
 	}
 

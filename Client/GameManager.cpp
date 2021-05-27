@@ -58,7 +58,8 @@ GameManager::GameManager(GLFWwindow* window)
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	AudioManager::get().init();
-	AudioManager::get().playSound(SOUND_WOOF);
+
+	AudioManager::get().playSound(SOUND_DUB);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -80,7 +81,6 @@ Event GameManager::update()
 {
 	// Hopefully doesn't break audio
 	AudioManager::get().system->update();
-
 	if (localPlayerId == -1) {
 		// Client has not yet connected to the server.
 		cout << "Local Player ID not received yet... Waiting to connect to Server..." << endl;
@@ -197,6 +197,12 @@ Event GameManager::handleInput()
 		players[localPlayerId]->playerClass = 2;
 	}
 
+	bool dab = false;
+	// Special animation dab 
+	if (glfwGetKey(window, GLFW_KEY_F)) {
+		dab = true;
+	}
+
 	// Show scoreboard
 	showScoreboard = glfwGetKey(window, GLFW_KEY_TAB);
 
@@ -214,16 +220,15 @@ Event GameManager::handleInput()
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
-	if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
+	//if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
 
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
 		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
 		AudioManager::get().playSound(SOUND_DEATH);
-
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx);
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab);
 }
 
 // Use for one-time key presses
@@ -524,7 +529,6 @@ void GameManager::updateGameState(GameState& gs)
 		// Ignore update if player doesn't exist
 		if (players.find(ps.playerId) == players.end())
 			continue;
-
 		players[ps.playerId]->updatePlayer(ps);
 	}
 	catTeamWin = gs.catTeamWin;

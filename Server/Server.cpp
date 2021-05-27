@@ -20,7 +20,7 @@ Server::Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 i
 void Server::accept_new_connection()
 {
     if (nextClientID >= NUM_PLAYERS) {
-        gm.gameCountDown = 300;
+        gm.gameCountdown = 300;
         return;
     }
 

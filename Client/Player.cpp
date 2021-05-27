@@ -100,7 +100,7 @@ void Player::loadModels() {
 
 	gunTypeModels.push_back(modelsPistol); //push back pistol
 	gunTypeModels.push_back(modelsShotgun); //push back shotgun
-	//gunTypeModels.push_back(modelsRifle); //push back pistol
+	//gunTypeModels.push_back(modelsRifle); //push back rifle
 
 	model = gunTypeModels[0][0]; //get the pistol, get first animation which is IDLE
 

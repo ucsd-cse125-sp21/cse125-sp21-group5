@@ -28,7 +28,7 @@ public:
 
 
 	bool gameStarted = false;
-	int gameCountDown = -1;
+	int gameCountdown = -1;
 
 	// Win condition bools 
 	bool dogTeamWin = false;

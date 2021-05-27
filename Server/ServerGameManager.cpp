@@ -12,7 +12,7 @@ ServerGameManager::ServerGameManager() {
 	flagCatCarrierId = -1;
 	flagDogCarrierId = -1;
 
-	gameCountDown = -1;
+	gameCountdown = -1;
 }
 
 MapState ServerGameManager::generateMap()
@@ -204,13 +204,18 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			players[playerId]->guns.push_back(new Shotgun());
 			players[playerId]->guns.push_back(new FOG());
 		}
+		else if (e.playerClass == 2) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Rifle());
+			players[playerId]->guns.push_back(new Stun());
+		}
 	}
 
-	if (gameCountDown > 0) {
-		gameCountDown--;
+	if (gameCountdown > 0) {
+		gameCountdown--;
 
 		// If game did not start, don't let the players move
-		if (gameCountDown == 0) {
+		if (gameCountdown == 0) {
 			//TP
 			gameStarted = true;
 			cout << "Starting the game" << endl;
@@ -219,7 +224,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 		//return;
 	}
-	else if (gameCountDown == -1) {
+	else if (gameCountdown == -1) {
 		// Waiting for all players to connect.
 		//return;
 	}
@@ -489,7 +494,7 @@ GameState ServerGameManager::getGameState(int playerId)
 	gs.catTeamWin = catTeamWin; 
 	gs.dogTeamWin = dogTeamWin;
 
-	gs.gameCountdown = gameCountDown;
+	gs.gameCountdown = gameCountdown;
 
 	return gs;
 }

@@ -184,19 +184,30 @@ Event GameManager::handleInput()
 	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
-		players[localPlayerId]->playerClass = 0;
+		if (gameCountdown < 0) {
+			// Players can choose class only as they wait for other players to join.
+			players[localPlayerId]->playerClass = 0;
+		}
 		players[localPlayerId]->gun_idx = 0;
 	}
 	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
-		players[localPlayerId]->playerClass = 1;
+		if (gameCountdown < 0) {
+			// Players can choose class only as they wait for other players to join.
+			players[localPlayerId]->playerClass = 1;
+		}
 		players[localPlayerId]->gun_idx = 1;
 	}
 	// Class / Weapon 3
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
-		players[localPlayerId]->playerClass = 2;
+		// TODO: Uncomment when all rifle models are ready for use and part of the player's loaded models.
+		
+		//if (gameCountdown < 0) {
+		//	// Players can choose class only as they wait for other players to join.
+		//	players[localPlayerId]->playerClass = 2;
+		//}
 	}
 
 	// Show scoreboard
@@ -318,24 +329,36 @@ void GameManager::renderUI()
 
 		yOffset += texSize.y + 20;
 
+		float horizotalSpacing = 100.0f;
+
 		ImGui::Begin("SelectedPlayerDetails", &showUI, windowFlags);
-		boost::format fmtr = boost::format("Selected Class:\tPlayer %i\nPrimary Weapon:\t%s\nSecondary Weapon:\t%s");
-		fmtr% players[localPlayerId]->playerClass;
-		if (players[localPlayerId]->playerClass == 0) {
-			fmtr % "Pistol";
-			fmtr % "Flashbang Launcher";
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - 300.0f, yOffset));
+		ImGui::SetWindowSize(ImVec2(600.0f, 150.0f));
+		ImGui::Columns(2, "PlayerInfo");
+		ImGui::SetColumnWidth(0, 300.0f);
+		ImGui::SetColumnWidth(1, 300.0f);
+		ImGui::Text("Selected Class:");
+		ImGui::Text("Primary Weapon:");
+		ImGui::Text("Secondary Weapon:");
+
+		ImGui::NextColumn();
+		switch(players[localPlayerId]->playerClass) {
+		case 0:
+			ImGui::Text("Player Class 1");
+			ImGui::Text("Pistol");
+			ImGui::Text("Flashbang Launcher");
+			break;
+		case 1:
+			ImGui::Text("Player Class 2");
+			ImGui::Text("Shotgun");
+			ImGui::Text("Smoke Grenade Launcher");
+			break;
+		case 2:
+			ImGui::Text("Player Class 3");
+			ImGui::Text("Rifle");
+			ImGui::Text("Stun Grenade Launcher");
+			break;
 		}
-		else {
-			fmtr % "Shotgun";
-			fmtr % "Smoke Grenade Launcher";
-		}
-		std::string text = fmtr.str();
-		texSize = ImGui::CalcTextSize(text.c_str());
-		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
-		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
-		//ImGui::SetWindowFontScale(2);
-		ImGui::Text(text.c_str());
-		//ImGui::SetWindowFontScale(1);
 		ImGui::End();
 	}
 

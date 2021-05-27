@@ -29,9 +29,6 @@
 using boost::asio::ip::tcp;
 
 using namespace std;
-#define NUM_PLAYERS 2
-#define PACKET_SIZE 2048
-
 
 class tcp_connection
 	: public boost::enable_shared_from_this<tcp_connection>

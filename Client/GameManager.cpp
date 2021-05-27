@@ -58,7 +58,7 @@ GameManager::GameManager(GLFWwindow* window)
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	AudioManager::get().init();
-	AudioManager::get().playSound(SOUND_WOOF);
+	//AudioManager::get().playSound(SOUND_WOOF);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -67,7 +67,9 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Uninitialized playerID
 	localPlayerId = -1;
-	
+
+	// GamecountDown
+	gameCountdown = -1;	
 } 
 
 GameManager::~GameManager()
@@ -292,6 +294,63 @@ void GameManager::renderUI()
 
 	bool showUI = true;
 
+	if (gameCountdown < 0) {
+		float yOffset = 200;
+		ImGui::Begin("WaitingForPlayers", &showUI, windowFlags);
+		ImVec2 texSize = ImGui::CalcTextSize("Waiting for additional players...");
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text("Waiting for additional players...");
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+
+		yOffset += texSize.y + 20;
+
+		ImGui::Begin("PlayerSelectPrompt", &showUI, windowFlags);
+		texSize = ImGui::CalcTextSize("Switch between player classes using number keys 1 and 2.");
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text("Switch between player classes using number keys 1 and 2.");
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+
+		yOffset += texSize.y + 20;
+
+		ImGui::Begin("SelectedPlayerDetails", &showUI, windowFlags);
+		boost::format fmtr = boost::format("Selected Class:\tPlayer %i\nPrimary Weapon:\t%s\nSecondary Weapon:\t%s");
+		fmtr% players[localPlayerId]->playerClass;
+		if (players[localPlayerId]->playerClass == 0) {
+			fmtr % "Pistol";
+			fmtr % "Flashbang Launcher";
+		}
+		else {
+			fmtr % "Shotgun";
+			fmtr % "Smoke Grenade Launcher";
+		}
+		std::string text = fmtr.str();
+		texSize = ImGui::CalcTextSize(text.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(text.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	if (gameCountdown > 0) {
+		ImGui::Begin("StartingGame", &showUI, windowFlags);
+		std::string str = (boost::format("Game starts in %i...") % (gameCountdown / 60)).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
@@ -300,6 +359,7 @@ void GameManager::renderUI()
 	// Change Health Bar color.
 	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
+	ImGui::PopStyleColor();
 	ImGui::End();
 
 	// super basic crosshair, maybe move this somewhere else
@@ -315,6 +375,9 @@ void GameManager::renderUI()
 
 	// Gun info
 	ImGui::Begin("Gun Info", &showUI, windowFlags);
+	string str = players[localPlayerId]->curr_gun.name;
+	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
+	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
 	ImGui::SetWindowSize(ImVec2(400, 300));
 	ImGui::SetWindowFontScale(2);
@@ -350,6 +413,9 @@ void GameManager::renderUI()
 	{
 		// Show first team (left)
 		// TODO: Deal with tabbing
+		windowFlags &= ~ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0.25));
 
 		ImGui::Begin("Scoreboard", &showUI, windowFlags);
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - 500, Window::height / 2 - 250));
@@ -438,6 +504,9 @@ void GameManager::renderUI()
 			}
 			ImGui::EndChild();
 		ImGui::End();
+
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+		ImGui::PopStyleColor();
 	}
 
 	// UI for game end 
@@ -531,6 +600,8 @@ void GameManager::updateGameState(GameState& gs)
 	dogTeamWin = gs.dogTeamWin;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);
+
+	gameCountdown = gs.gameCountdown;
 }
 
 // TODO: Model* should be a string or int to what kind of model should be used to render player

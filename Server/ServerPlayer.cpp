@@ -128,3 +128,30 @@ void ServerPlayer::decreaseHealth(float decAmount)
 {
 	health -= decAmount;
 }
+
+void ServerPlayer::resetPlayer(glm::vec3 pos, float yaw, float pitch)
+{
+	respawn(pos, yaw, pitch);
+
+	kills = 0;
+	captures = 0;
+	deaths = 0;
+	vVelocity = -0.1f;
+	animation = AnimationID::IDLE;
+	jumping = 0;
+	isGrounded = false;
+	health = 100.0f;
+	isDead = 0;
+	kills = 0;
+	deaths = 0;
+	captures = 0;
+}
+
+void ServerPlayer::respawn(glm::vec3 pos, float yaw, float pitch)
+{
+	this->pos = glm::vec3(0, 0, 0);
+	this->yaw = 0;
+	this->pitch = 0;
+
+	update(pos, yaw, pitch);
+}

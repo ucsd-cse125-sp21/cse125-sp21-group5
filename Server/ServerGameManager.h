@@ -48,6 +48,8 @@ public:
 	MapState generateMap();
 	void buildQuadtree();
 	void checkWinCondition();
+	void startGame();
+	void respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch);
 	void gameOver();
 	
 

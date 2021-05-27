@@ -10,7 +10,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "Tile.h"
 #include "Window.h"
 #include "Camera.h"
 #include "../Shared/Event.h"

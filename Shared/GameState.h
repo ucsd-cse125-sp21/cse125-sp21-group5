@@ -15,6 +15,7 @@ enum class AnimationID {
 	SHOOT = 2,
 	DAB = 3,
 	DEATH = 4,
+	RELOAD = 5
 };
 
 class PlayerState

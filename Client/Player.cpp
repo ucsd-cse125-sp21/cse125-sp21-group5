@@ -25,7 +25,7 @@ Player::Player(Transform* transform, int playerId)
 
 Player::~Player()
 {
-	for (Model* m : models)
+	for (Model* m : modelsPistol)
 	{
 		delete m;
 	}
@@ -78,20 +78,38 @@ void Player::updatePlayer(PlayerState ps)
 	// Don't waste time animating
 	if (mustLoadModels) return;
 
-	model = models[(int)ps.currentAnimation];
+	//model = modelsPistol[(int)ps.currentAnimation];
+
+	model = gunTypeModels[gun_idx][(int)ps.currentAnimation];
 }
 
 
 // loads the model files and sets up shaders
 void Player::loadModels() {
 
-	models.push_back(new Model("res/models/finalIdle.dae"));
-	models.push_back(new Model("res/models/finalWalk.dae"));
-	models.push_back(new Model("res/models/finalShoot.dae"));
-	models.push_back(new Model("res/models/finalToxicDab.dae"));
-	models.push_back(new Model("res/models/finalDeath200.dae"));
+	modelsPistol.push_back(new Model("res/models/finalIdle.dae"));
+	modelsPistol.push_back(new Model("res/models/finalWalk.dae"));
+	modelsPistol.push_back(new Model("res/models/finalShoot.dae"));
+	modelsPistol.push_back(new Model("res/models/finalToxicDab.dae"));
+	modelsPistol.push_back(new Model("res/models/finalDeath200.dae"));
+	//modelsPistol.push_back(new Model("res/models/finalReload.dae"));
 
-	model = models[0];
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Shoot.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-OrangeJustice.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae"));
+
+	gunTypeModels.push_back(modelsPistol); //push back pistol
+	gunTypeModels.push_back(modelsShotgun); //push back shotgun
+	//gunTypeModels.push_back(modelsRifle); //push back pistol
+
+	model = gunTypeModels[0][0]; //get the pistol, get first animation which is IDLE
+
+	//example of how to access the current model, we default at pistol when we start
+	//model = gunTypeModels.at(gun_idx).at(IDLE);
+	//model = gunTypeModels.at(gun_idx).at(0);
 }
 
 void Player::displayHUD()

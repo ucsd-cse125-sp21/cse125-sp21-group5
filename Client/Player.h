@@ -12,6 +12,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "AudioManager.h"
 
 class Player : public Node
 {
@@ -23,7 +24,15 @@ public:
 	Transform* transform;
 
 	Model* model;
-	std::vector<Model*> models;
+	std::vector<Model*> modelsPistol; //pistol
+	std::vector<Model*> modelsShotgun; //shotgun
+	std::vector<Model*> modelsRifle; //rifle
+
+	// SHEILA 
+	// Index 0 - pistol
+	// Index 1 - shotgun 
+	// Index 2 - rifle 
+	std::vector<vector<Model*>> gunTypeModels;
 
 	int playerId;
 

@@ -55,12 +55,15 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 				float initPitch,
 				int playerId)
 {
-	pos = initPos;
-	front = glm::vec3(0.0f, 0.0f, 1.0f);
-	yaw = initYaw;
-	pitch = initPitch;
+	pos = glm::vec3(0, 0, 0);
+	yaw = 0;
+	pitch = 0;
+
 	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	hitbox->setParentPlayer(this);
+
+	this->update(initPos, initYaw, initPitch);
+
 	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
 	jumping = 0;

@@ -436,7 +436,7 @@ void ServerGameManager::createNewPlayer(int playerId)
 	float initYaw;
 	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER){
 		playerSpawnPos = CAT_SPAWN;
-		initYaw = 90;
+		initYaw = 225;
 	}
 	else {
 		playerSpawnPos = DOG_SPAWN;

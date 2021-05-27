@@ -46,7 +46,9 @@ public:
 	unsigned int kills, deaths, captures;
 
 	int gun_idx;
-	vector<Gun*> guns;
+	Gun curr_gun;
+
+	int playerClass;
 
 	Player(Transform* transform, int playerId);
 	~Player();

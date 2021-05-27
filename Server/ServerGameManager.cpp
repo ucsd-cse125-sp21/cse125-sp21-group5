@@ -190,6 +190,37 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
 
+	// If game didn't start yet, allow players to change class but not move
+	if (!gameStarted) {
+		if (e.playerClass == 0) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Pistol());
+			players[playerId]->guns.push_back(new FOV());
+		}
+		else if (e.playerClass == 1) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Shotgun());
+			players[playerId]->guns.push_back(new FOG());
+		}
+	}
+
+	if (gameCountDown > 0) {
+		gameCountDown--;
+
+		// If game did not start, don't let the players move
+		if (gameCountDown == 0) {
+			//TP
+			gameStarted = true;
+			cout << "Starting the game" << endl;
+
+		}
+
+		return;
+	}
+	else if (gameCountDown == -1) {
+		return;
+	}
+
 	// TODO: Varying death timers 
 	if (curr_player->isDead > 0)
 	{
@@ -460,8 +491,17 @@ GameState ServerGameManager::getGameState(int playerId)
 
 void ServerGameManager::createNewPlayer(int playerId)
 {
-	glm::vec3 playerSpawnPos = (playerId % 2) == 0 ? CAT_SPAWN : DOG_SPAWN;
-	players[playerId] = new ServerPlayer(playerSpawnPos, playerId);
+	glm::vec3 playerSpawnPos;
+	float initYaw;
+	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER){
+		playerSpawnPos = CAT_SPAWN;
+		initYaw = 225;
+	}
+	else {
+		playerSpawnPos = DOG_SPAWN;
+		initYaw = 45;
+	}
+	players[playerId] = new ServerPlayer(playerSpawnPos, initYaw, 0, playerId);
 
 
 	// Add player hitboxes to all colliders

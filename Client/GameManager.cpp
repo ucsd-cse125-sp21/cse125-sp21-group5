@@ -91,12 +91,6 @@ Event GameManager::update()
 		//cout << "Player pointer in unordered_map for localPlayerID " << localPlayerId << " is " << players[localPlayerId];
 	}
 
-	// Make a new imgui frame
-	// do this here so game objects can make ImGUI calls in their update function
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
 	// Calculate deltaTime
 	currTime = (float) glfwGetTime();
 	deltaTime = currTime - prevTime;
@@ -185,20 +179,22 @@ Event GameManager::handleInput()
 		dPos -= camera->up;
 	}
 
-	// Weapon 1
+	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
+		players[localPlayerId]->playerClass = 0;
 		players[localPlayerId]->gun_idx = 0;
 	}
-	// Weapon 2
+	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
+		players[localPlayerId]->playerClass = 1;
 		players[localPlayerId]->gun_idx = 1;
 	}
-	// Weapon 3
+	// Class / Weapon 3
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
-		players[localPlayerId]->gun_idx = 2;
+		players[localPlayerId]->playerClass = 2;
 	}
 
 	// Show scoreboard
@@ -227,7 +223,7 @@ Event GameManager::handleInput()
 
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->gun_idx);
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx);
 }
 
 // Use for one-time key presses
@@ -265,6 +261,23 @@ void GameManager::render()
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Render the models
+	Renderer::get().setCamera(players[localPlayerId]->cam);
+	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
+
+	renderUI();
+
+	// Swap buffers
+	glfwSwapBuffers(window);
+}
+
+void GameManager::renderUI()
+{
+	// Make a new imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	// show an example window
 	ImGuiWindowFlags windowFlags = 0;
 
@@ -278,10 +291,14 @@ void GameManager::render()
 	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 	bool showUI = true;
+
+	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
 	ImGui::SetWindowSize(ImVec2(300, 100));
 	ImGui::Text("Super basic health bar");
+	// Change Health Bar color.
+	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::End();
 
@@ -296,6 +313,21 @@ void GameManager::render()
 	drawList->AddLine(ImVec2(p.x, p.y + 20), ImVec2(p.x + 40, p.y + 20), ImColor(ImVec4(0, 1, 0, 1)), 1.0);
 	ImGui::End();
 
+	// Gun info
+	ImGui::Begin("Gun Info", &showUI, windowFlags);
+	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
+	ImGui::SetWindowSize(ImVec2(400, 300));
+	ImGui::SetWindowFontScale(2);
+	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
+	ImGui::SetWindowFontScale(1);
+	if (players[localPlayerId]->curr_gun.reload_time > 0) {
+		ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+	}
+	else {
+		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);
+	}
+	ImGui::End();
+
 	// Debug UI Information
 	if (Renderer::get().debug)
 	{
@@ -306,7 +338,7 @@ void GameManager::render()
 		ImGui::Text("Number of Players: %d", players.size());
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
-		ImGui::Text("Player gun name: %s", p->guns[p->gun_idx]->name);
+		ImGui::Text("Player gun name: %s", p->curr_gun.name);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
@@ -424,16 +456,9 @@ void GameManager::render()
 		ImGui::End();
 	}
 
-	// Render the models
-	Renderer::get().setCamera(players[localPlayerId]->cam);
-	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
-
 	// call ImGUI render to actually render the ui to opengl
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	// Swap buffers
-	glfwSwapBuffers(window);
 }
 
 // We translate then scale on the server, so we have to match on client

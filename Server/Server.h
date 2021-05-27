@@ -29,7 +29,7 @@
 using boost::asio::ip::tcp;
 
 using namespace std;
-#define NUM_PLAYERS 4
+#define NUM_PLAYERS 2
 #define PACKET_SIZE 2048
 
 
@@ -79,6 +79,8 @@ public:
 	std::shared_ptr<tcp::acceptor> acceptor;
 
 	int nextClientID;
+
+
 
 	Server(boost::asio::io_context& ioContext, boost::asio::ip::address_v4 inputIp);
 

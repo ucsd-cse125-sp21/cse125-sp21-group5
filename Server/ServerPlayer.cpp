@@ -41,8 +41,8 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
 
 	gun_idx = 0;
 	guns.push_back(new Pistol());
-	guns.push_back(new Shotgun());
-	guns.push_back(new Rifle());
+	guns.push_back(new FOV());
+
 
 	this->team =
 		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
@@ -51,20 +51,38 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
-			   const glm::vec3& hitboxSize,
-			   float initYaw,
-			   float initPitch)
+				float initYaw,
+				float initPitch,
+				int playerId)
 {
-	hitbox = new Collider(ObjectType::PLAYER, initPos, hitboxSize);
+	pos = glm::vec3(0, 0, 0);
+	yaw = 0;
+	pitch = 0;
+
+	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
 	hitbox->setParentPlayer(this);
-	update(initPos, initYaw, initPitch);
-	health = 100.0f;
+
+	this->update(initPos, initYaw, initPitch);
+
 	vVelocity = -0.1f;
 	animation = AnimationID::IDLE;
+	jumping = 0;
+	isGrounded = false;
+	health = 100.0f;
 	isDead = 0;
 	kills = 0;
 	deaths = 0;
 	captures = 0;
+
+	gun_idx = 0;
+	guns.push_back(new Pistol());
+	guns.push_back(new FOV());
+
+
+	this->team =
+		(playerId % 2 == (int)PlayerTeam::CAT_LOVER)
+		? PlayerTeam::CAT_LOVER
+		: PlayerTeam::DOG_LOVER;
 }
 
 void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float dPitch)

@@ -11,11 +11,12 @@ Event::Event() {
 }
 
 // Movement update
-Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int gun_idx) {
+Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx) {
 	this->dPos = dPos;
 	this->dYaw = dYaw;
 	this->dPitch = dPitch;
 	this->shooting = shooting;
 	this->jumping = jumping;
+	this->playerClass = playerClass;
 	this->gun_idx = gun_idx;
 }

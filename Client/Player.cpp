@@ -16,11 +16,9 @@ Player::Player(Transform* transform, int playerId)
 	this->kills = 0;
 	this->deaths = 0;
 	this->captures = 0;
-
+	this->playerClass = 0;
 	this->gun_idx = 1;
-	this->guns.push_back(new Pistol());
-	this->guns.push_back(new Shotgun());
-	this->guns.push_back(new Rifle());
+	this->curr_gun = Gun();
 }
 
 Player::~Player()
@@ -72,8 +70,7 @@ void Player::updatePlayer(PlayerState ps)
 
 	// Update whichever gun you are holding
 	gun_idx = ps.gun_idx;
-	guns[gun_idx]->clip_size = ps.curr_gun.clip_size;
-	guns[gun_idx]->reload_time = ps.curr_gun.reload_time;
+	curr_gun = ps.curr_gun;
 
 	// Don't waste time animating
 	if (mustLoadModels) return;

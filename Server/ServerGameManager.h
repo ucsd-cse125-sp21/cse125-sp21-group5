@@ -26,6 +26,10 @@ public:
 	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
+
+	bool gameStarted = false;
+	int gameCountDown = -1;
+
 	// Win condition bools 
 	bool dogTeamWin = false;
 	bool catTeamWin = false;

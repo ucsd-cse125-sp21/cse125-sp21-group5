@@ -42,9 +42,9 @@ public:
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos, int playerId);
 	ServerPlayer(const glm::vec3& initPos,
-		  	     const glm::vec3& hitboxSize,
-			     float initYaw,
-			     float initPitch);
+			    float initYaw,
+			    float initPitch,
+				int playerId);
 
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
 	void decreaseHealth(float decAmount);

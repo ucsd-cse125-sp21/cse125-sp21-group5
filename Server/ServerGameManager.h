@@ -27,7 +27,7 @@ public:
 	int flagCatCarrierId, flagDogCarrierId;
 
 	bool gameStarted = false;
-	int gameCountDown = 0;
+	int gameCountDown = -1;
 
 	// Track all players
 	unordered_map<int, ServerPlayer*> players;

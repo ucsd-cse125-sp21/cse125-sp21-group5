@@ -171,23 +171,22 @@ Event GameManager::handleInput()
 		dPos -= camera->up;
 	}
 
-	// Weapon 1
+	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
 		players[localPlayerId]->playerClass = 0;
 		players[localPlayerId]->gun_idx = 0;
 	}
-	// Weapon 2
+	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
 		players[localPlayerId]->playerClass = 1;
 		players[localPlayerId]->gun_idx = 1;
 	}
-	// Weapon 3
+	// Class / Weapon 3
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
 		players[localPlayerId]->playerClass = 2;
-		players[localPlayerId]->gun_idx = 2;
 	}
 
 	// Show scoreboard
@@ -305,13 +304,13 @@ void GameManager::renderUI()
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
 	ImGui::SetWindowSize(ImVec2(400, 300));
 	ImGui::SetWindowFontScale(2);
-	ImGui::Text(players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->name.c_str());
+	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
 	ImGui::SetWindowFontScale(1);
-	if (players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->reload_time > 0) {
-		ImGui::TextDisabled("%i", players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->clip_size);
+	if (players[localPlayerId]->curr_gun.reload_time > 0) {
+		ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
 	}
 	else {
-		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->guns[players[localPlayerId]->gun_idx]->clip_size);
+		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);
 	}
 	ImGui::End();
 
@@ -325,7 +324,7 @@ void GameManager::renderUI()
 		ImGui::Text("Number of Players: %d", players.size());
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
-		ImGui::Text("Player gun name: %s", p->guns[p->gun_idx]->name);
+		ImGui::Text("Player gun name: %s", p->curr_gun.name);
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);

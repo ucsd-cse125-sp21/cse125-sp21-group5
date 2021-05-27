@@ -125,20 +125,39 @@ public:
 	}
 };
 
-class Rifle : public Gun
+class FOV : public Gun
 {
 public:
-	Rifle()
+	FOV()
 	{
-		name = "Rifle";
+		name = "Flashbang Launcher";
 		fire_rate = 0;
 		fire_rate_reset = 10;
-		clip_size = 6;
-		clip_size_reset = 6;
-		reload_time = 10;
-		reload_time_reset = 10;
+		clip_size = 1;
+		clip_size_reset = 1;
+		reload_time = 0;
+		reload_time_reset = 600;
 		bullets_per_shot = 1;
-		damage_per_bullet = 10.0f;
+		damage_per_bullet = 0.0f;
+		x_recoil = 0.0f;
+		y_recoil = 0.0f;
+	}
+};
+
+class FOG : public Gun
+{
+public:
+	FOG()
+	{
+		name = "Smoke Launcher";
+		fire_rate = 0;
+		fire_rate_reset = 10;
+		clip_size = 1;
+		clip_size_reset = 1;
+		reload_time = 0;
+		reload_time_reset = 600;
+		bullets_per_shot = 1;
+		damage_per_bullet = 0.0f;
 		x_recoil = 0.0f;
 		y_recoil = 0.0f;
 	}

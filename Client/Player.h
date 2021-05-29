@@ -38,6 +38,8 @@ public:
 
 	float health;
 	int isDead;
+
+	int hasLimitedFOV, isFogged, isFrozen;
 	
 	bool isGrounded;
 	bool isCarryingCatFlag;

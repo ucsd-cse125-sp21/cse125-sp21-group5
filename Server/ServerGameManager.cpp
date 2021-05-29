@@ -141,6 +141,7 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 								break;
 							case 2:
 								p.second->isFrozen = FREEZE_TIME;
+								break;
 						}
 					}
 
@@ -511,6 +512,8 @@ GameState ServerGameManager::getGameState(int playerId)
 {
 	GameState gs;
 
+	//cout << "Printing out Game State:" << endl;
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		PlayerState ps(i,
@@ -529,10 +532,16 @@ GameState ServerGameManager::getGameState(int playerId)
 						*(players[i]->guns[players[i]->gun_idx]),
 						players[i]->isLimitFOV,
 						players[i]->isFogged,
+						players[i]->isFrozen,
 						players[i]->playerClass
 		);
 		gs.addState(ps);
+
+		//cout << "Player ID: " << i << "\tIsFogged: " << players[i]->isFogged << endl;
 	}
+
+
+	//cout << endl;
 
 	// Send back flag locations
 	gs.catLocation = flagCat->cen;

@@ -34,8 +34,8 @@ PlayerState::PlayerState(int playerId,
 						const Gun& curr_gun,
 						int isLimitFOV,
 						int isFogged,
-						int playerClass
-)
+						int isFrozen,
+						int playerClass)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -53,6 +53,7 @@ PlayerState::PlayerState(int playerId,
 	this->curr_gun = curr_gun;
 	this->isLimitFOV = isLimitFOV;
 	this->isFogged = isFogged;
+	this->isFrozen = isFrozen;
 	this->playerClass = playerClass;
 }
 

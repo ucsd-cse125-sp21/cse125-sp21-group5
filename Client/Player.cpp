@@ -60,6 +60,11 @@ void Player::updatePlayer(PlayerState ps)
 	isCarryingCatFlag = ps.carryingCatFlag;
 	isCarryingDogFlag = ps.carryingDogFlag;
 
+	// Update Special Attack Effect information
+	hasLimitedFOV = ps.isLimitFOV;
+	isFogged = ps.isFogged;
+	isFrozen = ps.isFrozen;
+
 	// Update Score information
 	kills = ps.kills;
 	deaths = ps.deaths;
@@ -76,7 +81,6 @@ void Player::updatePlayer(PlayerState ps)
 	if (mustLoadModels) return;
 
 	//model = modelsPistol[(int)ps.currentAnimation];
-	cout << ps.playerId << " " << ps.playerClass << endl;
 	model = gunTypeModels[(int)ps.playerClass][(int)ps.currentAnimation];
 }
 

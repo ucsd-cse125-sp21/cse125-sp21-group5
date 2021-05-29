@@ -37,7 +37,7 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
-	int isLimitFOV, isFogged;
+	int isLimitFOV, isFogged, isFrozen;
 	int playerClass;
 
 	PlayerState();
@@ -57,6 +57,7 @@ public:
 				const Gun& curr_gun,
 				int isLimitFOV,
 				int isFogged,
+				int isFrozen,
 				int playerClass
 	);
 	
@@ -83,6 +84,7 @@ public:
 		ar& curr_gun;
 		ar& isLimitFOV;
 		ar& isFogged;
+		ar& isFrozen;
 		ar& playerClass;
 	}
 };

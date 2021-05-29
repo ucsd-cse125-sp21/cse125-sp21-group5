@@ -383,6 +383,48 @@ void GameManager::renderUI()
 		ImGui::End();
 	}
 
+	// Let player know if they are frozen.
+	if (players[localPlayerId]->isFrozen > 0)
+	{
+		ImGui::Begin("FrozenMessage", &showUI, windowFlags);
+		std::string str = (boost::format("You've been frozen!!!") % (gameCountdown / 60)).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	// Let players know if they are Fogged.
+	if (players[localPlayerId]->isFogged > 0)
+	{
+		ImGui::Begin("FoggedMessage", &showUI, windowFlags);
+		std::string str = (boost::format("You think it's dark, but they can see you....") % (gameCountdown / 60)).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	// Let players know that they have limited visibilty.
+	if (players[localPlayerId]->hasLimitedFOV > 0)
+	{
+		ImGui::Begin("LimitedFOVMessage", &showUI, windowFlags);
+		std::string str = (boost::format("Can you see what's coming?") % (gameCountdown / 60)).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));

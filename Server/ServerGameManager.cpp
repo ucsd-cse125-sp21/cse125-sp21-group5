@@ -205,16 +205,19 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	if (!gameStarted) {
 		if (e.playerClass == 0) {
 			players[playerId]->guns.clear();
+			players[playerId]->playerClass = 0;
 			players[playerId]->guns.push_back(new Pistol());
 			players[playerId]->guns.push_back(new FOV());
 		}
 		else if (e.playerClass == 1) {
 			players[playerId]->guns.clear();
+			players[playerId]->playerClass = 1;
 			players[playerId]->guns.push_back(new Shotgun());
 			players[playerId]->guns.push_back(new FOG());
 		}
 		else if (e.playerClass == 2) {
 			players[playerId]->guns.clear();
+			players[playerId]->playerClass = 2;
 			players[playerId]->guns.push_back(new Rifle());
 			players[playerId]->guns.push_back(new Stun());
 		}
@@ -482,19 +485,23 @@ GameState ServerGameManager::getGameState(int playerId)
 	for (int i = 0; i < players.size(); i++)
 	{
 		PlayerState ps(i,
-			           players[i]->pos,
-			           players[i]->front,
-			           players[i]->animation,
-			           players[i]->isGrounded,
-			           players[i]->health,
-			           players[i]->isDead,
-					   (flagCatCarrierId == i),
-					   (flagDogCarrierId == i),
-			           players[i]->kills,
-			           players[i]->deaths,
-			           players[i]->captures,
-					   players[i]->gun_idx,
-					   *(players[i]->guns[players[i]->gun_idx]));
+						players[i]->pos,
+						players[i]->front,
+						players[i]->animation,
+						players[i]->isGrounded,
+						players[i]->health,
+						players[i]->isDead,
+						(flagCatCarrierId == i),
+						(flagDogCarrierId == i),
+						players[i]->kills,
+						players[i]->deaths,
+						players[i]->captures,
+						players[i]->gun_idx,
+						*(players[i]->guns[players[i]->gun_idx]),
+						players[i]->isLimitFOV,
+						players[i]->isFogged,
+						players[i]->playerClass
+		);
 		gs.addState(ps);
 	}
 

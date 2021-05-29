@@ -76,7 +76,8 @@ void Player::updatePlayer(PlayerState ps)
 	if (mustLoadModels) return;
 
 	//model = modelsPistol[(int)ps.currentAnimation];
-	model = gunTypeModels[gun_idx][(int)ps.currentAnimation];
+	cout << ps.playerId << " " << ps.playerClass << endl;
+	model = gunTypeModels[(int)ps.playerClass][(int)ps.currentAnimation];
 }
 
 
@@ -100,7 +101,7 @@ void Player::loadModels() {
 	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae"));
-	modelsRifle.push_back(new Model("res/models/Shotgun-OrangeJustice.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Floss.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae"));
 

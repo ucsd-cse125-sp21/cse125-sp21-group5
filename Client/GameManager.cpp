@@ -204,11 +204,10 @@ Event GameManager::handleInput()
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
 		// TODO: Uncomment when all rifle models are ready for use and part of the player's loaded models.
-		
-		//if (gameCountdown < 0) {
-		//	// Players can choose class only as they wait for other players to join.
-		//	players[localPlayerId]->playerClass = 2;
-		//}
+		if (gameCountdown < 0) {
+			// Players can choose class only as they wait for other players to join.
+			players[localPlayerId]->playerClass = 2;
+		}
 	}
 
 	bool dab = false;

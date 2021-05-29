@@ -19,6 +19,10 @@ ServerPlayer::ServerPlayer() {
 	kills = 0;
 	deaths = 0;
 	captures = 0;
+
+	isLimitFOV = false;
+	isFogged = false;
+	playerClass = 0;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
@@ -43,6 +47,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
 	guns.push_back(new Pistol());
 	guns.push_back(new FOV());
 
+	isLimitFOV = false;
+	isFogged = false;
+	playerClass = 0;
 
 	this->team =
 		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
@@ -78,6 +85,9 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	guns.push_back(new Pistol());
 	guns.push_back(new FOV());
 
+	isLimitFOV = false;
+	isFogged = false;
+	playerClass = 0;
 
 	this->team =
 		(playerId % 2 == (int)PlayerTeam::CAT_LOVER)

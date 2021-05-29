@@ -37,6 +37,9 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
+	bool isLimitFOV, isFogged;
+	int playerClass;
+
 	PlayerState();
 	PlayerState(int playerId, 
 				const glm::vec3& pos,
@@ -51,7 +54,11 @@ public:
 				unsigned int deaths,
 				unsigned int captures,
 				int gun_idx,
-				const Gun& curr_gun);
+				const Gun& curr_gun,
+				bool isLimitFOV,
+				bool isFogged,
+				int playerClass
+	);
 	
 
 	template <typename Archive>
@@ -74,6 +81,9 @@ public:
 		ar& captures;
 		ar& gun_idx;
 		ar& curr_gun;
+		ar& isLimitFOV;
+		ar& isFogged;
+		ar& playerClass;
 	}
 };
 

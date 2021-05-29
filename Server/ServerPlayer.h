@@ -39,6 +39,10 @@ public:
 	int gun_idx;
 	std::vector<Gun*> guns;
 
+	bool isLimitFOV;
+	bool isFogged;
+	int playerClass;
+
 	ServerPlayer();
 	ServerPlayer(const glm::vec3& initPos, int playerId);
 	ServerPlayer(const glm::vec3& initPos,

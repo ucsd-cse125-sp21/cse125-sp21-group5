@@ -189,7 +189,6 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -245,7 +244,6 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

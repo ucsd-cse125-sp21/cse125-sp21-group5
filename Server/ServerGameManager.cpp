@@ -96,6 +96,12 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 		float minHitlength = std::numeric_limits<float>::infinity();
 		Collider* closestCollider = nullptr;
 
+		// Calculate Scatter
+		float x = (float)rand() / (float)RAND_MAX - 0.5f;
+		float y = (float)rand() / (float)RAND_MAX - 0.5f;
+		glm::vec3 scatter = glm::vec3(gun->x_spread * x, gun->y_spread * y, 0.0f);
+		glm::vec3 trajectory = glm::normalize(player->front + scatter);
+
 		// Check shooting against all other colliders before checking movement 
 		for (Collider* otherCollider : allColliders)
 		{
@@ -105,7 +111,7 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 
 			// Check for shooting stuff
 			glm::vec3 hitPos;
-			if (otherCollider->check_ray_collision(player->hitbox->cen, player->front, hitPos))
+			if (otherCollider->check_ray_collision(player->hitbox->cen, trajectory, hitPos))
 			{
 				float hitLength = glm::length(hitPos - player->hitbox->cen);
 				if (hitLength < minHitlength)
@@ -163,6 +169,9 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 			}
 		}
 	}
+
+	// Add recoil
+	player->update(glm::vec3(0.0f), 0.0f, gun->recoil);
 }
 
 void ServerGameManager::handleEvent(Event& e, int playerId)

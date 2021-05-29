@@ -15,8 +15,9 @@ public:
 	unsigned int reload_time_reset;
 	unsigned int bullets_per_shot;
 	float damage_per_bullet;
-	float x_recoil;
-	float y_recoil;
+	float x_spread;
+	float y_spread;
+	float recoil;
 
 	void decrement_reload_time()
 	{
@@ -56,7 +57,7 @@ public:
 			return false;
 
 		// Shoot bullet(s)
-		clip_size -= bullets_per_shot;
+		clip_size -= 1;
 
 		// Reset fire_rate
 		fire_rate = fire_rate_reset;
@@ -75,8 +76,10 @@ public:
 		reload_time_reset = 0;
 		bullets_per_shot = 0;
 		damage_per_bullet = 0.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		x_spread = 0.0f;
+		y_spread = 0.0f;
+		recoil = 0.0f;
+
 	};
 
 	template <typename Archive>
@@ -94,15 +97,16 @@ public:
 	{
 		name = "Pistol";
 		fire_rate = 0;
-		fire_rate_reset = 10;
+		fire_rate_reset = 30;
 		clip_size = 6;
 		clip_size_reset = 6;
-		reload_time = 10;
-		reload_time_reset = 10;
+		reload_time = 0;
+		reload_time_reset = 60;
 		bullets_per_shot = 1;
 		damage_per_bullet = 10.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		x_spread = 0.0f;
+		y_spread = 0.0f;
+		recoil = 1.0f;
 	}
 };
 
@@ -113,15 +117,16 @@ public:
 	{
 		name = "Shotgun";
 		fire_rate = 0;
-		fire_rate_reset = 10;
-		clip_size = 6;
-		clip_size_reset = 6;
-		reload_time = 10;
-		reload_time_reset = 10;
-		bullets_per_shot = 1;
-		damage_per_bullet = 10.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		fire_rate_reset = 60;
+		clip_size = 2;
+		clip_size_reset = 10;
+		reload_time = 0;
+		reload_time_reset = 120;
+		bullets_per_shot = 5;
+		damage_per_bullet = 5.0f;
+		x_spread = 0.5f;
+		y_spread = 0.5f;
+		recoil = 1.0f;
 	}
 };
 
@@ -131,14 +136,15 @@ public:
 		name = "Rifle";
 		fire_rate = 0;
 		fire_rate_reset = 10;
-		clip_size = 6;
-		clip_size_reset = 6;
-		reload_time = 10;
-		reload_time_reset = 10;
+		clip_size = 36;
+		clip_size_reset = 36;
+		reload_time = 90;
+		reload_time_reset = 90;
 		bullets_per_shot = 1;
-		damage_per_bullet = 10.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		damage_per_bullet = 2.0f;
+		x_spread = 0.01f;
+		y_spread = 0.01f;
+		recoil = 2.0f;
 	}
 };
 
@@ -156,8 +162,9 @@ public:
 		reload_time_reset = 600;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		x_spread = 0.0f;
+		y_spread = 0.0f;
+		recoil = 1.0f;
 	}
 };
 
@@ -175,8 +182,9 @@ public:
 		reload_time_reset = 600;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		x_spread = 0.0f;
+		y_spread = 0.0f;
+		recoil = 1.0f;
 	}
 };
 
@@ -194,7 +202,8 @@ public:
 		reload_time_reset = 600;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
-		x_recoil = 0.0f;
-		y_recoil = 0.0f;
+		x_spread = 0.0f;
+		y_spread = 0.0f;
+		recoil = 1.0f;
 	}
 };

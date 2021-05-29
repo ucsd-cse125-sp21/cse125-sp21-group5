@@ -11,6 +11,8 @@ ServerGameManager::ServerGameManager() {
 	//Tile and flags are unintialized
 	flagCatCarrierId = -1;
 	flagDogCarrierId = -1;
+
+	gameCountdown = -1;
 }
 
 MapState ServerGameManager::generateMap()
@@ -202,23 +204,29 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			players[playerId]->guns.push_back(new Shotgun());
 			players[playerId]->guns.push_back(new FOG());
 		}
+		else if (e.playerClass == 2) {
+			players[playerId]->guns.clear();
+			players[playerId]->guns.push_back(new Rifle());
+			players[playerId]->guns.push_back(new Stun());
+		}
 	}
 
-	if (gameCountDown > 0) {
-		gameCountDown--;
+	if (gameCountdown > 0) {
+		gameCountdown--;
 
 		// If game did not start, don't let the players move
-		if (gameCountDown == 0) {
+		if (gameCountdown == 0) {
 			//TP
 			gameStarted = true;
 			cout << "Starting the game" << endl;
-
+			startGame();
 		}
 
-		return;
+		//return;
 	}
-	else if (gameCountDown == -1) {
-		return;
+	else if (gameCountdown == -1) {
+		// Waiting for all players to connect.
+		//return;
 	}
 
 	// TODO: Varying death timers 
@@ -489,6 +497,8 @@ GameState ServerGameManager::getGameState(int playerId)
 	gs.catTeamWin = catTeamWin; 
 	gs.dogTeamWin = dogTeamWin;
 
+	gs.gameCountdown = gameCountdown;
+
 	return gs;
 }
 
@@ -509,4 +519,28 @@ void ServerGameManager::createNewPlayer(int playerId)
 
 	// Add player hitboxes to all colliders
 	allColliders.push_back(players[playerId]->hitbox);
+}
+
+void ServerGameManager::startGame()
+{
+	for (auto p : players)
+	{
+		int playerId = p.first;
+		glm::vec3 playerSpawnPos;
+		float initYaw;
+		if (playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
+			playerSpawnPos = CAT_SPAWN;
+			initYaw = 225;
+		}
+		else {
+			playerSpawnPos = DOG_SPAWN;
+			initYaw = 45;
+		}
+		respawnPlayerWithID(p.first, playerSpawnPos, initYaw, 0);
+	}
+}
+
+void ServerGameManager::respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch)
+{
+	players[playerId]->resetPlayer(pos, yaw, pitch);
 }

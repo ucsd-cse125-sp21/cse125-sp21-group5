@@ -9,8 +9,9 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <string>
+#include <boost/format.hpp>
 
-#include "Tile.h"
 #include "Window.h"
 #include "Camera.h"
 #include "../Shared/Event.h"
@@ -40,6 +41,9 @@ private:
 	// Global bool for win condition
 	bool catTeamWin;
 	bool dogTeamWin;
+
+	// Game status indicator counter
+	int gameCountdown;
 
 public:
 	// Track players in the world

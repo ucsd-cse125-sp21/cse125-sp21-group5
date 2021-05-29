@@ -1,7 +1,13 @@
+// Control Networking Packet size
+#define PACKET_SIZE 2048
+
+// Control number of players in game.
+#define NUM_PLAYERS 2
+
 // Control Map Generation
 #define TILE_SIZE 20
 #define NUM_MAP_TILES 5
-#define MAX_NUM_TREES_PER_TILE 5
+#define MAX_NUM_TREES_PER_TILE 1
 
 // Control Player Properties
 #define DEATH_TICK_TIMER 100

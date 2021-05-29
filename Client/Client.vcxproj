@@ -131,8 +131,8 @@
       <AdditionalDependencies>opengl32.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H/Y
-xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
+      <Command>xcopy "$(ProjectDir)"\res "$(OutDir)"\res\ /E/H/Y
+;xcopy "$(ProjectDir)"\lib\x64 "$(OutDir)" /E/H/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,8 +154,8 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
       <AdditionalDependencies>opengl32.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)\res $(OutDir)\res\ /E/H/Y
-xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
+      <Command>xcopy "$(ProjectDir)"\res "$(OutDir)"\res\ /E/H/Y
+;xcopy "$(ProjectDir)"\lib\x64 "$(OutDir)" /E/H/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -186,7 +186,6 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -241,7 +240,6 @@ xcopy $(ProjectDir)\lib\x64 $(OutDir) /E/H/Y</Command>
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Tile.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

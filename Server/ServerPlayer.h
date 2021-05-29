@@ -49,7 +49,8 @@ public:
 	void update(const glm::vec3& dPos, const float dYaw, const float dPitch);
 	void decreaseHealth(float decAmount);
 	bool isDeadCheck();
-	void respawn();
+	void resetPlayer(glm::vec3 pos, float yaw, float pitch);
+	void respawn(glm::vec3 pos, float yaw, float pitch);
 	void updateAnimations(const Event& e);
 };
 

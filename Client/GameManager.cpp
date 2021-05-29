@@ -58,6 +58,7 @@ GameManager::GameManager(GLFWwindow* window)
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	AudioManager::get().init();
+	//AudioManager::get().playSound(SOUND_WOOF);
 
 	AudioManager::get().playSound(SOUND_DUB);
 
@@ -68,7 +69,9 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Uninitialized playerID
 	localPlayerId = -1;
-	
+
+	// GamecountDown
+	gameCountdown = -1;	
 } 
 
 GameManager::~GameManager()
@@ -182,19 +185,30 @@ Event GameManager::handleInput()
 	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
-		players[localPlayerId]->playerClass = 0;
+		if (gameCountdown < 0) {
+			// Players can choose class only as they wait for other players to join.
+			players[localPlayerId]->playerClass = 0;
+		}
 		players[localPlayerId]->gun_idx = 0;
 	}
 	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
-		players[localPlayerId]->playerClass = 1;
+		if (gameCountdown < 0) {
+			// Players can choose class only as they wait for other players to join.
+			players[localPlayerId]->playerClass = 1;
+		}
 		players[localPlayerId]->gun_idx = 1;
 	}
 	// Class / Weapon 3
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
-		players[localPlayerId]->playerClass = 2;
+		// TODO: Uncomment when all rifle models are ready for use and part of the player's loaded models.
+		
+		//if (gameCountdown < 0) {
+		//	// Players can choose class only as they wait for other players to join.
+		//	players[localPlayerId]->playerClass = 2;
+		//}
 	}
 
 	bool dab = false;
@@ -297,6 +311,75 @@ void GameManager::renderUI()
 
 	bool showUI = true;
 
+	if (gameCountdown < 0) {
+		float yOffset = 200;
+		ImGui::Begin("WaitingForPlayers", &showUI, windowFlags);
+		ImVec2 texSize = ImGui::CalcTextSize("Waiting for additional players...");
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text("Waiting for additional players...");
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+
+		yOffset += texSize.y + 20;
+
+		ImGui::Begin("PlayerSelectPrompt", &showUI, windowFlags);
+		texSize = ImGui::CalcTextSize("Switch between player classes using number keys 1 and 2.");
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text("Switch between player classes using number keys 1 and 2.");
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+
+		yOffset += texSize.y + 20;
+
+		float horizotalSpacing = 100.0f;
+
+		ImGui::Begin("SelectedPlayerDetails", &showUI, windowFlags);
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - 300.0f, yOffset));
+		ImGui::SetWindowSize(ImVec2(600.0f, 150.0f));
+		ImGui::Columns(2, "PlayerInfo");
+		ImGui::SetColumnWidth(0, 300.0f);
+		ImGui::SetColumnWidth(1, 300.0f);
+		ImGui::Text("Selected Class:");
+		ImGui::Text("Primary Weapon:");
+		ImGui::Text("Secondary Weapon:");
+
+		ImGui::NextColumn();
+		switch(players[localPlayerId]->playerClass) {
+		case 0:
+			ImGui::Text("Player Class 1");
+			ImGui::Text("Pistol");
+			ImGui::Text("Flashbang Launcher");
+			break;
+		case 1:
+			ImGui::Text("Player Class 2");
+			ImGui::Text("Shotgun");
+			ImGui::Text("Smoke Grenade Launcher");
+			break;
+		case 2:
+			ImGui::Text("Player Class 3");
+			ImGui::Text("Rifle");
+			ImGui::Text("Stun Grenade Launcher");
+			break;
+		}
+		ImGui::End();
+	}
+
+	if (gameCountdown > 0) {
+		ImGui::Begin("StartingGame", &showUI, windowFlags);
+		std::string str = (boost::format("Game starts in %i...") % (gameCountdown / 60)).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
@@ -305,6 +388,7 @@ void GameManager::renderUI()
 	// Change Health Bar color.
 	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
+	ImGui::PopStyleColor();
 	ImGui::End();
 
 	// super basic crosshair, maybe move this somewhere else
@@ -320,6 +404,9 @@ void GameManager::renderUI()
 
 	// Gun info
 	ImGui::Begin("Gun Info", &showUI, windowFlags);
+	string str = players[localPlayerId]->curr_gun.name;
+	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
+	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
 	ImGui::SetWindowSize(ImVec2(400, 300));
 	ImGui::SetWindowFontScale(2);
@@ -355,6 +442,9 @@ void GameManager::renderUI()
 	{
 		// Show first team (left)
 		// TODO: Deal with tabbing
+		windowFlags &= ~ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0.25));
 
 		ImGui::Begin("Scoreboard", &showUI, windowFlags);
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - 500, Window::height / 2 - 250));
@@ -443,6 +533,9 @@ void GameManager::renderUI()
 			}
 			ImGui::EndChild();
 		ImGui::End();
+
+		windowFlags |= ImGuiWindowFlags_NoBackground;
+		ImGui::PopStyleColor();
 	}
 
 	// UI for game end 
@@ -535,6 +628,8 @@ void GameManager::updateGameState(GameState& gs)
 	dogTeamWin = gs.dogTeamWin;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);
+
+	gameCountdown = gs.gameCountdown;
 }
 
 // TODO: Model* should be a string or int to what kind of model should be used to render player

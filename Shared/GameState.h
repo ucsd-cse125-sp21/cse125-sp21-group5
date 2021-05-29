@@ -87,6 +87,8 @@ public:
 	bool catTeamWin;
 	bool dogTeamWin;
 
+	int gameCountdown;
+
 	void addState(PlayerState ps);
 
 	template <typename Archive>
@@ -100,6 +102,7 @@ public:
 		ar& dogLocation.z;
 		ar& catTeamWin;
 		ar& dogTeamWin;
+		ar& gameCountdown;
 	}
 
 };

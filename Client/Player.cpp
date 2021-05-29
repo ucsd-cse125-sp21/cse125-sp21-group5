@@ -97,9 +97,16 @@ void Player::loadModels() {
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae"));
 
-	gunTypeModels.push_back(modelsPistol); //push back pistol
+	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae"));
+	modelsRifle.push_back(new Model("res/models/Shotgun-OrangeJustice.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae"));
+
+	gunTypeModels.push_back(modelsPistol); //push back pistol6
 	gunTypeModels.push_back(modelsShotgun); //push back shotgun
-	//gunTypeModels.push_back(modelsRifle); //push back rifle
+	gunTypeModels.push_back(modelsRifle); //push back rifle
 
 	model = gunTypeModels[0][0]; //get the pistol, get first animation which is IDLE
 

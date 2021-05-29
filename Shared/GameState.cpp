@@ -32,8 +32,8 @@ PlayerState::PlayerState(int playerId,
 						unsigned int captures,
 						int gun_idx,
 						const Gun& curr_gun,
-						bool isLimitFOV,
-						bool isFogged,
+						int isLimitFOV,
+						int isFogged,
 						int playerClass
 )
 {

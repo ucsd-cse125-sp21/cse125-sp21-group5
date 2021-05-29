@@ -37,7 +37,7 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
-	bool isLimitFOV, isFogged;
+	int isLimitFOV, isFogged;
 	int playerClass;
 
 	PlayerState();
@@ -55,8 +55,8 @@ public:
 				unsigned int captures,
 				int gun_idx,
 				const Gun& curr_gun,
-				bool isLimitFOV,
-				bool isFogged,
+				int isLimitFOV,
+				int isFogged,
 				int playerClass
 	);
 	

@@ -189,7 +189,9 @@ Event GameManager::handleInput()
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 0;
 		}
-		players[localPlayerId]->gun_idx = 0;
+		else {
+			players[localPlayerId]->gun_idx = 0;
+		}
 	}
 	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
@@ -198,7 +200,9 @@ Event GameManager::handleInput()
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 1;
 		}
-		players[localPlayerId]->gun_idx = 1;
+		else {
+			players[localPlayerId]->gun_idx = 1;
+		}
 	}
 	// Class / Weapon 3
 	else if (glfwGetKey(window, GLFW_KEY_3))
@@ -266,11 +270,11 @@ void GameManager::cursorPositionCallback(GLFWwindow* window, double xpos, double
 // Detect mouse scroll
 void GameManager::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	cerr << "Fov: " << fov << endl;
-	fov -= yoffset;
-	fov = glm::clamp(fov, 1.0f, 270.0f);
-	Window::projection =
-		glm::perspective(glm::radians(fov), (float) Window::width / (float) Window::height, 0.1f, 1000.0f);
+	//cerr << "Fov: " << fov << endl;
+	//fov -= yoffset;
+	//fov = glm::clamp(fov, 1.0f, 270.0f);
+	//Window::projection =
+	//	glm::perspective(glm::radians(fov), (float) Window::width / (float) Window::height, 0.1f, 1000.0f);
 }
 
 // Draw objects to screen

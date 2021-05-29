@@ -39,8 +39,9 @@ public:
 	int gun_idx;
 	std::vector<Gun*> guns;
 
-	bool isLimitFOV;
-	bool isFogged;
+	int isLimitFOV;
+	int isFogged;
+	int isFrozen;
 	int playerClass;
 
 	ServerPlayer();

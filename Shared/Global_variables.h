@@ -18,6 +18,8 @@
 
 // Game properties 
 #define NUM_CAPTURES_TO_WIN 1
+#define VISION_IMPAIRMENT_TIME 300
+#define FREEZE_TIME 1800
 
 enum class PlayerTeam
 {

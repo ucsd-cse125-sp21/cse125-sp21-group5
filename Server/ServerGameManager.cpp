@@ -130,6 +130,20 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 			{
 				if (p.second->hitbox == closestCollider)
 				{
+					//Set their fov and stuff man
+					if (player->gun_idx == 1) {
+						switch (player->playerClass) {
+							case 0: 
+								p.second->isLimitFOV = VISION_IMPAIRMENT_TIME;
+								break;
+							case 1: 
+								p.second->isFogged = VISION_IMPAIRMENT_TIME;
+								break;
+							case 2:
+								p.second->isFrozen = FREEZE_TIME;
+						}
+					}
+
 					p.second->decreaseHealth(gun->damage_per_bullet);
 
 					// Check if player died
@@ -239,6 +253,21 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	else if (gameCountdown == -1) {
 		// Waiting for all players to connect.
 		//return;
+	}
+
+	if (curr_player->isLimitFOV > 0) {
+		curr_player->isLimitFOV--;
+	}
+	if (curr_player->isFogged > 0) {
+		curr_player->isFogged--;
+	}
+	if (curr_player->isFrozen > 0) {
+		curr_player->isFrozen--;
+		e.dPos = glm::vec3(0, 0, 0);
+		e.dYaw = 0;
+		e.dPitch = 0;
+		e.shooting = false;
+		e.jumping = false;
 	}
 
 	// TODO: Varying death timers 

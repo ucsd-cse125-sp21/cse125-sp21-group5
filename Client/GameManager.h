@@ -59,6 +59,8 @@ public:
 	Model* catModel;
 	Transform* dogT;
 	Model* dogModel;
+	Model* dogTeamIndicator;
+	Model* catTeamIndicator;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;

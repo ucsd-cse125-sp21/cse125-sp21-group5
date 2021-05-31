@@ -20,6 +20,7 @@ Client::Client(boost::asio::io_context& ioContext, GLFWwindow* window, boost::as
     connection = tcp_connection::create(ioContext);
     boost::asio::connect(connection->getSocket(), endpoints);
 
+    cout << "Connected to server!" << endl;
     start_client();
 }
 
@@ -147,7 +148,15 @@ void Client::handle_read_client_connect_update() {
 }
 
 void Client::handle_read_game_state() {
-    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n");
+    boost::system::error_code error;
+    size_t bytes_read = boost::asio::read_until(connection->getSocket(), buf, "\r\n\r\n", error);
+    
+    if (error) {
+        cout << "Error when reading game state message:\t";
+        cout << error.message() << endl;
+        return;
+    }
+
     GameState gs;
     std::string s = std::string{
         boost::asio::buffers_begin(buf.data()),
@@ -155,9 +164,15 @@ void Client::handle_read_game_state() {
     }; // -4 for \r\n\r\n
     buf.consume(bytes_read);
 
-    boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
-    boost::archive::text_iarchive eAR(eSource);
-    eAR >> gs;
+    try {
+        boost::iostreams::stream<boost::iostreams::array_source> eSource(s.data(), bytes_read);
+        boost::archive::text_iarchive eAR(eSource);
+        eAR >> gs;
+    }
+    catch (exception e) {
+        cout << "Error when serializing game state:\t";
+        cout << e.what() << endl;
+    }
 
     gm.updateGameState(gs);
 

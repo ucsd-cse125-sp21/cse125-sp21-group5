@@ -23,6 +23,8 @@ public:
 	Camera* cam;
 	Transform* transform;
 
+	Transform* teamIndicatorTransform;
+
 	Model* model;
 	std::vector<Model*> modelsPistol; //pistol
 	std::vector<Model*> modelsShotgun; //shotgun
@@ -52,7 +54,7 @@ public:
 
 	int playerClass;
 
-	Player(Transform* transform, int playerId);
+	Player(Transform* transform, int playerId, Transform* teamIndicatorTransform);
 	~Player();
 
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);

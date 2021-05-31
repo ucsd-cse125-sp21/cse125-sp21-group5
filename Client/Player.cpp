@@ -1,10 +1,12 @@
 #include "Player.h"
 
 // Used for other players
-Player::Player(Transform* transform, int playerId)
+Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTransform)
 {
 	this->playerId = playerId;
 	this->transform = transform;
+	this->teamIndicatorTransform = teamIndicatorTransform;
+
 	cam = new Camera();
 	mustLoadModels = true;
 	this->model = nullptr;
@@ -35,6 +37,9 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 	if (mustLoadModels) return;
 	if (playerId == Renderer::get().localPlayerId) return;
 	model->draw(glm::rotate(parent_transform, -glm::atan(cam->front.z, cam->front.x) - glm::pi<float>() / 2, glm::vec3(0, 1, 0)), view);
+	
+	// Need to call draw here since transform is not added to the world.
+	teamIndicatorTransform->draw(glm::rotate(parent_transform, -glm::atan(cam->front.z, cam->front.x) - glm::pi<float>() / 2, glm::vec3(0, 1, 0)), view);
 }
 
 void Player::update(float deltaTime)
@@ -53,6 +58,9 @@ void Player::updatePlayer(PlayerState ps)
 	// Update Rendering information
 	cam->update(ps.pos + glm::vec3(0.0f, 0.25f, 0.0f), ps.front);
 	transform->setTranslate(ps.pos);
+
+	teamIndicatorTransform->setTranslate(ps.pos + glm::vec3(0.0f, 1.0f, 0.0f));
+	teamIndicatorTransform->setRotate(transform->rotation);
 
 	// Update Movement information
 	isGrounded = ps.isGrounded;

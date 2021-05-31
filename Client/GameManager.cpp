@@ -39,10 +39,16 @@ GameManager::GameManager(GLFWwindow* window)
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
 
-	catT = nullptr;
-	dogT = nullptr;
+	// Initialize to Empty transform to avoid race condition with MapState vs GameState update.
+	// If Game State update reaches first, these need to be initialized or leads to nullptr exception.
+	catT = new Transform();
+	dogT = new Transform();
+
 	catModel = new Model("res/models/cat.dae");
+	catTeamIndicator = new Model("res/models/iconCat.dae");
+
 	dogModel = new Model("res/models/finalHuskyIdle.dae");
+	dogTeamIndicator = new Model("res/models/iconDog.dae");
 
 	// Initialize variables
 	showScoreboard = false;
@@ -185,7 +191,7 @@ Event GameManager::handleInput()
 	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 0;
 		}
@@ -196,7 +202,7 @@ Event GameManager::handleInput()
 	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 1;
 		}
@@ -208,7 +214,7 @@ Event GameManager::handleInput()
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
 		// TODO: Uncomment when all rifle models are ready for use and part of the player's loaded models.
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 2;
 		}
@@ -387,7 +393,7 @@ void GameManager::renderUI()
 	if (players[localPlayerId]->isFrozen > 0)
 	{
 		ImGui::Begin("FrozenMessage", &showUI, windowFlags);
-		std::string str = (boost::format("You've been frozen!!!") % (gameCountdown / 60)).str();
+		std::string str = (boost::format("You've been frozen!!!")).str();
 		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
@@ -401,7 +407,7 @@ void GameManager::renderUI()
 	if (players[localPlayerId]->isFogged > 0)
 	{
 		ImGui::Begin("FoggedMessage", &showUI, windowFlags);
-		std::string str = (boost::format("You think it's dark, but they can see you....") % (gameCountdown / 60)).str();
+		std::string str = (boost::format("You think it's dark, but they can see you....")).str();
 		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
@@ -415,7 +421,7 @@ void GameManager::renderUI()
 	if (players[localPlayerId]->hasLimitedFOV > 0)
 	{
 		ImGui::Begin("LimitedFOVMessage", &showUI, windowFlags);
-		std::string str = (boost::format("Can you see what's coming?") % (gameCountdown / 60)).str();
+		std::string str = (boost::format("Can you see what's coming?")).str();
 		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
@@ -690,11 +696,27 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 	// Create new player with model
 	Transform* playerT = new Transform();
 	playerT->setName("Player " + std::to_string(playerId) + " Transform");
-	Player* player = new Player(playerT, playerId);
+
+	Transform* teamIndicatorT = new Transform();
+	teamIndicatorT->setName("Player " + std::to_string(playerId) + " Team Indicator Transform");
+
+	Player* player = new Player(playerT, playerId, teamIndicatorT);
 	playerT->setName("Player " + std::to_string(playerId));
 	
+	if (playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
+		//Player is part of dog Team
+		teamIndicatorT->add_child(dogTeamIndicator);
+	}
+	else {
+		// Player is part of cat Team
+		teamIndicatorT->add_child(catTeamIndicator);
+	}
+
 	playerT->add_child(player);
 	worldT->add_child(playerT);
+
+	// Transform not added to world. Player calls draw on this transform.
+	//worldT->add_child(teamIndicatorT);
 
 	//players.insert(make_pair(playerId, player));
 	players[playerId] = player;

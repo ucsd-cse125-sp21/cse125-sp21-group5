@@ -37,8 +37,8 @@ GameManager::GameManager(GLFWwindow* window)
 	treeModels.push_back(new Model("res/models/deadTree.dae"));
 
 	// Wall around the world
-	wallTileModel = new Model("res/models/TrumpWall.dae");
-	//wallTileModel->setName("Wall Tile Model");
+	wallTileModel = new Model("res/models/TrumpWall-20m.dae");
+	wallTileModel->setName("Wall Tile Model");
 	//Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f, TILE_SIZE/2, 0.0f));
 	//wallT->add_child(wallTileModel);
 	//worldT->add_child(wallT);
@@ -668,21 +668,45 @@ void GameManager::updateMap(MapState& ms)
 				wallT->add_child(wallTileModel);
 				worldT->add_child(wallT);
 
-				cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 			}
 
 			if (i == NUM_MAP_TILES - 1)
 			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter + glm::vec3(((float)TILE_SIZE) / 2, 0.0f, 0.0f));
+				wallT->rotate(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
 
 			if (j == 0)
 			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter - glm::vec3(0.0f, 0.0f, ((float)TILE_SIZE) / 2));
+				wallT->rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
 
 			if (j == NUM_MAP_TILES - 1)
 			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter + glm::vec3(0.0f, 0.0f, ((float)TILE_SIZE) / 2));
+				wallT->rotate(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
 

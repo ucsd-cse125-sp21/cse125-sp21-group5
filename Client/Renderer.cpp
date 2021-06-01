@@ -15,6 +15,7 @@ void Renderer::setCamera(Camera* camera)
 
 void Renderer::addPointLight(PointLight light) 
 {
+	std::cout << "Adding light at position " << glm::to_string(light.mPosition) << std::endl;
 	mPointLights.push_back(light);
 }
 
@@ -76,6 +77,20 @@ void Renderer::update(double deltaTime)
 {
 	// todo: track time here for animation stuff
 	gameTime += deltaTime;
+
+	// calculate fog color based on team's position
+
+
+	glm::vec3 dogTeamColor = glm::vec3(0.2, 0.1, 0.1);
+	glm::vec3 catTeamColor = glm::vec3(0.1, 0.1, 0.2);
+
+	glm::vec3 dogTeamBase = glm::vec3(50, 0, 50);
+	glm::vec3 catTeamBase = glm::vec3(-50, 0, -50);
+
+	float dogDist = glm::length(mCamera->pos - dogTeamBase);
+	float catDist = glm::length(mCamera->pos - catTeamBase);
+
+	fogColor = dogTeamColor * (dogDist / (dogDist + catDist)) + catTeamColor * (catDist / (dogDist + catDist));
 
 	glClearColor(fogColor.x, fogColor.y, fogColor.z, 0);
 }

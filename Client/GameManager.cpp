@@ -48,10 +48,10 @@ GameManager::GameManager(GLFWwindow* window)
 	showScoreboard = false;
 
 	// Add a test point light
-	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
-	Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
+	//Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, -2), glm::vec3(1, 0, 0)));
+	//Renderer::get().addPointLight(PointLight(glm::vec3(0, 2, 2), glm::vec3(0, 1, 0)));
 
-	Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
+	//Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
 	Renderer::get().fogDensity = 0.0001;
 
@@ -579,6 +579,10 @@ void GameManager::updateMap(MapState& ms)
 			tileT->setName("Tile ["  + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
+
+			PointLight p = PointLight(tileCenter + glm::vec3(0, 1, 0),glm::vec3(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX));
+			Renderer::get().addPointLight(p);
+
 
 			// Cat flag
 			if (i == 0 && j == 0)

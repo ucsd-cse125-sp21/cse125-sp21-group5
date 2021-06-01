@@ -31,6 +31,11 @@ MapState ServerGameManager::generateMap()
 			// Center point of the tile
 			glm::vec3 tileCenter = glm::vec3(TILE_SIZE * (i - NUM_MAP_TILES / 2), 0.0f, TILE_SIZE * (j - NUM_MAP_TILES / 2));
 
+			// random point light color
+			rand();
+			rand();
+			rand();
+
 			// Special case for flags
 			if (i == 0 && j == 0)
 			{

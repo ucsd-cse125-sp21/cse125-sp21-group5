@@ -60,7 +60,7 @@ GameManager::GameManager(GLFWwindow* window)
 	AudioManager::get().init();
 	//AudioManager::get().playSound(SOUND_WOOF);
 
-	AudioManager::get().playSound(SOUND_DUB);
+	//AudioManager::get().playSound(SOUND_DUB);
 
 	// Initialize time variables
 	deltaTime = 0.0f;

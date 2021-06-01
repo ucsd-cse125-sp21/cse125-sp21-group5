@@ -17,6 +17,8 @@ void AudioManager::init() {
 		std::cerr << "Failed to initialize FMOD system" << std::endl;
 	}
 
+	this->volume = 0.5f;
+
 	loadSound(SOUND_MEOW);
 	loadSound(SOUND_WOOF);
 	loadSound(SOUND_STEP);
@@ -28,7 +30,12 @@ void AudioManager::init() {
 
 void AudioManager::loadSound(std::string filePath) {
 	FMOD::Sound* sound;
-	FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_DEFAULT, nullptr, &sound);
+	FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_3D, nullptr, &sound);
+
+	FMOD::SoundGroup* test;
+	system->createSoundGroup("test group", &test);
+	sound->setSoundGroup(test);
+	
 
 	if (result != FMOD_OK) {
 		std::cerr << "Failed to load sound file " << filePath << std::endl;
@@ -44,7 +51,21 @@ void AudioManager::playSound(std::string soundName) {
 	FMOD::Sound* sound = mSounds[soundName];
 
 	FMOD::Channel *channel;
-	FMOD_RESULT result = system->playSound(sound, nullptr, false, &channel);
+
+	// 3rd parameter is true to pause sound on load.
+	FMOD_RESULT result = system->playSound(sound, nullptr, true, &channel);
+	result = channel->setVolume(this->volume);
+	result = channel->setPaused(false);
 }
 
+void AudioManager::adjustVolume(float dVolume) {
+	// Change volume variable
+	this->volume += dVolume;
+
+	// Clamp
+	if (this->volume > 1.0f)
+		this->volume = 1.0f;
+	else if (this->volume < 0.0f)
+		this->volume = 0.0f;
+}
 

@@ -78,7 +78,7 @@ GameManager::GameManager(GLFWwindow* window)
 	AudioManager::get().init();
 	//AudioManager::get().playSound(SOUND_WOOF);
 
-	AudioManager::get().playSound(SOUND_DUB);
+	//AudioManager::get().playSound(SOUND_DUB);
 
 	// Initialize time variables
 	deltaTime = 0.0f;
@@ -255,7 +255,7 @@ Event GameManager::handleInput()
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
-	//if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
+	if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
 
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
@@ -273,6 +273,16 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 	{
 		Renderer::get().debug = !Renderer::get().debug;
 	}
+
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+	{
+		AudioManager::get().adjustVolume(0.1f);
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+	{
+		AudioManager::get().adjustVolume(-0.1f);
+	}
+
 }
 
 // Detect mouse clicks
@@ -497,6 +507,7 @@ void GameManager::renderUI()
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
+		ImGui::Text("Game Volume: %f", AudioManager::get().volume);
 		ImGui::End();
 	}
 

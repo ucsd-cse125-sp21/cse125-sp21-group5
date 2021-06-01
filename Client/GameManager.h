@@ -53,6 +53,7 @@ public:
 	// Models used in the environment
 	Model* playerModel;
 	Model* tileModel;
+	Model* wallTileModel;
 	vector<Model*> treeModels;
 
 	Transform* catT;

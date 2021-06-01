@@ -37,7 +37,11 @@ GameManager::GameManager(GLFWwindow* window)
 	treeModels.push_back(new Model("res/models/deadTree.dae"));
 
 	// Wall around the world
-	worldT->add_child(new Model("res/models/BuildTheWall.dae"));
+	wallTileModel = new Model("res/models/TrumpWall.dae");
+	//wallTileModel->setName("Wall Tile Model");
+	//Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f, TILE_SIZE/2, 0.0f));
+	//wallT->add_child(wallTileModel);
+	//worldT->add_child(wallT);
 
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
@@ -653,6 +657,34 @@ void GameManager::updateMap(MapState& ms)
 			tileT->setName("Tile ["  + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
+
+			// Add Wall Tiles
+			if (i == 0)
+			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter - glm::vec3(((float)TILE_SIZE) / 2, 0.0f, 0.0f));
+				wallT->rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+			}
+
+			if (i == NUM_MAP_TILES - 1)
+			{
+
+			}
+
+			if (j == 0)
+			{
+
+			}
+
+			if (j == NUM_MAP_TILES - 1)
+			{
+
+			}
 
 			// Cat flag
 			if (i == 0 && j == 0)

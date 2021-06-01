@@ -30,7 +30,7 @@ Model::~Model()
 
 void Model::update(float deltaTime)
 {
-	//cout << "\tCurrently updating " << name << endl;
+	cout << "\tCurrently updating " << name << endl;
 	//get the new transform of the bones
 	if (animationPlayer != nullptr) animationPlayer->update(deltaTime);
 }

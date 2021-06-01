@@ -21,6 +21,10 @@ Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTrans
 	this->playerClass = 0;
 	this->gun_idx = 1;
 	this->curr_gun = Gun();
+
+	// Try something
+	//loadModels();
+	//this->model = gunTypeModels[playerClass][(int)AnimationID::IDLE];
 }
 
 Player::~Player()
@@ -44,8 +48,11 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Player::update(float deltaTime)
 {
+	cout << "\tCurrently updating " << name << endl;
 	if (mustLoadModels) {
+		cout << "\tLoading Player Models...." << endl;
 		loadModels();
+		cout << "\tModels Loaded!!" << endl;
 		mustLoadModels = false;
 	}
 
@@ -59,8 +66,8 @@ void Player::updatePlayer(PlayerState ps)
 	cam->update(ps.pos + glm::vec3(0.0f, 0.25f, 0.0f), ps.front);
 	transform->setTranslate(ps.pos);
 
-	teamIndicatorTransform->setTranslate(ps.pos + glm::vec3(0.0f, 1.0f, 0.0f));
 	teamIndicatorTransform->setRotate(transform->rotation);
+	teamIndicatorTransform->setTranslate(glm::vec3(0.0f, 0.5f, 0.0f));
 
 	// Update Movement information
 	isGrounded = ps.isGrounded;
@@ -103,6 +110,13 @@ void Player::loadModels() {
 	modelsPistol.push_back(new Model("res/models/finalDeath200.dae"));
 	//modelsPistol.push_back(new Model("res/models/finalReload.dae"));
 
+	modelsPistol[0]->setName("res/models/finalIdle.dae");
+	modelsPistol[1]->setName("res/models/finalWalk.dae");
+	modelsPistol[2]->setName("res/models/finalShoot.dae");
+	modelsPistol[3]->setName("res/models/finalToxicDab.dae");
+	modelsPistol[4]->setName("res/models/finalDeath200.dae");
+	//modelsPistol[5]->setName("res/models/finalReload.dae");
+
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Shoot.dae"));
@@ -110,12 +124,26 @@ void Player::loadModels() {
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae"));
 
+	modelsShotgun[0]->setName("res/models/Shotgun-Idle.dae");
+	modelsShotgun[1]->setName("res/models/Shotgun-Walk.dae");
+	modelsShotgun[2]->setName("res/models/Shotgun-Shoot.dae");
+	modelsShotgun[3]->setName("res/models/Shotgun-OrangeJustice.dae");
+	modelsShotgun[4]->setName("res/models/Shotgun-Death.dae");
+	//modelsShotgun[5]->setName("res/models/Shotgun-Reload.dae");
+
 	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Floss.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae"));
+
+	modelsRifle[0]->setName("res/models/Rifle-Idle.dae");
+	modelsRifle[1]->setName("res/models/Rifle-Walk.dae");
+	modelsRifle[2]->setName("res/models/Rifle-Shoot.dae");
+	modelsRifle[3]->setName("res/models/Rifle-Floss.dae");
+	modelsRifle[4]->setName("res/models/Rifle-Death.dae");
+	//modelsRifle[5]->setName("res/models/Rifle-Reload.dae");
 
 	gunTypeModels.push_back(modelsPistol); //push back pistol6
 	gunTypeModels.push_back(modelsShotgun); //push back shotgun

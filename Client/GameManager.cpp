@@ -39,16 +39,28 @@ GameManager::GameManager(GLFWwindow* window)
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
 
+	treeModels[0]->setName("res/models/willowTrunk_old.dae");
+	treeModels[1]->setName("res/models/scragglyTrunk.dae");
+	treeModels[2]->setName("res/models/basicTree.dae");
+	treeModels[3]->setName("res/models/fiboTree.dae");
+	treeModels[4]->setName("res/models/deadTree.dae");
+
 	// Initialize to Empty transform to avoid race condition with MapState vs GameState update.
 	// If Game State update reaches first, these need to be initialized or leads to nullptr exception.
 	catT = new Transform();
+	catT->setName("Uninitialized CatT");
 	dogT = new Transform();
+	dogT->setName("Uninitialized DogT");
 
 	catModel = new Model("res/models/cat.dae");
+	catModel->setName("res/models/cat.dae");
 	catTeamIndicator = new Model("res/models/iconCat.dae");
+	catTeamIndicator->setName("res/models/iconCat.dae");
 
 	dogModel = new Model("res/models/finalHuskyIdle.dae");
+	dogModel->setName("res/models/finalHuskyIdle.dae");
 	dogTeamIndicator = new Model("res/models/iconDog.dae");
+	dogTeamIndicator->setName("res/models/iconDog.dae");
 
 	// Initialize variables
 	showScoreboard = false;
@@ -701,7 +713,7 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 	teamIndicatorT->setName("Player " + std::to_string(playerId) + " Team Indicator Transform");
 
 	Player* player = new Player(playerT, playerId, teamIndicatorT);
-	playerT->setName("Player " + std::to_string(playerId));
+	player->setName("Player " + std::to_string(playerId));
 	
 	if (playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
 		//Player is part of dog Team

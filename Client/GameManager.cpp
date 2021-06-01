@@ -697,6 +697,7 @@ void GameManager::updateGameState(GameState& gs)
 		if (players.find(ps.playerId) == players.end())
 			continue;
 		players[ps.playerId]->updatePlayer(ps);
+
 	}
 	catTeamWin = gs.catTeamWin;
 	dogTeamWin = gs.dogTeamWin;

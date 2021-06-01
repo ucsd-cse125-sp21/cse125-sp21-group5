@@ -24,6 +24,7 @@ ServerPlayer::ServerPlayer() {
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+	hasFiredGun = false;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
@@ -52,6 +53,8 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+
+	hasFiredGun = false;
 
 	this->team =
 		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
@@ -91,6 +94,8 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+
+	hasFiredGun = false;
 
 	this->team =
 		(playerId % 2 == (int)PlayerTeam::CAT_LOVER)

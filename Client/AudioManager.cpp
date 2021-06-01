@@ -17,7 +17,7 @@ void AudioManager::init() {
 		std::cerr << "Failed to initialize FMOD system" << std::endl;
 	}
 
-	this->volume = 0.5f;
+	this->volume = 0.01f;
 
 	loadSound(SOUND_MEOW);
 	loadSound(SOUND_WOOF);

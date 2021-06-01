@@ -25,6 +25,7 @@ public:
 	glm::vec3 pos, front;
 
 	AnimationID currentAnimation;
+	bool isShooting;
 	bool isGrounded;
 	float health;
 	int isDead;
@@ -37,7 +38,7 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
-	int isLimitFOV, isFogged;
+	int isLimitFOV, isFogged, isFrozen;
 	int playerClass;
 
 	PlayerState();
@@ -55,8 +56,10 @@ public:
 				unsigned int captures,
 				int gun_idx,
 				const Gun& curr_gun,
+				bool isShooting,
 				int isLimitFOV,
 				int isFogged,
+				int isFrozen,
 				int playerClass
 	);
 	
@@ -81,8 +84,10 @@ public:
 		ar& captures;
 		ar& gun_idx;
 		ar& curr_gun;
+		ar& isShooting;
 		ar& isLimitFOV;
 		ar& isFogged;
+		ar& isFrozen;
 		ar& playerClass;
 	}
 };

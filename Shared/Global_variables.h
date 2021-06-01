@@ -19,7 +19,10 @@
 // Game properties 
 #define NUM_CAPTURES_TO_WIN 1
 #define VISION_IMPAIRMENT_TIME 300
-#define FREEZE_TIME 1800
+#define FREEZE_TIME 180
+
+// Server properties
+#define GAME_COUNTDOWN_TIMER 300
 
 enum class PlayerTeam
 {

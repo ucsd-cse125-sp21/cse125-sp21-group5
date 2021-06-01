@@ -15,6 +15,7 @@ PlayerState::PlayerState()
 	this->kills = 0;
 	this->deaths = 0;
 	this->captures = 0;
+	this->isShooting = false;
 }
 
 // TODO: why is this not a shared player?
@@ -32,10 +33,11 @@ PlayerState::PlayerState(int playerId,
 						unsigned int captures,
 						int gun_idx,
 						const Gun& curr_gun,
+						bool isShooting,
 						int isLimitFOV,
 						int isFogged,
-						int playerClass
-)
+						int isFrozen,
+						int playerClass)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -51,9 +53,12 @@ PlayerState::PlayerState(int playerId,
 	this->captures = captures;
 	this->gun_idx = gun_idx;
 	this->curr_gun = curr_gun;
+	this->isShooting = isShooting;
 	this->isLimitFOV = isLimitFOV;
 	this->isFogged = isFogged;
+	this->isFrozen = isFrozen;
 	this->playerClass = playerClass;
+	this->isShooting = isShooting;
 }
 
 // Could be reference? 

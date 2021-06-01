@@ -24,11 +24,15 @@ public:
 	AudioManager(AudioManager const&) = delete;
 	void operator=(AudioManager const&) = delete;
 	// END SINGLETON STUFF
-
+	
 	void init();
 	void playSound(std::string soundName);
+	void adjustVolume(float dVolume);
 
 	FMOD::System* system;
+
+	// The master volume
+	float volume;
 
 private:
 	AudioManager() {}

@@ -57,7 +57,7 @@ TexturedMaterial::TexturedMaterial(aiMaterial* aiMat)
 
 	char buff[100];
 	snprintf(buff, sizeof(buff), "res/textures/%s", path.C_Str());
-	std::cout << "Loading from " << buff << std::endl;
+	//std::cout << "Loading from " << buff << std::endl;
 
 	int width, height, numChannels;
 	unsigned char* data = stbi_load(buff, &width, &height, &numChannels, 0);
@@ -118,7 +118,7 @@ DiffuseMaterial::DiffuseMaterial(aiMaterial* aiMat)
 	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
 	diffuseColor = glm::vec3(aiColor.r, aiColor.g, aiColor.b);
 
-	std::cout << "Loaded diffuse material with color " << glm::to_string(diffuseColor) << std::endl;
+	//std::cout << "Loaded diffuse material with color " << glm::to_string(diffuseColor) << std::endl;
 
 	colorLocation = glGetUniformLocation(shader, "aColor");
 	loadShaderLocations();

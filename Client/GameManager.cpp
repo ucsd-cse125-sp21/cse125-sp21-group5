@@ -36,13 +36,38 @@ GameManager::GameManager(GLFWwindow* window)
 	treeModels.push_back(new Model("res/models/fiboTree.dae"));
 	treeModels.push_back(new Model("res/models/deadTree.dae"));
 
+	// Wall around the world
+	wallTileModel = new Model("res/models/TrumpWall-20m.dae");
+	wallTileModel->setName("Wall Tile Model");
+	//Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f, TILE_SIZE/2, 0.0f));
+	//wallT->add_child(wallTileModel);
+	//worldT->add_child(wallT);
+
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
 
-	catT = nullptr;
-	dogT = nullptr;
+	treeModels[0]->setName("res/models/willowTrunk_old.dae");
+	treeModels[1]->setName("res/models/scragglyTrunk.dae");
+	treeModels[2]->setName("res/models/basicTree.dae");
+	treeModels[3]->setName("res/models/fiboTree.dae");
+	treeModels[4]->setName("res/models/deadTree.dae");
+
+	// Initialize to Empty transform to avoid race condition with MapState vs GameState update.
+	// If Game State update reaches first, these need to be initialized or leads to nullptr exception.
+	catT = new Transform();
+	catT->setName("Uninitialized CatT");
+	dogT = new Transform();
+	dogT->setName("Uninitialized DogT");
+
 	catModel = new Model("res/models/cat.dae");
+	catModel->setName("res/models/cat.dae");
+	catTeamIndicator = new Model("res/models/iconCat.dae");
+	catTeamIndicator->setName("res/models/iconCat.dae");
+
 	dogModel = new Model("res/models/finalHuskyIdle.dae");
+	dogModel->setName("res/models/finalHuskyIdle.dae");
+	dogTeamIndicator = new Model("res/models/iconDog.dae");
+	dogTeamIndicator->setName("res/models/iconDog.dae");
 
 	// Initialize variables
 	showScoreboard = false;
@@ -185,7 +210,7 @@ Event GameManager::handleInput()
 	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 0;
 		}
@@ -196,7 +221,7 @@ Event GameManager::handleInput()
 	// Class / Weapon 2
 	else if (glfwGetKey(window, GLFW_KEY_2))
 	{
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 1;
 		}
@@ -208,7 +233,7 @@ Event GameManager::handleInput()
 	else if (glfwGetKey(window, GLFW_KEY_3))
 	{
 		// TODO: Uncomment when all rifle models are ready for use and part of the player's loaded models.
-		if (gameCountdown < 0) {
+		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 2;
 		}
@@ -237,7 +262,6 @@ Event GameManager::handleInput()
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
-	//if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
 
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
@@ -254,6 +278,15 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
 		Renderer::get().debug = !Renderer::get().debug;
+	}
+
+	if (key == GLFW_KEY_UP && action != GLFW_RELEASE)
+	{
+		AudioManager::get().adjustVolume(0.001f);
+	}
+	else if (key == GLFW_KEY_DOWN && action != GLFW_PRESS)
+	{
+		AudioManager::get().adjustVolume(-0.001f);
 	}
 }
 
@@ -383,6 +416,48 @@ void GameManager::renderUI()
 		ImGui::End();
 	}
 
+	// Let player know if they are frozen.
+	if (players[localPlayerId]->isFrozen > 0)
+	{
+		ImGui::Begin("FrozenMessage", &showUI, windowFlags);
+		std::string str = (boost::format("You've been frozen!!!")).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	// Let players know if they are Fogged.
+	if (players[localPlayerId]->isFogged > 0)
+	{
+		ImGui::Begin("FoggedMessage", &showUI, windowFlags);
+		std::string str = (boost::format("You think it's dark, but they can see you....")).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	// Let players know that they have limited visibilty.
+	if (players[localPlayerId]->hasLimitedFOV > 0)
+	{
+		ImGui::Begin("LimitedFOVMessage", &showUI, windowFlags);
+		std::string str = (boost::format("Can you see what's coming?")).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, 200));
+		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
+		//ImGui::SetWindowFontScale(2);
+		ImGui::Text(str.c_str());
+		//ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
@@ -412,11 +487,12 @@ void GameManager::renderUI()
 	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
 	ImGui::SetWindowSize(ImVec2(400, 300));
-	ImGui::SetWindowFontScale(2);
+	//ImGui::SetWindowFontScale(2);
 	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
-	ImGui::SetWindowFontScale(1);
+	//ImGui::SetWindowFontScale(1);
 	if (players[localPlayerId]->curr_gun.reload_time > 0) {
-		ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+		//ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+		ImGui::TextDisabled("Reloading...");
 	}
 	else {
 		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);
@@ -437,6 +513,8 @@ void GameManager::renderUI()
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
+		ImGui::Text("Game Volume: %f", AudioManager::get().volume);
+		ImGui::Text("Player is shooting %d", p->isShooting);
 		ImGui::End();
 	}
 
@@ -580,6 +658,58 @@ void GameManager::updateMap(MapState& ms)
 			tileT->add_child(tileModel);
 			worldT->add_child(tileT);
 
+			// Add Wall Tiles
+			if (i == 0)
+			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter - glm::vec3(((float)TILE_SIZE) / 2, 0.0f, 0.0f));
+				wallT->rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+			}
+
+			if (i == NUM_MAP_TILES - 1)
+			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter + glm::vec3(((float)TILE_SIZE) / 2, 0.0f, 0.0f));
+				wallT->rotate(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+
+			}
+
+			if (j == 0)
+			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter - glm::vec3(0.0f, 0.0f, ((float)TILE_SIZE) / 2));
+				wallT->rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+
+			}
+
+			if (j == NUM_MAP_TILES - 1)
+			{
+				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+				wallT->translate(tileCenter + glm::vec3(0.0f, 0.0f, ((float)TILE_SIZE) / 2));
+				wallT->rotate(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				wallT->setName("Wall [" + std::to_string(i) + "][" + std::to_string(j) + "] Transform");
+				wallT->add_child(wallTileModel);
+				worldT->add_child(wallT);
+
+				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
+
+			}
+
 			PointLight p = PointLight(tileCenter + glm::vec3(0, 1, 0),glm::vec3(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX));
 			Renderer::get().addPointLight(p);
 
@@ -629,7 +759,14 @@ void GameManager::updateGameState(GameState& gs)
 		// Ignore update if player doesn't exist
 		if (players.find(ps.playerId) == players.end())
 			continue;
+
 		players[ps.playerId]->updatePlayer(ps);
+		
+		// Play shooting for player
+		// TODO: change it so that it's at the 3d location
+		if (players[ps.playerId]->isShooting)
+			AudioManager::get().playSound(SOUND_SHOOT);
+
 	}
 	catTeamWin = gs.catTeamWin;
 	dogTeamWin = gs.dogTeamWin;
@@ -652,11 +789,27 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 	// Create new player with model
 	Transform* playerT = new Transform();
 	playerT->setName("Player " + std::to_string(playerId) + " Transform");
-	Player* player = new Player(playerT, playerId);
-	playerT->setName("Player " + std::to_string(playerId));
+
+	Transform* teamIndicatorT = new Transform();
+	teamIndicatorT->setName("Player " + std::to_string(playerId) + " Team Indicator Transform");
+
+	Player* player = new Player(playerT, playerId, teamIndicatorT);
+	player->setName("Player " + std::to_string(playerId));
 	
+	if (playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
+		//Player is part of dog Team
+		teamIndicatorT->add_child(dogTeamIndicator);
+	}
+	else {
+		// Player is part of cat Team
+		teamIndicatorT->add_child(catTeamIndicator);
+	}
+
 	playerT->add_child(player);
 	worldT->add_child(playerT);
+
+	// Transform not added to world. Player calls draw on this transform.
+	//worldT->add_child(teamIndicatorT);
 
 	//players.insert(make_pair(playerId, player));
 	players[playerId] = player;

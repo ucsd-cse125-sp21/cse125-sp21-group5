@@ -53,12 +53,15 @@ public:
 	// Models used in the environment
 	Model* playerModel;
 	Model* tileModel;
+	Model* wallTileModel;
 	vector<Model*> treeModels;
 
 	Transform* catT;
 	Model* catModel;
 	Transform* dogT;
 	Model* dogModel;
+	Model* dogTeamIndicator;
+	Model* catTeamIndicator;
 
 	// TODO: not supposed to be public scene graph vars
 	Transform* worldT;

@@ -1,10 +1,12 @@
 #include "Player.h"
 
 // Used for other players
-Player::Player(Transform* transform, int playerId)
+Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTransform)
 {
 	this->playerId = playerId;
 	this->transform = transform;
+	this->teamIndicatorTransform = teamIndicatorTransform;
+
 	cam = new Camera();
 	mustLoadModels = true;
 	this->model = nullptr;
@@ -19,6 +21,10 @@ Player::Player(Transform* transform, int playerId)
 	this->playerClass = 0;
 	this->gun_idx = 1;
 	this->curr_gun = Gun();
+
+	// Try something
+	//loadModels();
+	//this->model = gunTypeModels[playerClass][(int)AnimationID::IDLE];
 }
 
 Player::~Player()
@@ -35,12 +41,18 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 	if (mustLoadModels) return;
 	if (playerId == Renderer::get().localPlayerId) return;
 	model->draw(glm::rotate(parent_transform, -glm::atan(cam->front.z, cam->front.x) - glm::pi<float>() / 2, glm::vec3(0, 1, 0)), view);
+	
+	// Need to call draw here since transform is not added to the world.
+	teamIndicatorTransform->draw(glm::rotate(parent_transform, -glm::atan(cam->front.z, cam->front.x) - glm::pi<float>() / 2, glm::vec3(0, 1, 0)), view);
 }
 
 void Player::update(float deltaTime)
 {
+	//cout << "\tCurrently updating " << name << endl;
 	if (mustLoadModels) {
+		cout << "\tLoading Player Models...." << endl;
 		loadModels();
+		cout << "\tModels Loaded!!" << endl;
 		mustLoadModels = false;
 	}
 
@@ -54,11 +66,20 @@ void Player::updatePlayer(PlayerState ps)
 	cam->update(ps.pos + glm::vec3(0.0f, 0.25f, 0.0f), ps.front);
 	transform->setTranslate(ps.pos);
 
+	teamIndicatorTransform->setRotate(transform->rotation);
+	teamIndicatorTransform->setTranslate(glm::vec3(0.0f, 0.5f, 0.0f));
+
 	// Update Movement information
+	isShooting = ps.isShooting;
 	isGrounded = ps.isGrounded;
 	isDead = ps.isDead;
 	isCarryingCatFlag = ps.carryingCatFlag;
 	isCarryingDogFlag = ps.carryingDogFlag;
+
+	// Update Special Attack Effect information
+	hasLimitedFOV = ps.isLimitFOV;
+	isFogged = ps.isFogged;
+	isFrozen = ps.isFrozen;
 
 	// Update Score information
 	kills = ps.kills;
@@ -76,7 +97,6 @@ void Player::updatePlayer(PlayerState ps)
 	if (mustLoadModels) return;
 
 	//model = modelsPistol[(int)ps.currentAnimation];
-	cout << ps.playerId << " " << ps.playerClass << endl;
 	model = gunTypeModels[(int)ps.playerClass][(int)ps.currentAnimation];
 }
 
@@ -89,7 +109,14 @@ void Player::loadModels() {
 	modelsPistol.push_back(new Model("res/models/finalShoot.dae"));
 	modelsPistol.push_back(new Model("res/models/finalToxicDab.dae"));
 	modelsPistol.push_back(new Model("res/models/finalDeath200.dae"));
-	//modelsPistol.push_back(new Model("res/models/finalReload.dae"));
+	modelsPistol.push_back(new Model("res/models/finalReload.dae"));
+
+	modelsPistol[0]->setName("res/models/finalIdle.dae");
+	modelsPistol[1]->setName("res/models/finalWalk.dae");
+	modelsPistol[2]->setName("res/models/finalShoot.dae");
+	modelsPistol[3]->setName("res/models/finalToxicDab.dae");
+	modelsPistol[4]->setName("res/models/finalDeath200.dae");
+	modelsPistol[5]->setName("res/models/finalReload.dae");
 
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae"));
@@ -98,12 +125,26 @@ void Player::loadModels() {
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae"));
 
+	modelsShotgun[0]->setName("res/models/Shotgun-Idle.dae");
+	modelsShotgun[1]->setName("res/models/Shotgun-Walk.dae");
+	modelsShotgun[2]->setName("res/models/Shotgun-Shoot.dae");
+	modelsShotgun[3]->setName("res/models/Shotgun-OrangeJustice.dae");
+	modelsShotgun[4]->setName("res/models/Shotgun-Death.dae");
+	modelsShotgun[5]->setName("res/models/Shotgun-Reload.dae");
+
 	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Floss.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae"));
+
+	modelsRifle[0]->setName("res/models/Rifle-Idle.dae");
+	modelsRifle[1]->setName("res/models/Rifle-Walk.dae");
+	modelsRifle[2]->setName("res/models/Rifle-Shoot.dae");
+	modelsRifle[3]->setName("res/models/Rifle-Floss.dae");
+	modelsRifle[4]->setName("res/models/Rifle-Death.dae");
+	modelsRifle[5]->setName("res/models/Rifle-Reload.dae");
 
 	gunTypeModels.push_back(modelsPistol); //push back pistol6
 	gunTypeModels.push_back(modelsShotgun); //push back shotgun

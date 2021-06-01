@@ -41,8 +41,6 @@ public:
 	int isLimitFOV, isFogged, isFrozen;
 	int playerClass;
 
-	bool hasFiredGun;
-
 	PlayerState();
 	PlayerState(int playerId, 
 				const glm::vec3& pos,
@@ -62,8 +60,7 @@ public:
 				int isLimitFOV,
 				int isFogged,
 				int isFrozen,
-				int playerClass,
-				bool hasFiredGun
+				int playerClass
 	);
 	
 

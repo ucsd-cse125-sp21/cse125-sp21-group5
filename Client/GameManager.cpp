@@ -483,11 +483,12 @@ void GameManager::renderUI()
 	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
 	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
 	ImGui::SetWindowSize(ImVec2(400, 300));
-	ImGui::SetWindowFontScale(2);
+	//ImGui::SetWindowFontScale(2);
 	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
-	ImGui::SetWindowFontScale(1);
+	//ImGui::SetWindowFontScale(1);
 	if (players[localPlayerId]->curr_gun.reload_time > 0) {
-		ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+		//ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+		ImGui::TextDisabled("Reloading...");
 	}
 	else {
 		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);

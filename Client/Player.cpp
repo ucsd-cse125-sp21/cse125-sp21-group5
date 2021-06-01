@@ -109,14 +109,14 @@ void Player::loadModels() {
 	modelsPistol.push_back(new Model("res/models/finalShoot.dae"));
 	modelsPistol.push_back(new Model("res/models/finalToxicDab.dae"));
 	modelsPistol.push_back(new Model("res/models/finalDeath200.dae"));
-	//modelsPistol.push_back(new Model("res/models/finalReload.dae"));
+	modelsPistol.push_back(new Model("res/models/finalReload.dae"));
 
 	modelsPistol[0]->setName("res/models/finalIdle.dae");
 	modelsPistol[1]->setName("res/models/finalWalk.dae");
 	modelsPistol[2]->setName("res/models/finalShoot.dae");
 	modelsPistol[3]->setName("res/models/finalToxicDab.dae");
 	modelsPistol[4]->setName("res/models/finalDeath200.dae");
-	//modelsPistol[5]->setName("res/models/finalReload.dae");
+	modelsPistol[5]->setName("res/models/finalReload.dae");
 
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae"));
 	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae"));
@@ -130,7 +130,7 @@ void Player::loadModels() {
 	modelsShotgun[2]->setName("res/models/Shotgun-Shoot.dae");
 	modelsShotgun[3]->setName("res/models/Shotgun-OrangeJustice.dae");
 	modelsShotgun[4]->setName("res/models/Shotgun-Death.dae");
-	//modelsShotgun[5]->setName("res/models/Shotgun-Reload.dae");
+	modelsShotgun[5]->setName("res/models/Shotgun-Reload.dae");
 
 	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
 	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
@@ -144,7 +144,7 @@ void Player::loadModels() {
 	modelsRifle[2]->setName("res/models/Rifle-Shoot.dae");
 	modelsRifle[3]->setName("res/models/Rifle-Floss.dae");
 	modelsRifle[4]->setName("res/models/Rifle-Death.dae");
-	//modelsRifle[5]->setName("res/models/Rifle-Reload.dae");
+	modelsRifle[5]->setName("res/models/Rifle-Reload.dae");
 
 	gunTypeModels.push_back(modelsPistol); //push back pistol6
 	gunTypeModels.push_back(modelsShotgun); //push back shotgun

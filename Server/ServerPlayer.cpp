@@ -132,6 +132,9 @@ void ServerPlayer::updateAnimations(const Event& e) {
 	{
 		animation = AnimationID::SHOOT;
 	}
+	else if (guns[gun_idx]->reload_time > 0) {
+		animation = AnimationID::RELOAD;
+	}
 	else if (glm::length(e.dPos) > 0) {
 		// the player is moving, play the run animation
 		animation = AnimationID::WALK;

@@ -93,7 +93,6 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 	// Check gun stuff
 	if (!gun->fire())
 	{
-		
 		return;
 	}
 
@@ -211,6 +210,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				player.second->animation = AnimationID::DAB;
 			}
 		}
+		return;
 	}
 	else if (dogTeamWin) {
 		// Changes win animation
@@ -220,16 +220,15 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				player.second->animation = AnimationID::DAB;
 			}
 		}
+		return;
 	}
 
-	uint8_t gameOver = 0, 1, 2;
-	if (!gameOver && (catTeamWin || dogTeamWin))
-	{
-		resetGame();
+	//uint8_t gameOver = 0, 1, 2;
+	//if (!gameOver && (catTeamWin || dogTeamWin))
+	//{
+	//	resetGame();
 
-	}
-
-
+	//}
 
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];

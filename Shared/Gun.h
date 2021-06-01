@@ -126,7 +126,7 @@ public:
 		fire_rate = 0;
 		fire_rate_reset = 60;
 		clip_size = 2;
-		clip_size_reset = 10;
+		clip_size_reset = 2;
 		reload_time = 0;
 		reload_time_reset = 120;
 		bullets_per_shot = 5;

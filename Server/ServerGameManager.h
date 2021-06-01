@@ -26,9 +26,11 @@ public:
 	Collider* catWinArea, *dogWinArea;
 	int flagCatCarrierId, flagDogCarrierId;
 
-
+	// Indicates game status
 	bool gameStarted = false;
 	int gameCountdown = -1;
+
+	State gameStatus;
 
 	// Win condition bools 
 	bool dogTeamWin = false;
@@ -48,6 +50,8 @@ public:
 	MapState generateMap();
 	void buildQuadtree();
 	void checkWinCondition();
+	void forceDab(int team);
+	void switchClass(int playerId, int playerClass);
 	void startGame();
 	void respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch);
 	void gameOver();

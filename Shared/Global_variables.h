@@ -29,3 +29,10 @@ enum class PlayerTeam
 	CAT_LOVER = 0,
 	DOG_LOVER = 1,
 };
+
+enum class State
+{
+	LOBBY_STATE = 0,
+	PLAY_STATE = 1,
+	GAMEOVER_STATE = 2,
+};

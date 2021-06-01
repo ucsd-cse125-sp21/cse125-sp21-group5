@@ -13,6 +13,9 @@ ServerGameManager::ServerGameManager() {
 	flagDogCarrierId = -1;
 
 	gameCountdown = -1;
+
+	// Set the game in lobby state
+	gameStatus = State::LOBBY_STATE;
 }
 
 MapState ServerGameManager::generateMap()
@@ -30,11 +33,6 @@ MapState ServerGameManager::generateMap()
 		{
 			// Center point of the tile
 			glm::vec3 tileCenter = glm::vec3(TILE_SIZE * (i - NUM_MAP_TILES / 2), 0.0f, TILE_SIZE * (j - NUM_MAP_TILES / 2));
-
-			// random point light color
-			rand();
-			rand();
-			rand();
 
 			// Special case for flags
 			if (i == 0 && j == 0)
@@ -204,36 +202,76 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 	player->update(glm::vec3(0.0f), 0.0f, gun->recoil);
 }
 
+// Forces specified teamID to dab
+void ServerGameManager::forceDab(int team)
+{
+	// Changes win animation
+	for (auto player : players) {
+		if (player.first % 2 == team)
+			player.second->animation = AnimationID::DAB;
+	}
+}
+
+void ServerGameManager::switchClass(int playerId, int playerClass)
+{
+	if (players[playerId]->playerClass == playerClass)
+	{
+		return;
+	}
+
+	if (playerClass == 0) {
+		players[playerId]->guns.clear();
+		players[playerId]->playerClass = 0;
+		players[playerId]->guns.push_back(new Pistol());
+		players[playerId]->guns.push_back(new FOV());
+	}
+	else if (playerClass == 1) {
+		players[playerId]->guns.clear();
+		players[playerId]->playerClass = 1;
+		players[playerId]->guns.push_back(new Shotgun());
+		players[playerId]->guns.push_back(new FOG());
+	}
+	else if (playerClass == 2) {
+		players[playerId]->guns.clear();
+		players[playerId]->playerClass = 2;
+		players[playerId]->guns.push_back(new Rifle());
+		players[playerId]->guns.push_back(new Stun());
+	}
+}
+
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
-	// If a team has won
-	if (catTeamWin) {
-		// Changes win animation
-		for (auto player : players) {
-			// For cat players 
-			if (player.first % 2 == (int)PlayerTeam::CAT_LOVER) {
-				player.second->animation = AnimationID::DAB;
-			}
+	switch (gameStatus) {
+	case State::LOBBY_STATE:
+		// handle Lobby mechanics
+
+		// Tick Gamecount
+		if (!gameCountdown--)
+		break;
+	case State::PLAY_STATE:
+		break;
+	case State::GAMEOVER_STATE:
+		// If a team has won
+		if (catTeamWin)
+		{
+			// Tell cat team to dab
+			forceDab((int)PlayerTeam::CAT_LOVER);
+			return;
 		}
-		return;
-	}
-	else if (dogTeamWin) {
-		// Changes win animation
-		for (auto player : players) {
-			// For cat players 
-			if (player.first % 2 == (int)PlayerTeam::DOG_LOVER) {
-				player.second->animation = AnimationID::DAB;
-			}
+		else if (dogTeamWin)
+		{
+			// Tell dog team to dab
+			forceDab((int)PlayerTeam::DOG_LOVER);
+			return;
 		}
-		return;
+
+		// Reset GameCountdown Timer
+		gameCountdown = GAME_COUNTDOWN_TIMER;
+
+		break;
 	}
 
-	//uint8_t gameOver = 0, 1, 2;
-	//if (!gameOver && (catTeamWin || dogTeamWin))
-	//{
-	//	resetGame();
-
-	//}
+	
 
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
@@ -241,29 +279,14 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	curr_player->isShooting = false;
 
 	// If game didn't start yet, allow players to change class but not move
-	if (!gameStarted) {
-		if (e.playerClass == 0) {
-			players[playerId]->guns.clear();
-			players[playerId]->playerClass = 0;
-			players[playerId]->guns.push_back(new Pistol());
-			players[playerId]->guns.push_back(new FOV());
-		}
-		else if (e.playerClass == 1) {
-			players[playerId]->guns.clear();
-			players[playerId]->playerClass = 1;
-			players[playerId]->guns.push_back(new Shotgun());
-			players[playerId]->guns.push_back(new FOG());
-		}
-		else if (e.playerClass == 2) {
-			players[playerId]->guns.clear();
-			players[playerId]->playerClass = 2;
-			players[playerId]->guns.push_back(new Rifle());
-			players[playerId]->guns.push_back(new Stun());
-		}
+	if (!gameStarted)
+	{
+		switchClass(playerId, e.playerClass);
 	}
 
 	// Game not started yet
-	if (gameCountdown > 0) {
+	if (gameCountdown > 0)
+	{
 		gameCountdown--;
 
 		// If game did not start, don't let the players move
@@ -469,7 +492,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 			flagCat->isActive = true;
 			checkWinCondition();
 		}
-			
 	}
 	else if(flagDogCarrierId == playerId && curr_player->team == PlayerTeam::DOG_LOVER)
 	{
@@ -526,16 +548,13 @@ void ServerGameManager::checkWinCondition()
 	if (catTeamPoints == NUM_CAPTURES_TO_WIN) {
 		// end the game
 		catTeamWin = true;
+		gameStatus = State::GAMEOVER_STATE;
 	}
 	if (dogTeamPoints == NUM_CAPTURES_TO_WIN) {
-		// end the game 
+		// end the game
 		dogTeamWin = true;
+		gameStatus = State::GAMEOVER_STATE;
 	}
-
-	// Disable winhitboxes
-	// TODO: call reset game here
-
-	
 }
 
 GameState ServerGameManager::getGameState(int playerId)

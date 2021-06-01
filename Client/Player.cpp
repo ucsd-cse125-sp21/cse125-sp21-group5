@@ -70,6 +70,7 @@ void Player::updatePlayer(PlayerState ps)
 	teamIndicatorTransform->setTranslate(glm::vec3(0.0f, 0.5f, 0.0f));
 
 	// Update Movement information
+	isShooting = ps.isShooting;
 	isGrounded = ps.isGrounded;
 	isDead = ps.isDead;
 	isCarryingCatFlag = ps.carryingCatFlag;

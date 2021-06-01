@@ -255,7 +255,6 @@ Event GameManager::handleInput()
 
 	// Detect mouse presses
 	bool shooting = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
-	if (shooting) AudioManager::get().playSound(SOUND_SHOOT); 
 
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
@@ -274,15 +273,14 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 		Renderer::get().debug = !Renderer::get().debug;
 	}
 
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+	if (key == GLFW_KEY_UP && action != GLFW_RELEASE)
 	{
-		AudioManager::get().adjustVolume(0.1f);
+		AudioManager::get().adjustVolume(0.001f);
 	}
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_DOWN && action != GLFW_PRESS)
 	{
-		AudioManager::get().adjustVolume(-0.1f);
+		AudioManager::get().adjustVolume(-0.001f);
 	}
-
 }
 
 // Detect mouse clicks
@@ -508,6 +506,7 @@ void GameManager::renderUI()
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
 		ImGui::Text("Game Volume: %f", AudioManager::get().volume);
+		ImGui::Text("Player is shooting %d", p->isShooting);
 		ImGui::End();
 	}
 
@@ -696,7 +695,14 @@ void GameManager::updateGameState(GameState& gs)
 		// Ignore update if player doesn't exist
 		if (players.find(ps.playerId) == players.end())
 			continue;
+
 		players[ps.playerId]->updatePlayer(ps);
+		
+		// Play shooting for player
+		// TODO: change it so that it's at the 3d location
+		if (players[ps.playerId]->isShooting)
+			AudioManager::get().playSound(SOUND_SHOOT);
+
 	}
 	catTeamWin = gs.catTeamWin;
 	dogTeamWin = gs.dogTeamWin;

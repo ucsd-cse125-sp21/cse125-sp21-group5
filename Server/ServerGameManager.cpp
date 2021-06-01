@@ -67,12 +67,19 @@ MapState ServerGameManager::generateMap()
 	catWinArea = new Collider(ObjectType::ENVIRONMENT, flagDog->cen, flagDog->dim + glm::vec3(1.0f));
 
 	// Set up quadtree 
-	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
+	Collider boundary = Collider(glm::vec3(0.0f), glm::vec3(TILE_SIZE * (NUM_MAP_TILES + 1), 60.0f, TILE_SIZE * (NUM_MAP_TILES + 1)));
 	qt = new Quadtree(boundary, 4);
 	for (Collider* c : allColliders)
 	{
 		qt->insert(c);
 	}
+
+	// Create map border
+	float tmp = TILE_SIZE * NUM_MAP_TILES;
+	allColliders.push_back(new Collider(glm::vec3(tmp / 2 + 1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 50.0f, tmp)));
+	allColliders.push_back(new Collider(glm::vec3(-(tmp / 2 + 1.0f), 0.0f, 0.0f), glm::vec3(2.0f, 50.0f, tmp)));
+	allColliders.push_back(new Collider(glm::vec3(0.0f, 0.0f, tmp / 2 + 1.0f), glm::vec3(tmp, 50.0f, 2.0f)));
+	allColliders.push_back(new Collider(glm::vec3(0.0f, 0.0f, -(tmp / 2 + 1.0f)), glm::vec3(tmp, 50.0f, 2.0f)));
 
 	// Create map state
 	return MapState(tileSeed);
@@ -86,8 +93,12 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 	// Check gun stuff
 	if (!gun->fire())
 	{
+		
 		return;
 	}
+
+	// Player has shot
+	player->isShooting = true;
 
 	// Trace each bullet
 	for (int i = 0; i < gun->bullets_per_shot; i++)
@@ -215,6 +226,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
+
+	curr_player->isShooting = false;
 
 	// If game didn't start yet, allow players to change class but not move
 	if (!gameStarted) {
@@ -470,7 +483,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 void ServerGameManager::buildQuadtree()
 {
-	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	Collider boundary = Collider(glm::vec3(0.0f), glm::vec3(TILE_SIZE * (NUM_MAP_TILES + 1), 60.0f, TILE_SIZE * (NUM_MAP_TILES + 1)));
 	qt = new Quadtree(boundary, 4);
 
 	for (Collider* c : allColliders)
@@ -530,6 +543,7 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->captures,
 						players[i]->gun_idx,
 						*(players[i]->guns[players[i]->gun_idx]),
+						players[i]->isShooting,
 						players[i]->isLimitFOV,
 						players[i]->isFogged,
 						players[i]->isFrozen,

@@ -20,10 +20,12 @@ ServerPlayer::ServerPlayer() {
 	deaths = 0;
 	captures = 0;
 
+	isShooting = false;
 	isLimitFOV = 0;
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+	hasFiredGun = false;
 }
 
 ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
@@ -48,10 +50,13 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
 	guns.push_back(new Pistol());
 	guns.push_back(new FOV());
 
+	isShooting = false;
 	isLimitFOV = 0;
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+
+	hasFiredGun = false;
 
 	this->team =
 		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
@@ -87,10 +92,13 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	guns.push_back(new Pistol());
 	guns.push_back(new FOV());
 
+	isShooting = false;
 	isLimitFOV = 0;
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
+
+	hasFiredGun = false;
 
 	this->team =
 		(playerId % 2 == (int)PlayerTeam::CAT_LOVER)
@@ -155,9 +163,12 @@ void ServerPlayer::resetPlayer(glm::vec3 pos, float yaw, float pitch)
 	isGrounded = false;
 	health = 100.0f;
 	isDead = 0;
-	kills = 0;
-	deaths = 0;
-	captures = 0;
+
+	isShooting = false;
+	isLimitFOV = 0;
+	isFogged = 0;
+	isFrozen = 0;
+	playerClass = 0;
 }
 
 void ServerPlayer::respawn(glm::vec3 pos, float yaw, float pitch)

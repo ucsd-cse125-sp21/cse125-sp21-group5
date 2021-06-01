@@ -48,7 +48,7 @@ void Player::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Player::update(float deltaTime)
 {
-	cout << "\tCurrently updating " << name << endl;
+	//cout << "\tCurrently updating " << name << endl;
 	if (mustLoadModels) {
 		cout << "\tLoading Player Models...." << endl;
 		loadModels();

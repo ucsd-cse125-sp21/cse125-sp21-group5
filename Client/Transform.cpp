@@ -121,8 +121,8 @@ void Transform::draw(const glm::mat4& parent_transform, const glm::mat4& view)
 
 void Transform::update(float deltaTime) 
 {
-	cout << "\tInside " << name << endl;
-	cout << "\tCurrently Updating children" << endl;
+	//cout << "\tInside " << name << endl;
+	//cout << "\tCurrently Updating children" << endl;
 	for (Node* child : this->children) 
 	{
 		child->update(deltaTime);

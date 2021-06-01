@@ -36,6 +36,9 @@ GameManager::GameManager(GLFWwindow* window)
 	treeModels.push_back(new Model("res/models/fiboTree.dae"));
 	treeModels.push_back(new Model("res/models/deadTree.dae"));
 
+	// Wall around the world
+	worldT->add_child(new Model("res/models/BuildTheWall.dae"));
+
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
 

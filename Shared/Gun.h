@@ -79,14 +79,21 @@ public:
 		x_spread = 0.0f;
 		y_spread = 0.0f;
 		recoil = 0.0f;
-
 	};
 
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version) {
 		ar& name;
+		ar& fire_rate;
+		ar& fire_rate_reset;
 		ar& clip_size;
+		ar& clip_size_reset;
 		ar& reload_time;
+		ar& reload_time_reset;
+		ar& bullets_per_shot;
+		ar& damage_per_bullet;
+		ar& x_spread;
+		ar& y_spread;
 	}
 };
 

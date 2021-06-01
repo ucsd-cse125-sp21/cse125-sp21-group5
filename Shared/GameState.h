@@ -25,6 +25,7 @@ public:
 	glm::vec3 pos, front;
 
 	AnimationID currentAnimation;
+	bool isShooting;
 	bool isGrounded;
 	float health;
 	int isDead;
@@ -57,6 +58,7 @@ public:
 				unsigned int captures,
 				int gun_idx,
 				const Gun& curr_gun,
+				bool isShooting,
 				int isLimitFOV,
 				int isFogged,
 				int isFrozen,
@@ -85,6 +87,7 @@ public:
 		ar& captures;
 		ar& gun_idx;
 		ar& curr_gun;
+		ar& isShooting;
 		ar& isLimitFOV;
 		ar& isFogged;
 		ar& isFrozen;

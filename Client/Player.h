@@ -43,6 +43,7 @@ public:
 
 	int hasLimitedFOV, isFogged, isFrozen;
 	
+	bool isShooting;
 	bool isGrounded;
 	bool isCarryingCatFlag;
 	bool isCarryingDogFlag;

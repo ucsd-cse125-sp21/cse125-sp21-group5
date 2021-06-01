@@ -67,12 +67,19 @@ MapState ServerGameManager::generateMap()
 	catWinArea = new Collider(ObjectType::ENVIRONMENT, flagDog->cen, flagDog->dim + glm::vec3(1.0f));
 
 	// Set up quadtree 
-	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 50.0f, 110.0f));
+	Collider boundary = Collider(glm::vec3(0.0f), glm::vec3(TILE_SIZE * (NUM_MAP_TILES + 1), 60.0f, TILE_SIZE * (NUM_MAP_TILES + 1)));
 	qt = new Quadtree(boundary, 4);
 	for (Collider* c : allColliders)
 	{
 		qt->insert(c);
 	}
+
+	// Create map border
+	float tmp = TILE_SIZE * NUM_MAP_TILES;
+	allColliders.push_back(new Collider(glm::vec3(tmp / 2 + 1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 50.0f, tmp)));
+	allColliders.push_back(new Collider(glm::vec3(-(tmp / 2 + 1.0f), 0.0f, 0.0f), glm::vec3(2.0f, 50.0f, tmp)));
+	allColliders.push_back(new Collider(glm::vec3(0.0f, 0.0f, tmp / 2 + 1.0f), glm::vec3(tmp, 50.0f, 2.0f)));
+	allColliders.push_back(new Collider(glm::vec3(0.0f, 0.0f, -(tmp / 2 + 1.0f)), glm::vec3(tmp, 50.0f, 2.0f)));
 
 	// Create map state
 	return MapState(tileSeed);
@@ -86,8 +93,12 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 	// Check gun stuff
 	if (!gun->fire())
 	{
+		
 		return;
 	}
+
+	// Player has shot
+	player->isShooting = true;
 
 	// Trace each bullet
 	for (int i = 0; i < gun->bullets_per_shot; i++)
@@ -191,7 +202,7 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
-	// Game is over 
+	// If a team has won
 	if (catTeamWin) {
 		// Changes win animation
 		for (auto player : players) {
@@ -200,7 +211,6 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				player.second->animation = AnimationID::DAB;
 			}
 		}
-		return;
 	}
 	else if (dogTeamWin) {
 		// Changes win animation
@@ -210,11 +220,21 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 				player.second->animation = AnimationID::DAB;
 			}
 		}
-		return;
 	}
+
+	uint8_t gameOver = 0, 1, 2;
+	if (!gameOver && (catTeamWin || dogTeamWin))
+	{
+		resetGame();
+
+	}
+
+
 
 	// Get the current player
 	ServerPlayer* curr_player = players[playerId];
+
+	curr_player->isShooting = false;
 
 	// If game didn't start yet, allow players to change class but not move
 	if (!gameStarted) {
@@ -238,24 +258,25 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 	}
 
+	// Game not started yet
 	if (gameCountdown > 0) {
 		gameCountdown--;
 
 		// If game did not start, don't let the players move
 		if (gameCountdown == 0) {
-			//TP
+			// Set game started; will teleport players back to spawn point
 			gameStarted = true;
 			cout << "Starting the game" << endl;
 			startGame();
 		}
-
-		//return;
 	}
+	// Waiting for all players to connect.
 	else if (gameCountdown == -1) {
-		// Waiting for all players to connect.
+		// TODO: delete?
 		//return;
 	}
 
+	// Special gun effects
 	if (curr_player->isLimitFOV > 0) {
 		curr_player->isLimitFOV--;
 	}
@@ -271,7 +292,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		e.jumping = false;
 	}
 
-	// TODO: Varying death timers 
+	// If player is dead/respawning
 	if (curr_player->isDead > 0)
 	{
 		// Update animation for death
@@ -470,7 +491,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 
 void ServerGameManager::buildQuadtree()
 {
-	Collider boundary = Collider(glm::vec3(0, -5.0f, 0), glm::vec3(110.0f, 30.0f, 110.0f));
+	Collider boundary = Collider(glm::vec3(0.0f), glm::vec3(TILE_SIZE * (NUM_MAP_TILES + 1), 60.0f, TILE_SIZE * (NUM_MAP_TILES + 1)));
 	qt = new Quadtree(boundary, 4);
 
 	for (Collider* c : allColliders)
@@ -499,13 +520,18 @@ void ServerGameManager::checkWinCondition()
 
 	// Check cat team points 
 	if (catTeamPoints == NUM_CAPTURES_TO_WIN) {
-		// end the gmae 
+		// end the game
 		catTeamWin = true;
 	}
 	if (dogTeamPoints == NUM_CAPTURES_TO_WIN) {
 		// end the game 
 		dogTeamWin = true;
 	}
+
+	// Disable winhitboxes
+	// TODO: call reset game here
+
+	
 }
 
 GameState ServerGameManager::getGameState(int playerId)
@@ -530,25 +556,21 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->captures,
 						players[i]->gun_idx,
 						*(players[i]->guns[players[i]->gun_idx]),
+						players[i]->isShooting,
 						players[i]->isLimitFOV,
 						players[i]->isFogged,
 						players[i]->isFrozen,
 						players[i]->playerClass
 		);
 		gs.addState(ps);
-
-		//cout << "Player ID: " << i << "\tIsFogged: " << players[i]->isFogged << endl;
 	}
-
-
-	//cout << endl;
 
 	// Send back flag locations
 	gs.catLocation = flagCat->cen;
 	gs.dogLocation = flagDog->cen;
 
 	// Sends back game-winning variables 
-	gs.catTeamWin = catTeamWin; 
+	gs.catTeamWin = catTeamWin;
 	gs.dogTeamWin = dogTeamWin;
 
 	gs.gameCountdown = gameCountdown;
@@ -560,11 +582,13 @@ void ServerGameManager::createNewPlayer(int playerId)
 {
 	glm::vec3 playerSpawnPos;
 	float initYaw;
-	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER){
+	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER)
+	{
 		playerSpawnPos = CAT_SPAWN;
 		initYaw = 225;
 	}
-	else {
+	else
+	{
 		playerSpawnPos = DOG_SPAWN;
 		initYaw = 45;
 	}
@@ -590,11 +614,11 @@ void ServerGameManager::startGame()
 			playerSpawnPos = DOG_SPAWN;
 			initYaw = 45;
 		}
-		respawnPlayerWithID(p.first, playerSpawnPos, initYaw, 0);
+		players[p.first]->resetPlayer(playerSpawnPos, initYaw, 0);
 	}
 }
 
 void ServerGameManager::respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch)
 {
-	players[playerId]->resetPlayer(pos, yaw, pitch);
+	players[playerId]->respawn(pos, yaw, pitch);
 }

@@ -21,6 +21,9 @@
 #define VISION_IMPAIRMENT_TIME 300
 #define FREEZE_TIME 180
 
+// Server properties
+#define GAME_COUNTDOWN_TIMER 300
+
 enum class PlayerTeam
 {
 	CAT_LOVER = 0,

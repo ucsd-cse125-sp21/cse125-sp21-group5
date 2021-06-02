@@ -15,6 +15,9 @@ uniform mat4 aViewProj;
 uniform vec3 aViewPos;
 uniform mat4 aModel;
 
+uniform float aFogDensity;
+uniform float aFogGradient;
+
 out vec3 fragNormal;
 out vec3 fragPos;
 
@@ -53,9 +56,9 @@ void main()
     gl_Position = aViewProj * aModel * vec4(totalPosition, 1);
 
 	// calculate fog
-	float fogDensity = 0.05;
-	float fogGradient = 3;
-	visibility = calculateFog(length(fragPos - aViewPos), fogDensity, fogGradient);
+	//float fogDensity = 0.05;
+	//float fogGradient = 3;
+	visibility = calculateFog(length(fragPos - aViewPos), aFogDensity, aFogGradient);
 }
 
 float calculateFog(float d, float density, float gradient) 

@@ -39,6 +39,10 @@ void Renderer::bindToShader(Material* mat)
 
 	glUniform3fv(mat->fogColorLoc, 1, glm::value_ptr(fogColor));
 
+	//std::cout << Renderer::get().fogDensity << std::endl;
+	glUniform1f(mat->fogDensityLoc, Renderer::get().fogDensity);
+	glUniform1f(mat->fogGradientLoc, 3.0f);
+
 
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 

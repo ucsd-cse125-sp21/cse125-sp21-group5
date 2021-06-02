@@ -80,8 +80,8 @@ public:
 	bool debug;
 
 	// fog parameters
-	float fogDensity;
-	float fogGradient;
+	float fogDensity = 0.05f;
+	float fogGradient = 3.0f;
 	glm::vec3 fogColor;
 
 	std::vector<PointLight> mPointLights;
@@ -104,9 +104,10 @@ private:
 	Renderer() {
 		gameTime = 0;
 		mCamera = nullptr;
-		fogDensity = 0.0001;
-		fogGradient = 1;
-		fogColor = glm::vec3(0.2, 0.05, 0.15);
+		fogDensity = 0.05f;
+		fogGradient = 3.0f;
+		fogColor = glm::vec3(0.1, 0.025, 0.05);
+		debug = false;
 	}
 };
 

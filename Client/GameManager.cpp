@@ -78,8 +78,6 @@ GameManager::GameManager(GLFWwindow* window)
 
 	//Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
-	Renderer::get().fogDensity = 0.0001;
-
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	AudioManager::get().init();

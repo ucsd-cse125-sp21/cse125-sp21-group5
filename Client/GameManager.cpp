@@ -235,6 +235,10 @@ Event GameManager::handleInput()
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 2;
 		}
+		else {
+			players[localPlayerId]->gun_idx = 2;
+
+		}
 	}
 
 	bool dab = false;
@@ -762,8 +766,14 @@ void GameManager::updateGameState(GameState& gs)
 		
 		// Play shooting for player
 		// TODO: change it so that it's at the 3d location
-		if (players[ps.playerId]->isShooting)
-			AudioManager::get().playSound(SOUND_SHOOT);
+		if (players[ps.playerId]->isShooting) {
+			if (players[ps.playerId]->gun_idx == 2) {
+				AudioManager::get().playSound(SOUND_RIFLE);
+
+			}
+			else 
+				AudioManager::get().playSound(SOUND_SHOOT);
+		}
 
 	}
 	catTeamWin = gs.catTeamWin;

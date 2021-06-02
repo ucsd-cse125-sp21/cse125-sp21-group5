@@ -9,6 +9,7 @@
 #define SOUND_SHOOT "./res/sounds/shoot.ogg"
 #define SOUND_DEATH "./res/sounds/death.ogg"
 #define SOUND_DUB "./res/sounds/dub.ogg"
+#define SOUND_RIFLE "./res/sounds/rifle.ogg"
 
 class AudioManager
 {

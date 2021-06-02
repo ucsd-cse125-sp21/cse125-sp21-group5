@@ -1,18 +1,16 @@
 #include "ServerGameManager.h"
 #include <glm/gtx/string_cast.hpp>
 
-
-ServerGameManager::ServerGameManager() {
-
-	// TODO: remove, hardcoded initPos
-	// TODO: add new player colliders as players connect
+ServerGameManager::ServerGameManager()
+{
+	// Set the seed
 	tileSeed = (int)time(NULL);
 
-	//Tile and flags are unintialized
+	// Flags are not picked up by anyone
 	flagCatCarrierId = -1;
 	flagDogCarrierId = -1;
 
-	gameCountdown = -1;
+	gameCountdown = GAME_COUNTDOWN_TIMER;
 
 	// Set the game in lobby state
 	gameStatus = State::LOBBY_STATE;
@@ -202,23 +200,90 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 	player->update(glm::vec3(0.0f), 0.0f, gun->recoil);
 }
 
-// Forces specified teamID to dab
-void ServerGameManager::forceDab(int team)
+void ServerGameManager::handleMovement(ServerPlayer* player, int playerId, Event& e)
 {
-	// Changes win animation
-	for (auto player : players) {
-		if (player.first % 2 == team)
-			player.second->animation = AnimationID::DAB;
+	// Not jumping
+	if (!e.jumping)
+	{
+		if (player->vVelocity >= 0.0f)
+			player->vVelocity -= 0.3f;
+		player->update(e.dPos + glm::vec3(0.0f, player->vVelocity, 0.0f), e.dYaw, e.dPitch);
 	}
+	// Jumping 
+	else {
+		// 10 ticks of jumping in total
+		player->jumping = 10;
+	}
+
+	// Parabolic jumping
+	float jumpingSquared = player->jumping * player->jumping;
+	// Handle jumping tick by tick
+	if (player->jumping > 0)
+	{
+		player->update(e.dPos + glm::vec3(0.0f, jumpingSquared / 100.0f, 0.0f), e.dYaw, e.dPitch);
+		// 5 ticks of jumping in total
+		player->jumping--;
+	}
+
+	// Rebuild quadtree for collision after player movement is updated
+	buildQuadtree();
+
+	// Movement for colliders 
+	Collider* queryRange = new Collider(player->hitbox->cen, player->hitbox->dim * 10.0f);
+	vector<Collider*> nearbyColliders;
+	nearbyColliders = qt->query(queryRange, nearbyColliders);
+	player->isGrounded = false;
+	for (Collider* otherCollider : nearbyColliders)
+	{
+		// Ignore collisions with yourself
+		if (player->hitbox == otherCollider)
+			continue;
+
+		// Determine which plane collision happened on
+		glm::vec3 plane = player->hitbox->check_collision(otherCollider);
+
+		// For jumping
+		if (plane.y > 0.0f)
+		{
+			player->isGrounded = true;
+		}
+
+		player->update(plane, 0.0f, 0.0f);
+
+		// If it happened on no plane
+		if (plane == glm::vec3(0.0f))
+			continue;
+
+		// Pick up flag
+		if (otherCollider == flagCat && flagCatCarrierId == -1 && player->team == PlayerTeam::CAT_LOVER) {
+			flagCatCarrierId = playerId;
+			flagCat->isActive = false;
+		}
+		else if (otherCollider == flagDog && flagDogCarrierId == -1 && player->team == PlayerTeam::DOG_LOVER) {
+			flagDogCarrierId = playerId;
+			flagDog->isActive = false;
+		}
+	}
+
+	// Rebuild quadtree for collision after player movement is updated
+	buildQuadtree();
+}
+
+// Forces specified team to dab
+void ServerGameManager::forceDab(PlayerTeam team)
+{
+	for (auto player : players)
+		if (player.second->team == team)
+			player.second->animation = AnimationID::DAB;
 }
 
 void ServerGameManager::switchClass(int playerId, int playerClass)
 {
+	// Do nothing if already right class
 	if (players[playerId]->playerClass == playerClass)
-	{
 		return;
-	}
 
+	// Clear out player's gun list and replace with appropriate ones
 	if (playerClass == 0) {
 		players[playerId]->guns.clear();
 		players[playerId]->playerClass = 0;
@@ -239,280 +304,216 @@ void ServerGameManager::switchClass(int playerId, int playerClass)
 	}
 }
 
+void ServerGameManager::handleDeath(ServerPlayer* player)
+{
+	// Update animation for death
+	player->animation = AnimationID::DEATH;
+	player->isDead--;
+
+	// Reset variables when they are alive again
+	if (player->isDead == 0)
+	{
+		// TP to cat base
+		if (player->team == PlayerTeam::CAT_LOVER)
+			player->respawn(CAT_SPAWN, CAT_YAW, 0.0f);
+		else if (player->team == PlayerTeam::DOG_LOVER)
+			player->respawn(DOG_SPAWN, DOG_YAW, 0.0f);
+	}
+}
+
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
-	switch (gameStatus) {
-	case State::LOBBY_STATE:
-		// handle Lobby mechanics
+	// Get current player
+	ServerPlayer* player = players[playerId];
 
-		// Tick Gamecount
-		if (!gameCountdown--)
+	// Handle events based on what stage in the game we are in
+	switch (gameStatus)
+	{
+	// This is where players wait for all other players to join
+	// This is also where players can test out the different classes and roam the map
+	case State::LOBBY_STATE:
+		switchClass(playerId, e.playerClass);
+
+		player->isShooting = false;
+		if (e.shooting) handleShoot(player);
+		handleMovement(player, playerId, e);
+
+		// Do nothing if any one player is not ready
+		/*
+		for (auto p : players)
+			if (!p.second->isReady)
+				return;
+		*/
+		
+		// All players must be ready, start countdown
+		gameStatus = State::READY_STATE;
+		break;
+	case State::READY_STATE:
+		// Tick game countdown
+		if (gameCountdown > 0)
+		{
+			// The tick after it hits 0 will be when game switches
+			gameCountdown--;
+			return;
+		}
+
+		// Enter the play state
+		gameStatus = State::PLAY_STATE;
 		break;
 	case State::PLAY_STATE:
-		break;
-	case State::GAMEOVER_STATE:
-		// If a team has won
-		if (catTeamWin)
+		// Movement
+
+		// Check if player has fallen off map
+		// TODO: maybe helper function or remove
+		if (player->pos.y < -10.0f)
 		{
-			// Tell cat team to dab
-			forceDab((int)PlayerTeam::CAT_LOVER);
-			return;
-		}
-		else if (dogTeamWin)
-		{
-			// Tell dog team to dab
-			forceDab((int)PlayerTeam::DOG_LOVER);
-			return;
-		}
+			// Slowly decrement health
+			player->decreaseHealth(10.0f);
 
-		// Reset GameCountdown Timer
-		gameCountdown = GAME_COUNTDOWN_TIMER;
-
-		break;
-	}
-
-	
-
-	// Get the current player
-	ServerPlayer* curr_player = players[playerId];
-
-	curr_player->isShooting = false;
-
-	// If game didn't start yet, allow players to change class but not move
-	if (!gameStarted)
-	{
-		switchClass(playerId, e.playerClass);
-	}
-
-	// Game not started yet
-	if (gameCountdown > 0)
-	{
-		gameCountdown--;
-
-		// If game did not start, don't let the players move
-		if (gameCountdown == 0) {
-			// Set game started; will teleport players back to spawn point
-			gameStarted = true;
-			cout << "Starting the game" << endl;
-			startGame();
-		}
-	}
-	// Waiting for all players to connect.
-	else if (gameCountdown == -1) {
-		// TODO: delete?
-		//return;
-	}
-
-	// Special gun effects
-	if (curr_player->isLimitFOV > 0) {
-		curr_player->isLimitFOV--;
-	}
-	if (curr_player->isFogged > 0) {
-		curr_player->isFogged--;
-	}
-	if (curr_player->isFrozen > 0) {
-		curr_player->isFrozen--;
-		e.dPos = glm::vec3(0, 0, 0);
-		e.dYaw = 0;
-		e.dPitch = 0;
-		e.shooting = false;
-		e.jumping = false;
-	}
-
-	// If player is dead/respawning
-	if (curr_player->isDead > 0)
-	{
-		// Update animation for death
-		players[playerId]->animation = AnimationID::DEATH;
-		players[playerId]->isDead--;
-		
-		// Reset variables when they are alive again
-		if (players[playerId]->isDead == 0)
-		{
-			// TODO: Reset player (including gun variables)
-			players[playerId]->health = 100.0f;
-			players[playerId]->hitbox->isActive = true;
-
-			// TP to cat base
-			if (players[playerId]->team == PlayerTeam::CAT_LOVER) {
-				players[playerId]->pos = CAT_SPAWN;
-			}
-			else if (players[playerId]->team == PlayerTeam::DOG_LOVER) {
-				players[playerId]->pos = DOG_SPAWN;
-			}
-		}
-		// If the player is dead, we don't let them move or do anything
-		return;
-	}
-
-	// Switch weapons
-	curr_player->gun_idx = e.gun_idx;
-
-	// Pick animation
-	curr_player->updateAnimations(e);
-
-	// Check if player has fallen off map
-	if (curr_player->pos.y < -10.0f)
-	{
-		// Slowly decrement health
-		curr_player->decreaseHealth(10.0f);
-	
-		// If player dies, return flag back to area
-		if (curr_player->isDeadCheck())
-		{
-			// Set death timer
-			curr_player->isDead = DEATH_TICK_TIMER;
-
-			// Disable hitbox
-			curr_player->hitbox->isActive = false;
-
-			// Increase death count
-			curr_player->deaths++;
-
-			if (flagCatCarrierId == playerId)
+			// If player dies, return flag back to area
+			if (player->isDeadCheck())
 			{
+				// Set death timer
+				player->isDead = DEATH_TICK_TIMER;
+
+				// Disable hitbox
+				player->hitbox->isActive = false;
+
+				// Increase death count
+				player->deaths++;
+
+				if (flagCatCarrierId == playerId)
+				{
+					flagCatCarrierId = -1;
+					flagCat->set_center(CAT_FLAG_SPAWN);
+					flagCat->isActive = true;
+				}
+				else if (flagDogCarrierId == playerId)
+				{
+					flagDogCarrierId = -1;
+					flagDog->set_center(DOG_FLAG_SPAWN);
+					flagDog->isActive = true;
+				}
+				buildQuadtree();
+			}
+		}
+
+		// Apply special gun effects, and tick effects
+		// TODO: helper function
+		if (player->isLimitFOV > 0) {
+			player->isLimitFOV--;
+		}
+		if (player->isFogged > 0) {
+			player->isFogged--;
+		}
+		if (player->isFrozen > 0) {
+			player->isFrozen--;
+			e.dPos = glm::vec3(0.0f);
+			e.dYaw = 0.0f;
+			e.dPitch = 0.0f;
+			e.shooting = false;
+			e.jumping = false;
+		}
+
+		// If player is dead/respawning
+		if (player->isDead > 0)
+		{
+			handleDeath(player);
+			// If the player is dead, we don't let them move or do anything
+			return;
+		}
+
+		player->isShooting = false;
+		if (e.shooting) handleShoot(player);
+		handleMovement(player, playerId, e);
+
+		// Switch weapons
+		player->gun_idx = e.gun_idx;
+
+		// Pick animation
+		player->updateAnimations(e);
+
+		// Update gun ticks
+		for (Gun* g : player->guns)
+		{
+			g->decrement_fire_rate();
+			g->decrement_reload_time();
+		}
+
+		// Make user dab
+		if (e.dab) players[playerId]->animation = AnimationID::DAB;
+
+		buildQuadtree();
+
+		// Move flags with player
+		if (flagCatCarrierId != -1)
+		{
+			glm::vec3 offsetVec = players[flagCatCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagCatCarrierId]->front.x, 0, players[flagCatCarrierId]->front.z));
+			flagCat->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
+		}
+		if (flagDogCarrierId != -1)
+		{
+			glm::vec3 offsetVec = players[flagDogCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagDogCarrierId]->front.x, 0, players[flagDogCarrierId]->front.z));
+			flagDog->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
+		}
+
+		// Detect score for Cat team
+		// TODO: helper function
+		if (flagCatCarrierId == playerId && player->team == PlayerTeam::CAT_LOVER)
+		{
+			glm::vec3 plane = player->hitbox->check_collision(catWinArea);
+			if (plane != glm::vec3(0.0f))
+			{
+				player->captures++;
+
+				// Reset cat flag
 				flagCatCarrierId = -1;
 				flagCat->set_center(CAT_FLAG_SPAWN);
 				flagCat->isActive = true;
+				if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
 			}
-			else if (flagDogCarrierId == playerId)
+		}
+		// Detect score for Dog team
+		else if (flagDogCarrierId == playerId && player->team == PlayerTeam::DOG_LOVER)
+		{
+			glm::vec3 plane = player->hitbox->check_collision(dogWinArea);
+			if (plane != glm::vec3(0.0f))
 			{
+				player->captures++;
+
+				// Reset dog flag
 				flagDogCarrierId = -1;
 				flagDog->set_center(DOG_FLAG_SPAWN);
 				flagDog->isActive = true;
+				if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
 			}
-
-			buildQuadtree();
 		}
-	}
 
-	// Not jumping
-	if (!e.jumping)
-	{
-		if (curr_player->vVelocity >= 0.0f)
+		break;
+	case State::GAMEOVER_STATE:
+		// Force winning team to dab
+		forceDab(winningTeam);
+
+		// Let winners enjoy a 10 second dab tick timer
+		if (gameOverCountdown > 0)
 		{
-			curr_player->vVelocity -= 0.1f;
+			gameOverCountdown--;
+			return;
 		}
-		curr_player->update(e.dPos + glm::vec3(0.0f, curr_player->vVelocity, 0.0f), e.dYaw, e.dPitch);
-	}
-	// Jumping 
-	else {
-		// 10 ticks of jumping in total
-		curr_player->jumping = 10;
-	}
 
-	// Parabolic jumping
-	float jumpingSquared = curr_player->jumping * curr_player->jumping;
-	// Handle jumping tick by tick
-	if (curr_player->jumping > 0)
-	{
-		curr_player->update(e.dPos + glm::vec3(0.0f, jumpingSquared/100.0f, 0.0f), e.dYaw, e.dPitch);
-		// 5 ticks of jumping in total
-		curr_player->jumping--;
-	}
-
-	// Rebuild quadtree for collision after player movement is updated
-	buildQuadtree();
-
-	// Update gun ticks
-	for (Gun* g : curr_player->guns)
-	{
-		g->decrement_fire_rate();
-		g->decrement_reload_time();
-	}
-
-	// Handle shooting
-	if (e.shooting)
-	{
-		handleShoot(curr_player);
-	}
-
-	// Movement for colliders 
-	Collider* queryRange = new Collider(curr_player->hitbox->cen, curr_player->hitbox->dim * 10.0f);
-	vector<Collider*> nearbyColliders;
-	nearbyColliders = qt->query(queryRange, nearbyColliders);
-	curr_player->isGrounded = false;
-	for (Collider* otherCollider : nearbyColliders)
-	{
-		// Ignore collisions with yourself
-		if (curr_player->hitbox == otherCollider)
-			continue;
-
-		// Determine which plane collision happened on
-		glm::vec3 plane = curr_player->hitbox->check_collision(otherCollider);
-
-		// For jumping
-		if (plane.y > 0.0f)
+		if (gameOverCountdown == 0)
 		{
-			curr_player->isGrounded = true;
+			gameOverCountdown = GAMEOVER_TIMER;
+			movePlayersToSpawn();
 		}
 
-		curr_player->update(plane, 0.0f, 0.0f);
+		// Once, timer is over, Reset GameCountdown Timer
+		gameCountdown = GAME_COUNTDOWN_TIMER;
 
-		// If it happened on no plane
-		if (plane == glm::vec3(0.0f))
-			continue;
-
-		// Pick up flag
-		if (otherCollider == flagCat && flagCatCarrierId == -1 && playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
-			flagCatCarrierId = playerId;
-			flagCat->isActive = false;
-		}
-		else if (otherCollider == flagDog && flagDogCarrierId == -1 && playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
-			flagDogCarrierId = playerId;
-			flagDog->isActive = false;
-		}
+		// Change state
+		gameStatus = State::LOBBY_STATE;
+		break;
 	}
-
-	// Move cat with player
-	if (flagCatCarrierId != -1)
-	{
-		glm::vec3 offsetVec = players[flagCatCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagCatCarrierId]->front.x, 0, players[flagCatCarrierId]->front.z));
-		flagCat->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
-	}
-
-	// Move dog with player
-	if (flagDogCarrierId != -1)
-	{
-		glm::vec3 offsetVec = players[flagDogCarrierId]->pos - 2.0f * glm::normalize(glm::vec3(players[flagDogCarrierId]->front.x, 0, players[flagDogCarrierId]->front.z));
-		flagDog->set_center(offsetVec - glm::vec3(0, 0.85f, 0));
-	}
-
-	// Detect score for Cat team
-	if (flagCatCarrierId == playerId && curr_player->team == PlayerTeam::CAT_LOVER)
-	{
-		glm::vec3 plane = curr_player->hitbox->check_collision(catWinArea);
-		if (plane != glm::vec3(0.0f))
-		{
-			curr_player->captures++;
-
-			// Reset cat flag
-			flagCatCarrierId = -1;
-			flagCat->set_center(CAT_FLAG_SPAWN);
-			flagCat->isActive = true;
-			checkWinCondition();
-		}
-	}
-	else if(flagDogCarrierId == playerId && curr_player->team == PlayerTeam::DOG_LOVER)
-	{
-		glm::vec3 plane = curr_player->hitbox->check_collision(dogWinArea);
-		if (plane != glm::vec3(0.0f))
-		{
-			curr_player->captures++;
-
-			// Reset dog flag
-			flagDogCarrierId = -1;
-			flagDog->set_center(DOG_FLAG_SPAWN);
-			flagDog->isActive = true;
-			checkWinCondition();
-		}
-	}
-
-	// Dab god damnit sheila 
-	if (e.dab) {
-		players[playerId]->animation = AnimationID::DAB;
-	}
-	buildQuadtree();
 }
 
 void ServerGameManager::buildQuadtree()
@@ -526,7 +527,9 @@ void ServerGameManager::buildQuadtree()
 	}
 }
 
-void ServerGameManager::checkWinCondition() 
+// If there is a tie, the Cat Team wins
+// Will also transition state to winning state
+bool ServerGameManager::checkWinCondition() 
 {
 	int dogTeamPoints = 0;
 	int catTeamPoints = 0;
@@ -535,33 +538,25 @@ void ServerGameManager::checkWinCondition()
 	for (auto player : players) {
 
 		// For cat players 
-		if (player.first % 2 == (int)PlayerTeam::CAT_LOVER) {
+		if (player.second->team == PlayerTeam::CAT_LOVER)
 			catTeamPoints += player.second->captures;
-		}
 		// For dog players 
-		else if (player.first % 2 == (int)PlayerTeam::DOG_LOVER) {
+		else if (player.second->team == PlayerTeam::DOG_LOVER)
 			dogTeamPoints += player.second->captures;
-		}
 	}
 
-	// Check cat team points 
-	if (catTeamPoints == NUM_CAPTURES_TO_WIN) {
-		// end the game
-		catTeamWin = true;
-		gameStatus = State::GAMEOVER_STATE;
-	}
-	if (dogTeamPoints == NUM_CAPTURES_TO_WIN) {
-		// end the game
-		dogTeamWin = true;
-		gameStatus = State::GAMEOVER_STATE;
-	}
+	// Assign winner
+	if (catTeamPoints == NUM_CAPTURES_TO_WIN)
+		winningTeam = PlayerTeam::CAT_LOVER;
+	else if (dogTeamPoints == NUM_CAPTURES_TO_WIN)
+		winningTeam = PlayerTeam::DOG_LOVER;
+
+	return winningTeam != PlayerTeam::NOBODY;
 }
 
 GameState ServerGameManager::getGameState(int playerId)
 {
 	GameState gs;
-
-	//cout << "Printing out Game State:" << endl;
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -583,7 +578,8 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->isLimitFOV,
 						players[i]->isFogged,
 						players[i]->isFrozen,
-						players[i]->playerClass
+						players[i]->playerClass,
+						players[i]->isReady
 		);
 		gs.addState(ps);
 	}
@@ -593,8 +589,7 @@ GameState ServerGameManager::getGameState(int playerId)
 	gs.dogLocation = flagDog->cen;
 
 	// Sends back game-winning variables 
-	gs.catTeamWin = catTeamWin;
-	gs.dogTeamWin = dogTeamWin;
+	gs.winningTeam = winningTeam;
 
 	gs.gameCountdown = gameCountdown;
 
@@ -603,41 +598,42 @@ GameState ServerGameManager::getGameState(int playerId)
 
 void ServerGameManager::createNewPlayer(int playerId)
 {
-	glm::vec3 playerSpawnPos;
+	glm::vec3 spawnPos;
 	float initYaw;
 	if (playerId % 2 == (int)PlayerTeam::CAT_LOVER)
 	{
-		playerSpawnPos = CAT_SPAWN;
-		initYaw = 225;
+		spawnPos = CAT_SPAWN;
+		initYaw = CAT_YAW;
 	}
 	else
 	{
-		playerSpawnPos = DOG_SPAWN;
-		initYaw = 45;
+		spawnPos = DOG_SPAWN;
+		initYaw = DOG_YAW;
 	}
-	players[playerId] = new ServerPlayer(playerSpawnPos, initYaw, 0, playerId);
-
+	players[playerId] = new ServerPlayer(spawnPos, initYaw, 0, playerId);
 
 	// Add player hitboxes to all colliders
 	allColliders.push_back(players[playerId]->hitbox);
 }
 
-void ServerGameManager::startGame()
+void ServerGameManager::movePlayersToSpawn()
 {
+	glm::vec3 spawnPos;
+	float initYaw;
+
 	for (auto p : players)
 	{
-		int playerId = p.first;
-		glm::vec3 playerSpawnPos;
-		float initYaw;
-		if (playerId % 2 == (int)PlayerTeam::CAT_LOVER) {
-			playerSpawnPos = CAT_SPAWN;
-			initYaw = 225;
+		if (p.second->team == PlayerTeam::CAT_LOVER)
+		{
+			spawnPos = CAT_SPAWN;
+			initYaw = CAT_YAW;
 		}
-		else {
-			playerSpawnPos = DOG_SPAWN;
-			initYaw = 45;
+		else
+		{
+			spawnPos = DOG_SPAWN;
+			initYaw = DOG_YAW;
 		}
-		players[p.first]->resetPlayer(playerSpawnPos, initYaw, 0);
+		p.second->resetPlayer(spawnPos, initYaw, 0);
 	}
 }
 

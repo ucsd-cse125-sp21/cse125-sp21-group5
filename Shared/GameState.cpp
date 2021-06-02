@@ -34,10 +34,11 @@ PlayerState::PlayerState(int playerId,
 						int gun_idx,
 						const Gun& curr_gun,
 						bool isShooting,
-						int isLimitFOV,
-						int isFogged,
-						int isFrozen,
-						int playerClass)
+						unsigned int isLimitFOV,
+						unsigned int isFogged,
+						unsigned int isFrozen,
+						unsigned int playerClass,
+						bool isReady)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -59,6 +60,7 @@ PlayerState::PlayerState(int playerId,
 	this->isFrozen = isFrozen;
 	this->playerClass = playerClass;
 	this->isShooting = isShooting;
+	this->isReady = isReady;
 }
 
 // Could be reference? 

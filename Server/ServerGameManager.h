@@ -7,6 +7,7 @@
 #include "../Shared/Event.h"
 #include "../Shared/GameState.h"
 #include "../Shared/MapState.h"
+#include "../Shared/Global_variables.h"
 #include "Quadtree.h"
 
 
@@ -29,12 +30,14 @@ public:
 	// Indicates game status
 	bool gameStarted = false;
 	int gameCountdown = -1;
+	unsigned int gameOverCountdown = GAMEOVER_TIMER;
 
 	State gameStatus;
 
 	// Win condition bools 
 	bool dogTeamWin = false;
 	bool catTeamWin = false;
+	PlayerTeam winningTeam = PlayerTeam::NOBODY;
 
 	// Track all players
 	unordered_map<int, ServerPlayer*> players;
@@ -44,15 +47,17 @@ public:
 	void createNewPlayer(int playerId);
 
 	void handleEvent(Event& e, int playerId);
+	void handleDeath(ServerPlayer* player);
 	void handleShoot(ServerPlayer* player);
+	void handleMovement(ServerPlayer* player, int playerId, Event& e);
 
 	GameState getGameState(int playerId);
 	MapState generateMap();
 	void buildQuadtree();
-	void checkWinCondition();
-	void forceDab(int team);
+	bool checkWinCondition();
+	void forceDab(PlayerTeam team);
 	void switchClass(int playerId, int playerClass);
-	void startGame();
+	void movePlayersToSpawn();
 	void respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch);
 	void gameOver();
 	

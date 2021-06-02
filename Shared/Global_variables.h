@@ -23,16 +23,22 @@
 
 // Server properties
 #define GAME_COUNTDOWN_TIMER 300
+#define GAMEOVER_TIMER 600
+
+#define CAT_YAW 225.0f
+#define DOG_YAW 45.0f
 
 enum class PlayerTeam
 {
 	CAT_LOVER = 0,
 	DOG_LOVER = 1,
+	NOBODY = 2
 };
 
 enum class State
 {
-	LOBBY_STATE = 0,
-	PLAY_STATE = 1,
-	GAMEOVER_STATE = 2,
+	LOBBY_STATE,
+	READY_STATE,
+	PLAY_STATE,
+	GAMEOVER_STATE,
 };

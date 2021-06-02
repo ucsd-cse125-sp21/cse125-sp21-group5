@@ -1,7 +1,5 @@
-#ifndef _GAME_MANAGER_H_
-#define _GAME_MANAGER_H_
+#pragma once
 
-// TODO: organize these
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -12,13 +10,17 @@
 #include <string>
 #include <boost/format.hpp>
 
-#include "Window.h"
-#include "Camera.h"
 #include "../Shared/Event.h"
 #include "../Shared/MapState.h"
+#include "../Shared/Global_variables.h"
+
+#include "Window.h"
+#include "Camera.h"
 #include "Model.h"
 #include "Transform.h"
 #include "Player.h"
+#include "Renderer.h"
+#include "AudioManager.h"
 
 using namespace std;
 
@@ -39,8 +41,7 @@ private:
 	bool showScoreboard;
 
 	// Global bool for win condition
-	bool catTeamWin;
-	bool dogTeamWin;
+	PlayerTeam winningTeam;
 
 	// Game status indicator counter
 	int gameCountdown;
@@ -86,6 +87,3 @@ public:
 
 	void setLocalPlayerID(int playerId);
 };
-
-
-#endif

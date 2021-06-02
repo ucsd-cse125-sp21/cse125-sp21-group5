@@ -8,6 +8,7 @@
 #include <boost/serialization/string.hpp>
 
 #include "../Shared/Gun.h"
+#include "../Shared/Global_variables.h"
 
 enum class AnimationID {
 	IDLE = 0,
@@ -38,8 +39,10 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
-	int isLimitFOV, isFogged, isFrozen;
+	unsigned int isLimitFOV, isFogged, isFrozen;
 	int playerClass;
+
+	bool isReady;
 
 	PlayerState();
 	PlayerState(int playerId, 
@@ -57,10 +60,11 @@ public:
 				int gun_idx,
 				const Gun& curr_gun,
 				bool isShooting,
-				int isLimitFOV,
-				int isFogged,
-				int isFrozen,
-				int playerClass
+				unsigned int isLimitFOV,
+				unsigned int isFogged,
+				unsigned int isFrozen,
+				unsigned int playerClass,
+				bool isReady
 	);
 	
 
@@ -99,8 +103,7 @@ public:
 	glm::vec3 catLocation;
 	glm::vec3 dogLocation;
 
-	bool catTeamWin;
-	bool dogTeamWin;
+	PlayerTeam winningTeam;
 
 	int gameCountdown;
 
@@ -115,8 +118,7 @@ public:
 		ar& dogLocation.x;
 		ar& dogLocation.y;
 		ar& dogLocation.z;
-		ar& catTeamWin;
-		ar& dogTeamWin;
+		ar& winningTeam;
 		ar& gameCountdown;
 	}
 

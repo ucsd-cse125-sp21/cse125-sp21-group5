@@ -4,11 +4,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "../Shared/Global_variables.h"
-
-#include "Renderer.h"
-#include "AudioManager.h"
-
 // TODO: possibly move these as well
 // Track mouse movements
 bool firstMouse = true;
@@ -620,14 +615,14 @@ void GameManager::renderUI()
 	}
 
 	// UI for game end 
-	if (catTeamWin) {
+	if (winningTeam == PlayerTeam::CAT_LOVER) {
 		ImGui::Begin("GAME OVER", &showUI, windowFlags);
 		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
 		ImGui::SetWindowSize(ImVec2(500, 500));
 		ImGui::Text("Cat Team Won");
 		ImGui::End();
 	}
-	else if (dogTeamWin) {
+	else if (winningTeam == PlayerTeam::DOG_LOVER) {
 		ImGui::Begin("GAME OVER", &showUI, windowFlags);
 		ImGui::SetWindowPos(ImVec2(Window::width / 2, Window::height / 2 - 250));
 		ImGui::SetWindowSize(ImVec2(500, 500));
@@ -670,7 +665,6 @@ void GameManager::updateMap(MapState& ms)
 
 				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 			}
-
 			if (i == NUM_MAP_TILES - 1)
 			{
 				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
@@ -683,7 +677,6 @@ void GameManager::updateMap(MapState& ms)
 				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
-
 			if (j == 0)
 			{
 				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
@@ -696,7 +689,6 @@ void GameManager::updateMap(MapState& ms)
 				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
-
 			if (j == NUM_MAP_TILES - 1)
 			{
 				Transform* wallT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
@@ -709,9 +701,6 @@ void GameManager::updateMap(MapState& ms)
 				//cout << "Creating wall [" << i << "][" << j << "] at \t" << glm::to_string(wallT->translation) << endl;
 
 			}
-
-			PointLight p = PointLight(tileCenter + glm::vec3(0, 1, 0),glm::vec3(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX));
-			Renderer::get().addPointLight(p);
 
 
 			// Cat flag
@@ -749,6 +738,17 @@ void GameManager::updateMap(MapState& ms)
 			}
 		}
 	}
+	for (int i = 0; i < NUM_MAP_TILES; i++)
+	{
+		for (int j = 0; j < NUM_MAP_TILES; j++)
+		{
+			// Define center of tile
+			glm::vec3 tileCenter = glm::vec3(TILE_SIZE * (i - NUM_MAP_TILES / 2), 0, TILE_SIZE * (j - NUM_MAP_TILES / 2));
+
+			PointLight p = PointLight(tileCenter + glm::vec3(0, 1, 0), glm::vec3(rand() / (float)RAND_MAX, rand() / (float)RAND_MAX, rand() / (float)RAND_MAX));
+			Renderer::get().addPointLight(p);
+		}
+	}
 }
 
 void GameManager::updateGameState(GameState& gs)
@@ -768,8 +768,7 @@ void GameManager::updateGameState(GameState& gs)
 			AudioManager::get().playSound(SOUND_SHOOT);
 
 	}
-	catTeamWin = gs.catTeamWin;
-	dogTeamWin = gs.dogTeamWin;
+	winningTeam = gs.winningTeam;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);
 

@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClCompile Include="..\Shared\Event.cpp" />
     <ClCompile Include="..\Shared\GameState.cpp" />
-    <ClCompile Include="..\Shared\Global_variables.cpp" />
     <ClCompile Include="..\Shared\MapState.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationPlayer.cpp" />

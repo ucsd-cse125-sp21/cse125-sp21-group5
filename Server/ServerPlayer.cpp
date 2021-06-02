@@ -3,71 +3,10 @@
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 
-ServerPlayer::ServerPlayer() {
-	pos = glm::vec3(0.0f);
-	front = glm::vec3(0.0f, 0.0f, 1.0f);
-	yaw = 0.0f;
-	pitch = 0.0f;
-	vVelocity = -0.1f;
-	hitbox = new Collider(ObjectType::PLAYER, pos, glm::vec3(1.0f));
-	hitbox->setParentPlayer(this);
-	animation = AnimationID::IDLE;
-	isGrounded = false;
-	jumping = 0;
-	health = 100.0f;
-	isDead = 0;
-	kills = 0;
-	deaths = 0;
-	captures = 0;
-
-	isShooting = false;
-	isLimitFOV = 0;
-	isFogged = 0;
-	isFrozen = 0;
-	playerClass = 0;
-	hasFiredGun = false;
-}
-
-ServerPlayer::ServerPlayer(const glm::vec3& initPos, int playerId)
-{
-	pos = initPos;
-	front = glm::vec3(0.0f, 0.0f, 1.0f);
-	yaw = 0.0f;
-	pitch = 0.0f;
-	hitbox = new Collider(ObjectType::PLAYER, pos + PLAYER_COLLIDER_OFFSET, glm::vec3(1, 2.2f, 1));
-	hitbox->setParentPlayer(this);
-	vVelocity = -0.1f;
-	animation = AnimationID::IDLE;
-	jumping = 0;
-	isGrounded = false;
-	health = 100.0f;
-	isDead = 0;
-	kills = 0;
-	deaths = 0;
-	captures = 0;
-
-	gun_idx = 0;
-	guns.push_back(new Pistol());
-	guns.push_back(new FOV());
-
-	isShooting = false;
-	isLimitFOV = 0;
-	isFogged = 0;
-	isFrozen = 0;
-	playerClass = 0;
-
-	hasFiredGun = false;
-
-	this->team =
-		(playerId % 2 == (int) PlayerTeam::CAT_LOVER)
-			? PlayerTeam::CAT_LOVER
-			: PlayerTeam::DOG_LOVER;
-}
-
 ServerPlayer::ServerPlayer(const glm::vec3& initPos,
-				float initYaw,
-				float initPitch,
-				int playerId)
+						   float initYaw,
+						   float initPitch,
+						   int playerId)
 {
 	pos = glm::vec3(0, 0, 0);
 	yaw = 0;
@@ -88,6 +27,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	deaths = 0;
 	captures = 0;
 
+	// TODO: why do we need to push guns?
 	gun_idx = 0;
 	guns.push_back(new Pistol());
 	guns.push_back(new FOV());
@@ -97,8 +37,6 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	isFogged = 0;
 	isFrozen = 0;
 	playerClass = 0;
-
-	hasFiredGun = false;
 
 	this->team =
 		(playerId % 2 == (int)PlayerTeam::CAT_LOVER)
@@ -184,6 +122,9 @@ void ServerPlayer::respawn(glm::vec3 pos, float yaw, float pitch)
 	isGrounded = false;
 	health = 100.0f;
 	isDead = 0;
+	hitbox->isActive = true;
+
+	// TODO: reset gun variables
 
 	// Move camera
 	update(pos, yaw, pitch);

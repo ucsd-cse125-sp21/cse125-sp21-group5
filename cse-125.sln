@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Shared\Event.h = Shared\Event.h
 		Shared\GameState.cpp = Shared\GameState.cpp
 		Shared\GameState.h = Shared\GameState.h
-		Shared\Global_variables.cpp = Shared\Global_variables.cpp
 		Shared\Global_variables.h = Shared\Global_variables.h
 		Shared\Gun.cpp = Shared\Gun.cpp
 		Shared\Gun.h = Shared\Gun.h

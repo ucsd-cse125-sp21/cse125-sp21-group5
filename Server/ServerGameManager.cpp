@@ -139,7 +139,7 @@ void ServerGameManager::handleShoot(ServerPlayer* player)
 			// TODO: maybe find constant time way to do this
 			for (auto p : players)
 			{
-				if (p.second->hitbox == closestCollider)
+				if (p.second->hitbox == closestCollider && p.second->team != player->team)
 				{
 					//Set their fov and stuff man
 					if (player->gun_idx == 1) {
@@ -338,12 +338,17 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (e.shooting) handleShoot(player);
 		handleMovement(player, playerId, e);
 
+		if (e.isReady) {
+			player->isReady = true;
+		}
+
 		// Do nothing if any one player is not ready
-		/*
+		if (players.size() != NUM_PLAYERS)
+			return;
 		for (auto p : players)
 			if (!p.second->isReady)
 				return;
-		*/
+		
 		
 		// All players must be ready, start countdown
 		gameStatus = State::READY_STATE;

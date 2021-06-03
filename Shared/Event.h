@@ -17,7 +17,9 @@ public:
 
 	int playerClass;
 
-	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab);
+	bool isReady;
+
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab, bool isReady);
 	Event();
 
 	template <typename Archive>
@@ -32,5 +34,6 @@ public:
 		ar& playerClass;
 		ar& gun_idx;
 		ar& dab;
+		ar& isReady;
 	}
 };

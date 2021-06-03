@@ -130,10 +130,10 @@ public:
 		reload_time = 0;
 		reload_time_reset = 120;
 		bullets_per_shot = 5;
-		damage_per_bullet = 5.0f;
+		damage_per_bullet = 7.5f;
 		x_spread = 0.5f;
 		y_spread = 0.5f;
-		recoil = 1.0f;
+		recoil = 3.0f;
 	}
 };
 
@@ -145,13 +145,13 @@ public:
 		fire_rate_reset = 10;
 		clip_size = 36;
 		clip_size_reset = 36;
-		reload_time = 90;
+		reload_time = 0;
 		reload_time_reset = 90;
 		bullets_per_shot = 1;
-		damage_per_bullet = 2.0f;
+		damage_per_bullet = 4.0f;
 		x_spread = 0.01f;
 		y_spread = 0.01f;
-		recoil = 2.0f;
+		recoil = 0.5f;
 	}
 };
 

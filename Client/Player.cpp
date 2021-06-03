@@ -61,7 +61,6 @@ void Player::update(float deltaTime)
 
 void Player::updatePlayer(PlayerState ps)
 {
-	// TODO: players should be able to pick their own name
 	// Update Rendering information
 	cam->update(ps.pos + glm::vec3(0.0f, 0.25f, 0.0f), ps.front);
 	transform->setTranslate(ps.pos);

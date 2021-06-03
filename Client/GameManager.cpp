@@ -169,6 +169,9 @@ Event GameManager::handleInput()
 
 	// Jumping control
 	bool jumping = false;
+	
+	//Ready up
+	bool isReady = false;
 
 	// Player Controls
 	glm::vec3 dPos = glm::vec3(0.0f);
@@ -200,6 +203,12 @@ Event GameManager::handleInput()
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
 	{
 		dPos -= camera->up;
+	}
+	
+	//Code for readying
+	if(glfwGetKey(window, GLFW_KEY_ENTER))
+	{
+		isReady = true;
 	}
 
 	// Class / Weapon 1
@@ -264,7 +273,7 @@ Event GameManager::handleInput()
 		AudioManager::get().playSound(SOUND_DEATH);
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab);
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady);
 }
 
 // Use for one-time key presses
@@ -301,8 +310,6 @@ void GameManager::scrollCallback(GLFWwindow* window, double xoffset, double yoff
 	//cerr << "Fov: " << fov << endl;
 	//fov -= yoffset;
 	//fov = glm::clamp(fov, 1.0f, 270.0f);
-	//Window::projection =
-	//	glm::perspective(glm::radians(fov), (float) Window::width / (float) Window::height, 0.1f, 1000.0f);
 }
 
 // Draw objects to screen
@@ -761,6 +768,34 @@ void GameManager::updateGameState(GameState& gs)
 			continue;
 
 		players[ps.playerId]->updatePlayer(ps);
+
+		//Special gun camera behaviors
+		if (ps.playerId == localPlayerId) {
+			if (ps.isLimitFOV) {
+				Window::projection = glm::perspective(
+										glm::radians(BIG_FOV),
+										(float) Window::width / (float) Window::height,
+										0.1f,
+										1000.0f
+									);
+			}
+			else {
+				Window::projection = glm::perspective(
+										glm::radians(DEFAULT_FOV),
+										(float)Window::width / (float)Window::height,
+										0.1f,
+										1000.0f
+									);
+
+			}
+
+			if (ps.isFogged) {
+				Renderer::get().fogDensity = BIG_FOG_DENSITY;
+			}
+			else {
+				Renderer::get().fogDensity = DEFAULT_FOG_DENSITY;
+			}
+		}
 		
 		// Play shooting for player
 		// TODO: change it so that it's at the 3d location

@@ -1,5 +1,4 @@
 #include "ServerPlayer.h"
-#include <glm/gtx/string_cast.hpp>
 
 const glm::vec3 PLAYER_COLLIDER_OFFSET = glm::vec3(0, -0.38, 0);
 
@@ -66,12 +65,12 @@ void ServerPlayer::update(const glm::vec3& dPos, const float dYaw, const float d
 
 void ServerPlayer::updateAnimations(const Event& e) {
 	// choose the animation to play on the client
-	if (e.shooting)
+	if (guns[gun_idx]->reload_time > 0) {
+		animation = AnimationID::RELOAD;
+	}
+	else if (e.shooting)
 	{
 		animation = AnimationID::SHOOT;
-	}
-	else if (guns[gun_idx]->reload_time > 0) {
-		animation = AnimationID::RELOAD;
 	}
 	else if (glm::length(e.dPos) > 0) {
 		// the player is moving, play the run animation
@@ -100,6 +99,7 @@ void ServerPlayer::resetPlayer(glm::vec3 pos, float yaw, float pitch)
 	captures = 0;
 	deaths = 0;
 	playerClass = 0;
+	isReady = false;
 }
 
 void ServerPlayer::respawn(glm::vec3 pos, float yaw, float pitch)

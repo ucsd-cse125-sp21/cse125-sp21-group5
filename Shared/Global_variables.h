@@ -1,3 +1,5 @@
+#pragma once
+
 // Control Networking Packet size
 #define PACKET_SIZE 2048
 
@@ -20,6 +22,11 @@
 #define NUM_CAPTURES_TO_WIN 1
 #define VISION_IMPAIRMENT_TIME 300
 #define FREEZE_TIME 180
+#define DEFAULT_FOV 90.0f
+#define BIG_FOV -90.0f
+#define DEFAULT_FOG_DENSITY 0.005
+#define BIG_FOG_DENSITY 0.02
+
 
 // Server properties
 #define GAME_COUNTDOWN_TIMER 300

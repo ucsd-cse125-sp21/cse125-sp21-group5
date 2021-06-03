@@ -332,6 +332,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// This is where players wait for all other players to join
 	// This is also where players can test out the different classes and roam the map
 	case State::LOBBY_STATE:
+		gameCountdown = -1;
+		winningTeam = PlayerTeam::NOBODY;
 		switchClass(playerId, e.playerClass);
 
 		player->isShooting = false;
@@ -352,6 +354,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		
 		// All players must be ready, start countdown
 		gameStatus = State::READY_STATE;
+		gameCountdown = GAME_COUNTDOWN_TIMER;
+
+		// Respawn players 
+		resetPlayersToSpawn();
+
 		break;
 	case State::READY_STATE:
 		// Tick game countdown
@@ -509,7 +516,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (gameOverCountdown == 0)
 		{
 			gameOverCountdown = GAMEOVER_TIMER;
-			movePlayersToSpawn();
+			resetPlayersToSpawn();
 		}
 
 		// Once, timer is over, Reset GameCountdown Timer
@@ -621,7 +628,7 @@ void ServerGameManager::createNewPlayer(int playerId)
 	allColliders.push_back(players[playerId]->hitbox);
 }
 
-void ServerGameManager::movePlayersToSpawn()
+void ServerGameManager::resetPlayersToSpawn()
 {
 	glm::vec3 spawnPos;
 	float initYaw;

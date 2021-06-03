@@ -239,10 +239,6 @@ Event GameManager::handleInput()
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 2;
 		}
-		else {
-			players[localPlayerId]->gun_idx = 2;
-
-		}
 	}
 
 	bool dab = false;
@@ -354,22 +350,22 @@ void GameManager::renderUI()
 	if (gameCountdown < 0) {
 		float yOffset = 200;
 		ImGui::Begin("WaitingForPlayers", &showUI, windowFlags);
-		ImVec2 texSize = ImGui::CalcTextSize("Waiting for additional players...");
+		ImVec2 texSize = ImGui::CalcTextSize("Press Enter to Ready Up");
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
 		//ImGui::SetWindowFontScale(2);
-		ImGui::Text("Waiting for additional players...");
+		ImGui::Text("Press Enter to Ready Up");
 		//ImGui::SetWindowFontScale(1);
 		ImGui::End();
 
 		yOffset += texSize.y + 20;
 
 		ImGui::Begin("PlayerSelectPrompt", &showUI, windowFlags);
-		texSize = ImGui::CalcTextSize("Switch between player classes using number keys 1 and 2.");
+		texSize = ImGui::CalcTextSize("Switch between player classes using number keys 1, 2 and 3.");
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
 		//ImGui::SetWindowFontScale(2);
-		ImGui::Text("Switch between player classes using number keys 1 and 2.");
+		ImGui::Text("Switch between player classes using number keys 1, 2 and 3.");
 		//ImGui::SetWindowFontScale(1);
 		ImGui::End();
 
@@ -807,7 +803,7 @@ void GameManager::updateGameState(GameState& gs)
 
 			}
 			else 
-				AudioManager::get().playSound(SOUND_SHOOT);
+				AudioManager::get().playSound(SOUND_PEW);
 		}
 
 	}

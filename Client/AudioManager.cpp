@@ -22,7 +22,7 @@ void AudioManager::init() {
 	loadSound(SOUND_MEOW);
 	loadSound(SOUND_WOOF);
 	loadSound(SOUND_STEP);
-	loadSound(SOUND_SHOOT);
+	loadSound(SOUND_PEW);
 	loadSound(SOUND_DEATH);
 	loadSound(SOUND_DUB);
 	loadSound(SOUND_RIFLE);

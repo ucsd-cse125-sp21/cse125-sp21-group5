@@ -24,8 +24,8 @@
 #define FREEZE_TIME 180
 #define DEFAULT_FOV 90.0f
 #define BIG_FOV -90.0f
-#define DEFAULT_FOG_DENSITY 0.005
-#define BIG_FOG_DENSITY 0.02
+#define DEFAULT_FOG_DENSITY 0.05
+#define BIG_FOG_DENSITY 0.35
 
 
 // Server properties

@@ -57,7 +57,7 @@ public:
 	bool checkWinCondition();
 	void forceDab(PlayerTeam team);
 	void switchClass(int playerId, int playerClass);
-	void movePlayersToSpawn();
+	void resetPlayersToSpawn();
 	void respawnPlayerWithID(int playerId, glm::vec3 pos, float yaw, float pitch);
 	void gameOver();
 	

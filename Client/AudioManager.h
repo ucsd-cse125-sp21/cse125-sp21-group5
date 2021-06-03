@@ -6,7 +6,7 @@
 #define SOUND_WOOF "./res/sounds/woof.ogg"
 #define SOUND_MEOW "./res/sounds/meow.ogg"
 #define SOUND_STEP "./res/sounds/step.ogg"
-#define SOUND_SHOOT "./res/sounds/shoot.ogg"
+#define SOUND_PEW "./res/sounds/pew.ogg"
 #define SOUND_DEATH "./res/sounds/death.ogg"
 #define SOUND_DUB "./res/sounds/dub.ogg"
 #define SOUND_RIFLE "./res/sounds/rifle.ogg"

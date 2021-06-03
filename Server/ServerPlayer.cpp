@@ -124,8 +124,6 @@ void ServerPlayer::respawn(glm::vec3 pos, float yaw, float pitch)
 	isDead = 0;
 	hitbox->isActive = true;
 
-	// TODO: reset gun variables
-
 	// Move camera
 	update(pos, yaw, pitch);
 }

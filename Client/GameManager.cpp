@@ -73,8 +73,6 @@ GameManager::GameManager(GLFWwindow* window)
 
 	//Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
-	Renderer::get().fogDensity = 0.0001;
-
 	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
 
 	AudioManager::get().init();
@@ -240,6 +238,10 @@ Event GameManager::handleInput()
 		if (gameCountdown != 0) {
 			// Players can choose class only as they wait for other players to join.
 			players[localPlayerId]->playerClass = 2;
+		}
+		else {
+			players[localPlayerId]->gun_idx = 2;
+
 		}
 	}
 
@@ -799,8 +801,14 @@ void GameManager::updateGameState(GameState& gs)
 		
 		// Play shooting for player
 		// TODO: change it so that it's at the 3d location
-		if (players[ps.playerId]->isShooting)
-			AudioManager::get().playSound(SOUND_SHOOT);
+		if (players[ps.playerId]->isShooting) {
+			if (players[ps.playerId]->gun_idx == 2) {
+				AudioManager::get().playSound(SOUND_RIFLE);
+
+			}
+			else 
+				AudioManager::get().playSound(SOUND_SHOOT);
+		}
 
 	}
 	winningTeam = gs.winningTeam;

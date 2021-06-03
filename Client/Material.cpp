@@ -17,6 +17,8 @@ void Material::loadShaderLocations() {
 	sunLightColor = glGetUniformLocation(shader, "sunLight.color");
 
 	fogColorLoc = glGetUniformLocation(shader, "aFogColor");
+	fogDensityLoc = glGetUniformLocation(shader, "aFogDensity");
+	fogGradientLoc = glGetUniformLocation(shader, "aFogGradient");
 
 	char buff[256];
 	for (int i = 0; i < NUM_POINT_LIGHTS; i++) {

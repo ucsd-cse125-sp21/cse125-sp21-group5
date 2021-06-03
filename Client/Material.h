@@ -22,6 +22,8 @@ public:
 	GLuint modelLoc;
 
 	GLuint fogColorLoc;
+	GLuint fogDensityLoc;
+	GLuint fogGradientLoc;
 
 	GLuint sunLightDir;
 	GLuint sunLightColor;

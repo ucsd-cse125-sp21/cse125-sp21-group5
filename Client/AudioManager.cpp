@@ -25,6 +25,7 @@ void AudioManager::init() {
 	loadSound(SOUND_SHOOT);
 	loadSound(SOUND_DEATH);
 	loadSound(SOUND_DUB);
+	loadSound(SOUND_RIFLE);
 }
 
 

@@ -602,7 +602,7 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->isDisrespecting
 		);
 
-		cout << players[i]->isDisrespecting << endl;
+		//cout << players[i]->isDisrespecting << endl;
 		gs.addState(ps);
 	}
 

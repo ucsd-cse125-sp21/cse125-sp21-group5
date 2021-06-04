@@ -99,6 +99,7 @@ void ServerPlayer::resetPlayer(glm::vec3 pos, float yaw, float pitch)
 	captures = 0;
 	deaths = 0;
 	playerClass = 0;
+	gun_idx = 0;
 	isReady = false;
 }
 

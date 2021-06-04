@@ -628,10 +628,20 @@ void ServerGameManager::createNewPlayer(int playerId)
 	allColliders.push_back(players[playerId]->hitbox);
 }
 
+void ServerGameManager::resetFlags() {
+	flagCatCarrierId = -1;
+	flagDogCarrierId = -1;
+
+	flagCat->set_center(CAT_FLAG_SPAWN);
+	flagDog->set_center(DOG_FLAG_SPAWN);
+}
+
 void ServerGameManager::resetPlayersToSpawn()
 {
 	glm::vec3 spawnPos;
 	float initYaw;
+
+	resetFlags();
 
 	for (auto p : players)
 	{

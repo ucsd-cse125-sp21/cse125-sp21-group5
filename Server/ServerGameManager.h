@@ -50,7 +50,7 @@ public:
 	void handleDeath(ServerPlayer* player);
 	void handleShoot(ServerPlayer* player);
 	void handleMovement(ServerPlayer* player, int playerId, Event& e);
-
+	void resetFlags();
 	GameState getGameState(int playerId);
 	MapState generateMap();
 	void buildQuadtree();

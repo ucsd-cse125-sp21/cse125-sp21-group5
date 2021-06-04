@@ -719,8 +719,8 @@ void GameManager::updateMap(MapState& ms)
 			// Cat flag
 			if (i == 0 && j == 0)
 			{
-				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
-				catSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.25f, 0.0f));
+				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.5f, 0.0f));
+				catSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, -0.9f, 0.0f));
 				
 				catT->setName("catT");
 				catSpawnPlatform->setName("catSpawn");
@@ -736,8 +736,8 @@ void GameManager::updateMap(MapState& ms)
 			// Dog flag
 			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
 			{
-				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
-				dogSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.25f, 0.0f));
+				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.5f, 0.0f));
+				dogSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, -0.9f, 0.0f));
 				
 				dogT->setName("dogT");
 				dogSpawnPlatform->setName("dogSpawn");

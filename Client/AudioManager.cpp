@@ -33,6 +33,7 @@ void AudioManager::init() {
 	loadSound(SOUND_EASY_GAME);
 	loadSound(SOUND_DAB);
 	loadSound(SOUND_FOG);
+	loadSound(SOUND_FLAG_CAPTURE);
 
 	playBackgroundMusic();
 }

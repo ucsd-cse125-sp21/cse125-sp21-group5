@@ -21,6 +21,7 @@
 #define SOUND_DUB "./res/sounds/miscSounds/dub.ogg"
 #define SOUND_EASY_GAME "./res/sounds/miscSounds/easyGame.ogg"
 #define SOUND_DAB "./res/sounds/miscSounds/dab.ogg"
+#define SOUND_FLAG_CAPTURE "./res/sounds/miscSounds/capture.ogg"
 
 
 class AudioManager

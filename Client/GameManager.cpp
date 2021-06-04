@@ -25,7 +25,7 @@ GameManager::GameManager(GLFWwindow* window)
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
 	tileModel = new Model("res/models/tile.dae");
-	treeModels.push_back(new Model("res/models/willowTrunk_old.dae"));
+	treeModels.push_back(new Model("res/models/willowTrunk.dae"));
 	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
 	treeModels.push_back(new Model("res/models/basicTree.dae"));
 	treeModels.push_back(new Model("res/models/fiboTree.dae"));
@@ -268,7 +268,7 @@ Event GameManager::handleInput()
 	// If the player is dead, yeet
 	if (players[localPlayerId]->isDead == DEATH_TICK_TIMER) {
 		dPos = glm::vec3(0.0f, 15.0f, 0.0f);
-		AudioManager::get().playSound(SOUND_DEATH);
+		AudioManager::get().playSound(SOUND_DEATH, players[localPlayerId]->transform->translation);
 	}
 
 	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady);
@@ -284,11 +284,11 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 
 	if (key == GLFW_KEY_UP && action != GLFW_RELEASE)
 	{
-		AudioManager::get().adjustVolume(0.001f);
+		AudioManager::get().adjustVolume(0.01f);
 	}
 	else if (key == GLFW_KEY_DOWN && action != GLFW_PRESS)
 	{
-		AudioManager::get().adjustVolume(-0.001f);
+		AudioManager::get().adjustVolume(-0.01f);
 	}
 }
 
@@ -318,6 +318,13 @@ void GameManager::render()
 
 	// Render the models
 	Renderer::get().setCamera(players[localPlayerId]->cam);
+
+	AudioManager::get().setListenerPosition(
+		Renderer::get().mCamera->pos,
+		Renderer::get().mCamera->front,
+		Renderer::get().mCamera->up
+	);
+
 	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 
 	renderUI();
@@ -798,12 +805,14 @@ void GameManager::updateGameState(GameState& gs)
 		// Play shooting for player
 		// TODO: change it so that it's at the 3d location
 		if (players[ps.playerId]->isShooting) {
-			if (players[ps.playerId]->gun_idx == 2) {
-				AudioManager::get().playSound(SOUND_RIFLE);
+			AudioManager::get().playSound(SOUND_RIFLE, players[ps.playerId]->transform->translation);
+			/*if (players[ps.playerId]->gun_idx == 2) {
+				
 
 			}
-			else 
-				AudioManager::get().playSound(SOUND_PEW);
+			else {
+				//AudioManager::get().playSound(SOUND_PEW, players[ps.playerId]->transform->translation);
+			}*/
 		}
 
 	}

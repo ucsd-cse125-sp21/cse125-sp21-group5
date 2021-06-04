@@ -3,6 +3,8 @@
 #include <fmod.hpp>
 #include <unordered_map>
 
+#include <glm/glm.hpp>
+
 #define SOUND_WOOF "./res/sounds/woof.ogg"
 #define SOUND_MEOW "./res/sounds/meow.ogg"
 #define SOUND_STEP "./res/sounds/step.ogg"
@@ -28,7 +30,10 @@ public:
 	
 	void init();
 	void playSound(std::string soundName);
+	void playSound(std::string soundName, glm::vec3 position);
 	void adjustVolume(float dVolume);
+
+	void setListenerPosition(glm::vec3 position, glm::vec3 forward, glm::vec3 up);
 
 	FMOD::System* system;
 

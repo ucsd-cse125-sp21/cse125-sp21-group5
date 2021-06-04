@@ -341,10 +341,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		handleMovement(player, playerId, e);
 
 		//Set the flag to be not picked up
-		flagCatCarrierId = -1;
-		flagDogCarrierId = -1;
-		flagCat->isActive = true;
-		flagDog->isActive = true;
+		resetFlags();
 
 		if (e.isReady) {
 			player->isReady = true;
@@ -640,6 +637,9 @@ void ServerGameManager::resetFlags() {
 
 	flagCat->set_center(CAT_FLAG_SPAWN);
 	flagDog->set_center(DOG_FLAG_SPAWN);
+
+	flagCat->isActive = true;
+	flagDog->isActive = true;
 }
 
 void ServerGameManager::resetPlayersToSpawn()

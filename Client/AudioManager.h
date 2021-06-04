@@ -37,6 +37,9 @@ public:
 	// END SINGLETON STUFF
 	
 	void init();
+	void playBackgroundMusic();
+	void adjustBackgroundChannelVolume();
+	void loadBackgroundSound(std::string filePath);
 	void playSound(std::string soundName);
 	void playSound(std::string soundName, glm::vec3 position);
 	void adjustVolume(float dVolume);
@@ -52,6 +55,8 @@ private:
 	AudioManager() {}
 
 	std::unordered_map<std::string, FMOD::Sound*> mSounds;
+
+	FMOD::Channel* backgroundChannel;
 
 	void loadSound(std::string filePath);
 };

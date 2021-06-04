@@ -18,20 +18,55 @@ void AudioManager::init() {
 	}
 
 	this->volume = 0.5f;
+	
+	loadBackgroundSound(SOUND_DUB);
 
 	loadSound(SOUND_MEOW);
 	loadSound(SOUND_WOOF);
 	loadSound(SOUND_STEP);
 	loadSound(SOUND_PEW);
 	loadSound(SOUND_DEATH);
-	loadSound(SOUND_DUB);
 	loadSound(SOUND_RIFLE);
 	loadSound(SOUND_SHOTGUN);
 	loadSound(SOUND_FLASHBANG);
 	loadSound(SOUND_FREEZE);
 	loadSound(SOUND_EASY_GAME);
+
+	playBackgroundMusic();
 }
 
+
+void AudioManager::playBackgroundMusic()
+{
+	FMOD::Sound* sound = mSounds[SOUND_DUB];
+
+	// 3rd parameter is true to pause sound on load.
+	FMOD_RESULT result = system->playSound(sound, nullptr, true, &backgroundChannel);
+	result = backgroundChannel->setVolume(this->volume);
+	result = backgroundChannel->setPaused(false);
+}
+
+void AudioManager::adjustBackgroundChannelVolume()
+{
+	backgroundChannel->setPaused(true);
+	backgroundChannel->setVolume(this->volume);
+	backgroundChannel->setPaused(false);
+}
+
+void AudioManager::loadBackgroundSound(std::string filePath)
+{
+	FMOD::Sound* sound;
+	FMOD_RESULT result = system->createSound(filePath.c_str(), FMOD_2D | FMOD_LOOP_NORMAL, nullptr, &sound);
+
+	if (result != FMOD_OK) {
+		std::cerr << "Failed to load sound file " << filePath << std::endl;
+		std::cerr << FMOD_ErrorString(result) << std::endl;
+		return;
+	}
+
+	// save sound pointer to map
+	mSounds[filePath] = sound;
+}
 
 void AudioManager::loadSound(std::string filePath) {
 	FMOD::Sound* sound;
@@ -94,6 +129,8 @@ void AudioManager::adjustVolume(float dVolume) {
 		this->volume = 1.0f;
 	else if (this->volume < 0.0f)
 		this->volume = 0.0f;
+
+	adjustBackgroundChannelVolume();
 }
 
 void AudioManager::setListenerPosition(glm::vec3 position, glm::vec3 forward, glm::vec3 up)

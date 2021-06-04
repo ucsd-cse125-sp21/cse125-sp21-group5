@@ -91,6 +91,9 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// GamecountDown
 	gameCountdown = -1;	
+
+	// Ready state
+	isReady = false;
 } 
 
 GameManager::~GameManager()
@@ -168,9 +171,6 @@ Event GameManager::handleInput()
 
 	// Jumping control
 	bool jumping = false;
-	
-	//Ready up
-	bool isReady = false;
 
 	// Player Controls
 	glm::vec3 dPos = glm::vec3(0.0f);
@@ -358,11 +358,22 @@ void GameManager::renderUI()
 	if (gameCountdown < 0) {
 		float yOffset = 200;
 		ImGui::Begin("WaitingForPlayers", &showUI, windowFlags);
-		ImVec2 texSize = ImGui::CalcTextSize("Press Enter to Ready Up");
+		std::string text = "";
+
+		if (isReady)
+		{
+			text.append("Waiting for other players to ready up...");
+		}
+		else
+		{
+			text.append("Press Enter to Ready Up!");
+		}
+
+		ImVec2 texSize = ImGui::CalcTextSize(text.c_str());
 		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x / 2, yOffset));
 		ImGui::SetWindowSize(ImVec2(texSize.x + 20, texSize.y + 20));
 		//ImGui::SetWindowFontScale(2);
-		ImGui::Text("Press Enter to Ready Up");
+		ImGui::Text(text.c_str());
 		//ImGui::SetWindowFontScale(1);
 		ImGui::End();
 
@@ -392,7 +403,7 @@ void GameManager::renderUI()
 		ImGui::Text("Secondary Weapon:");
 
 		ImGui::NextColumn();
-		switch(players[localPlayerId]->playerClass) {
+		switch (players[localPlayerId]->playerClass) {
 		case 0:
 			ImGui::Text("Player Class 1");
 			ImGui::Text("Pistol");
@@ -468,13 +479,15 @@ void GameManager::renderUI()
 
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
-	ImGui::SetWindowPos(ImVec2(50, Window::height - 150));
-	ImGui::SetWindowSize(ImVec2(300, 100));
+	ImGui::SetWindowPos(ImVec2(100, Window::height - 250));
+	ImGui::SetWindowSize(ImVec2(500, 200));
+	ImGui::SetWindowFontScale(2);
 	ImGui::Text("Super basic health bar");
 	// Change Health Bar color.
 	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::PopStyleColor();
+	ImGui::SetWindowFontScale(1);
 	ImGui::End();
 
 	// super basic crosshair, maybe move this somewhere else
@@ -491,13 +504,18 @@ void GameManager::renderUI()
 	// Gun info
 	ImGui::Begin("Gun Info", &showUI, windowFlags);
 	string str = players[localPlayerId]->curr_gun.name;
-	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
+	//if (players[localPlayerId]->curr_gun.reload_time > 0) {
+	//	//ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
+	//	str.append(boost::format("\nReloading...").str());
+	//}
+	//else {
+	//	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
+	//}
 	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
-	ImGui::SetWindowPos(ImVec2(Window::width - 400, Window::height - 200));
-	ImGui::SetWindowSize(ImVec2(400, 300));
-	//ImGui::SetWindowFontScale(2);
+	ImGui::SetWindowPos(ImVec2(Window::width - 700, Window::height - 250));
+	ImGui::SetWindowSize(ImVec2(600, 200));
+	ImGui::SetWindowFontScale(2);
 	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
-	//ImGui::SetWindowFontScale(1);
 	if (players[localPlayerId]->curr_gun.reload_time > 0) {
 		//ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
 		ImGui::TextDisabled("Reloading...");
@@ -505,7 +523,32 @@ void GameManager::renderUI()
 	else {
 		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);
 	}
+	ImGui::SetWindowFontScale(1);
 	ImGui::End();
+
+	if (players[localPlayerId]->isCarryingCatFlag)
+	{
+		ImGui::Begin("CarryingCatFlag", &showUI, windowFlags);
+		std::string flagText = "You are rescuing a cat!";
+		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
+		ImGui::SetWindowFontScale(2);
+		ImGui::Text(flagText.c_str());
+		ImGui::End();
+	}
+
+	if (players[localPlayerId]->isCarryingDogFlag)
+	{
+		ImGui::Begin("CarryingDogFlag", &showUI, windowFlags);
+		std::string flagText = "You are rescuing a dog!";
+		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
+		ImGui::SetWindowFontScale(2);
+		ImGui::Text(flagText.c_str());
+		ImGui::End();
+	}
 
 	// Debug UI Information
 	if (Renderer::get().debug)
@@ -517,7 +560,7 @@ void GameManager::renderUI()
 		ImGui::Text("Number of Players: %d", players.size());
 		ImGui::Text("Player ID: %d", localPlayerId);
 		ImGui::Text("Player center position: (%.2f, %.2f, %.2f)", p->cam->pos.x, p->cam->pos.y, p->cam->pos.z);
-		ImGui::Text("Player gun name: %s", p->curr_gun.name);
+		ImGui::Text("Player gun name: %s", p->curr_gun.name.c_str());
 		ImGui::Text("Player isDead: %d", p->isDead);
 		ImGui::Text("Player isGrounded: %d", p->isGrounded);
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
@@ -836,6 +879,10 @@ void GameManager::updateGameState(GameState& gs)
 	winningTeam = gs.winningTeam;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);
+
+	if (gameCountdown == 0 and gs.gameCountdown < 0) {
+		isReady = false;
+	}
 
 	gameCountdown = gs.gameCountdown;
 }

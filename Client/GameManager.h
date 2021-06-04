@@ -64,6 +64,8 @@ public:
 	Model* dogTeamIndicator;
 	Model* catTeamIndicator;
 
+	bool isReady;
+
 	Transform* catSpawnPlatform;
 	Transform* dogSpawnPlatform;
 	Model* spawnPlatform;

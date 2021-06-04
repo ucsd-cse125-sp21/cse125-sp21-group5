@@ -66,6 +66,7 @@ void Player::updatePlayer(PlayerState ps)
 	transform->setTranslate(ps.pos);
 
 	teamIndicatorTransform->setRotate(transform->rotation);
+	teamIndicatorTransform->rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	teamIndicatorTransform->setTranslate(glm::vec3(0.0f, 0.5f, 0.0f));
 
 	// Update Movement information

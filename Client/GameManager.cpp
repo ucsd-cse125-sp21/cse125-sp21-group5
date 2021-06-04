@@ -873,6 +873,12 @@ void GameManager::updateGameState(GameState& gs)
 			else if (players[ps.playerId]->curr_gun.name == "Shotgun") {
 				AudioManager::get().playSound(SOUND_SHOTGUN, players[ps.playerId]->transform->translation);
 			}
+			else if (players[ps.playerId]->curr_gun.name == "Flashbang Launcher") {
+				AudioManager::get().playSound(SOUND_FLASHBANG, players[ps.playerId]->transform->translation);
+			}
+			else if (players[ps.playerId]->curr_gun.name == "Stun Grenade Launcher") {
+				AudioManager::get().playSound(SOUND_FREEZE, players[ps.playerId]->transform->translation);
+			}
 		}
 
 	}

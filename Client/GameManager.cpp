@@ -613,6 +613,32 @@ void GameManager::renderUI()
 		ImGui::End();
 	}
 
+	for (auto p : players)
+	{
+		if (p.second->isCarryingDogFlag && (localPlayerId % 2 == (int)PlayerTeam::CAT_LOVER))
+		{
+			ImGui::Begin("DogFlagTaken", &showUI, windowFlags);
+			std::string str = "The Dog you stole is being rescued!";
+			ImVec2 flagTakenSize = ImGui::CalcTextSize(str.c_str());
+			ImGui::SetWindowSize(ImVec2(flagTakenSize.x + 20, flagTakenSize.y + 20));
+			ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTakenSize.x / 2, Window::height - flagTakenSize.y - 300));
+			ImGui::Text(str.c_str());
+			ImGui::End();
+			break;
+		}
+		if (p.second->isCarryingCatFlag && (localPlayerId % 2 == (int)PlayerTeam::DOG_LOVER))
+		{
+			ImGui::Begin("CatFlagTaken", &showUI, windowFlags);
+			std::string str = "The Cat you stole is being rescued!";
+			ImVec2 flagTakenSize = ImGui::CalcTextSize(str.c_str());
+			ImGui::SetWindowSize(ImVec2(flagTakenSize.x + 20, flagTakenSize.y + 20));
+			ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTakenSize.x / 2, Window::height - flagTakenSize.y - 300));
+			ImGui::Text(str.c_str());
+			ImGui::End();
+			break;
+		}
+	}
+
 	// Debug UI Information
 	if (Renderer::get().debug)
 	{

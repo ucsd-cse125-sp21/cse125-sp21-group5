@@ -97,6 +97,9 @@ void Player::updatePlayer(PlayerState ps)
 	gun_idx = ps.gun_idx;
 	curr_gun = ps.curr_gun;
 
+	// Special keys
+	this->isDisrespecting = ps.isDisrespecting;
+
 	// Don't waste time animating
 	if (mustLoadModels) return;
 

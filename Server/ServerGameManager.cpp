@@ -333,11 +333,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 	// This is also where players can test out the different classes and roam the map
 	case State::LOBBY_STATE:
 		gameCountdown = -1;
+		gameOverCountdown = GAMEOVER_TIMER;
 		winningTeam = PlayerTeam::NOBODY;
 		switchClass(playerId, e.playerClass);
 
 		player->isShooting = false;
-		if (e.shooting) handleShoot(player);
+		//if (e.shooting) handleShoot(player);
 		handleMovement(player, playerId, e);
 
 		//Set the flag to be not picked up
@@ -377,7 +378,7 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		break;
 	case State::PLAY_STATE:
 		player->isDisrespecting = e.isDisrespecting;
-
+		
 		// Movement
 
 		// Check if player has fallen off map
@@ -525,10 +526,11 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		}
 
 		// Once, timer is over, Reset GameCountdown Timer
-		gameCountdown = GAME_COUNTDOWN_TIMER;
+		// gameCountdown = GAME_COUNTDOWN_TIMER;
 
 		// Change state
 		gameStatus = State::LOBBY_STATE;
+		gameCountdown = -1;
 		break;
 	}
 }
@@ -599,6 +601,8 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->isReady,
 						players[i]->isDisrespecting
 		);
+
+		cout << players[i]->isDisrespecting << endl;
 		gs.addState(ps);
 	}
 

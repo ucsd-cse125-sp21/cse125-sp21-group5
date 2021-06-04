@@ -32,6 +32,7 @@ void AudioManager::init() {
 	loadSound(SOUND_FREEZE);
 	loadSound(SOUND_EASY_GAME);
 	loadSound(SOUND_DAB);
+	loadSound(SOUND_FOG);
 
 	playBackgroundMusic();
 }
@@ -43,14 +44,14 @@ void AudioManager::playBackgroundMusic()
 
 	// 3rd parameter is true to pause sound on load.
 	FMOD_RESULT result = system->playSound(sound, nullptr, true, &backgroundChannel);
-	result = backgroundChannel->setVolume(this->volume / 2.0f);
+	result = backgroundChannel->setVolume(this->volume / 6.0f);
 	result = backgroundChannel->setPaused(false);
 }
 
 void AudioManager::adjustBackgroundChannelVolume()
 {
 	backgroundChannel->setPaused(true);
-	backgroundChannel->setVolume(this->volume/2.0f);
+	backgroundChannel->setVolume(this->volume/6.0f);
 	backgroundChannel->setPaused(false);
 }
 

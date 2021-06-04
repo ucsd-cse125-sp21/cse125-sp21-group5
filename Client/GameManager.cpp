@@ -481,13 +481,13 @@ void GameManager::renderUI()
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(100, Window::height - 250));
 	ImGui::SetWindowSize(ImVec2(500, 200));
-	ImGui::SetWindowFontScale(2);
+	//ImGui::SetWindowFontScale(2);
 	ImGui::Text("Super basic health bar");
 	// Change Health Bar color.
 	ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_PlotHistogram, ImVec4(0, 255, 0, 1));
 	ImGui::ProgressBar(players[localPlayerId]->health / 100.0f);
 	ImGui::PopStyleColor();
-	ImGui::SetWindowFontScale(1);
+	//ImGui::SetWindowFontScale(1);
 	ImGui::End();
 
 	// super basic crosshair, maybe move this somewhere else
@@ -512,9 +512,9 @@ void GameManager::renderUI()
 	//	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
 	//}
 	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
-	ImGui::SetWindowPos(ImVec2(Window::width - 700, Window::height - 250));
-	ImGui::SetWindowSize(ImVec2(600, 200));
-	ImGui::SetWindowFontScale(2);
+	ImGui::SetWindowPos(ImVec2(Window::width - 500, Window::height - 250));
+	ImGui::SetWindowSize(ImVec2(400, 200));
+	//ImGui::SetWindowFontScale(2);
 	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
 	if (players[localPlayerId]->curr_gun.reload_time > 0) {
 		//ImGui::TextDisabled("%i", players[localPlayerId]->curr_gun.clip_size);
@@ -523,7 +523,7 @@ void GameManager::renderUI()
 	else {
 		ImGui::TextColored(ImVec4(255, 0, 0, 1), "%i", players[localPlayerId]->curr_gun.clip_size);
 	}
-	ImGui::SetWindowFontScale(1);
+	//ImGui::SetWindowFontScale(1);
 	ImGui::End();
 
 	if (players[localPlayerId]->isCarryingCatFlag)
@@ -531,9 +531,9 @@ void GameManager::renderUI()
 		ImGui::Begin("CarryingCatFlag", &showUI, windowFlags);
 		std::string flagText = "You are rescuing a cat!";
 		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
-		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x / 2, Window::height - flagTexSize.y - 150));
 		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
-		ImGui::SetWindowFontScale(2);
+		//ImGui::SetWindowFontScale(2);
 		ImGui::Text(flagText.c_str());
 		ImGui::End();
 	}
@@ -543,9 +543,9 @@ void GameManager::renderUI()
 		ImGui::Begin("CarryingDogFlag", &showUI, windowFlags);
 		std::string flagText = "You are rescuing a dog!";
 		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
-		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x / 2, Window::height - flagTexSize.y - 150));
 		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
-		ImGui::SetWindowFontScale(2);
+		//ImGui::SetWindowFontScale(2);
 		ImGui::Text(flagText.c_str());
 		ImGui::End();
 	}

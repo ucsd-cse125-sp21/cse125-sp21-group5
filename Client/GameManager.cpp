@@ -25,6 +25,7 @@ GameManager::GameManager(GLFWwindow* window)
 	// TODO: maybe save this in a map for less variables
 	playerModel = new Model("res/models/unitCube.dae");
 	tileModel = new Model("res/models/tile.dae");
+	spawnPlatform = new Model("res/models/unitCube.dae");
 	treeModels.push_back(new Model("res/models/willowTrunk.dae"));
 	treeModels.push_back(new Model("res/models/scragglyTrunk.dae"));
 	treeModels.push_back(new Model("res/models/basicTree.dae"));
@@ -719,18 +720,33 @@ void GameManager::updateMap(MapState& ms)
 			if (i == 0 && j == 0)
 			{
 				catT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
+				catSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.25f, 0.0f));
+				
 				catT->setName("catT");
+				catSpawnPlatform->setName("catSpawn");
+
 				catT->add_child(catModel);
+				catSpawnPlatform->add_child(spawnPlatform);
+
 				worldT->add_child(catT);
+				worldT->add_child(catSpawnPlatform);
+
 				continue;
 			}
 			// Dog flag
 			else if (i == NUM_MAP_TILES - 1 && j == NUM_MAP_TILES - 1)
 			{
 				dogT = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.75f, 0.0f));
+				dogSpawnPlatform = new Transform(glm::vec3(1.0f), glm::vec3(0.0f), tileCenter + glm::vec3(0.0f, 0.25f, 0.0f));
+				
 				dogT->setName("dogT");
+				dogSpawnPlatform->setName("dogSpawn");
+
 				dogT->add_child(dogModel);
+				dogSpawnPlatform->add_child(spawnPlatform);
+
 				worldT->add_child(dogT);
+				worldT->add_child(dogSpawnPlatform);
 				continue;
 			}
 

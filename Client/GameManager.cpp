@@ -13,6 +13,8 @@ float GameManager::lastX = Window::width / 2;
 float GameManager::lastY = Window::height / 2;
 float GameManager::fov = 60.0f;
 
+bool GameManager::isDisrespecting = false;
+
 GameManager::GameManager(GLFWwindow* window)
 {
 	// Save pointer to window
@@ -250,14 +252,6 @@ Event GameManager::handleInput()
 		dab = true;
 	}
 
-	// For shane 
-	isDisrespecting = false;
-	// Code for disrespecting your enemies 
-	if (glfwGetKey(window, GLFW_KEY_G))
-	{
-		isDisrespecting = true;
-	}
-
 	// Show scoreboard
 	showScoreboard = glfwGetKey(window, GLFW_KEY_TAB);
 
@@ -282,7 +276,9 @@ Event GameManager::handleInput()
 		AudioManager::get().playSound(SOUND_DEATH, players[localPlayerId]->transform->translation);
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady, isDisrespecting);
+	bool useDisrespect = isDisrespecting;
+	isDisrespecting = false;
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady, useDisrespect);
 }
 
 // Use for one-time key presses
@@ -291,6 +287,10 @@ void GameManager::keyCallback(GLFWwindow* window, int key, int scancode, int act
 	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
 		Renderer::get().debug = !Renderer::get().debug;
+	}
+
+	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+		isDisrespecting = true;
 	}
 
 	if (key == GLFW_KEY_UP && action != GLFW_RELEASE)

@@ -53,6 +53,7 @@ public:
 	bool isCarryingCatFlag;
 	bool isCarryingDogFlag;
 	bool isDisrespecting;
+	bool isDabbing;
 
 	unsigned int kills, deaths, captures;
 

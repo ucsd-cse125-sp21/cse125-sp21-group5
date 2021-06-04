@@ -340,6 +340,12 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		if (e.shooting) handleShoot(player);
 		handleMovement(player, playerId, e);
 
+		//Set the flag to be not picked up
+		flagCatCarrierId = -1;
+		flagDogCarrierId = -1;
+		flagCat->isActive = true;
+		flagDog->isActive = true;
+
 		if (e.isReady) {
 			player->isReady = true;
 		}

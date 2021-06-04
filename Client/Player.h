@@ -14,6 +14,9 @@
 #include "imgui_impl_opengl3.h"
 #include "AudioManager.h"
 
+#define CAT_PLAYER "catPlayer"
+#define DOG_PLAYER "dogPlayer"
+
 class Player : public Node
 {
 private:
@@ -53,9 +56,10 @@ public:
 	int gun_idx;
 	Gun curr_gun;
 
+	std::string team;
 	int playerClass;
 
-	Player(Transform* transform, int playerId, Transform* teamIndicatorTransform);
+	Player(Transform* transform, int playerId, Transform* teamIndicatorTransform, std::string team);
 	~Player();
 
 	void draw(const glm::mat4& parent_transform, const glm::mat4& view);

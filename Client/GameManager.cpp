@@ -909,17 +909,20 @@ void GameManager::addPlayer(int playerId, Model* playerModel)
 	Transform* teamIndicatorT = new Transform();
 	teamIndicatorT->setName("Player " + std::to_string(playerId) + " Team Indicator Transform");
 
-	Player* player = new Player(playerT, playerId, teamIndicatorT);
-	player->setName("Player " + std::to_string(playerId));
-	
+	Player* player;
+
 	if (playerId % 2 == (int)PlayerTeam::DOG_LOVER) {
 		//Player is part of dog Team
+		player = new Player(playerT, playerId, teamIndicatorT, DOG_PLAYER);
 		teamIndicatorT->add_child(dogTeamIndicator);
 	}
 	else {
 		// Player is part of cat Team
+		player = new Player(playerT, playerId, teamIndicatorT, CAT_PLAYER);
 		teamIndicatorT->add_child(catTeamIndicator);
 	}
+
+	player->setName("Player " + std::to_string(playerId));
 
 	playerT->add_child(player);
 	worldT->add_child(playerT);

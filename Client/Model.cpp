@@ -7,8 +7,20 @@
 #include <GLFW/glfw3.h>
 
 
+Model::Model(std::string modelPath, std::string playerType) {
+
+	this->playerType = playerType;
+
+	// loads the mesh into into position, normal, and index vectors
+	loadModel(modelPath);
+	currTime = glfwGetTime();
+	prevTime = glfwGetTime();
+}
+
 Model::Model(std::string modelPath)
 {
+	this->playerType = "";
+
 	// loads the mesh into into position, normal, and index vectors
 	loadModel(modelPath);
 	currTime = glfwGetTime();
@@ -102,8 +114,14 @@ void Model::loadModel(std::string modelPath)
 		aiString texturePath;
 		if (AI_SUCCESS == aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath)) {
 			// we found a textured material
-			Material* mat = new TexturedMaterial(aiMat);
-			materials.push_back(mat);
+			if (playerType == "") {
+				Material* mat = new TexturedMaterial(aiMat);
+				materials.push_back(mat);
+			}
+			else {
+				Material* mat = new TexturedMaterial(aiMat, playerType);
+				materials.push_back(mat);
+			}
 		}
 		else {
 			// found a diffuse texture

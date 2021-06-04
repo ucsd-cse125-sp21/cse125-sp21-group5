@@ -52,8 +52,11 @@ private:
 	void loadModel(std::string modelPath); //read in the file, load the model's data
 
 public:
+	Model(std::string modelPath, std::string playerType);
 	Model(std::string modelPath);
 	~Model();
+
+	std::string playerType;
 
 	void update(float deltaTime);
 	void draw(const glm::mat4& modelMtx, const glm::mat4& viewProjMtx);

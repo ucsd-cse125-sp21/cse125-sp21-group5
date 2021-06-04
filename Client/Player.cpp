@@ -1,7 +1,8 @@
 #include "Player.h"
 
+
 // Used for other players
-Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTransform)
+Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTransform, std::string team)
 {
 	this->playerId = playerId;
 	this->transform = transform;
@@ -21,6 +22,8 @@ Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTrans
 	this->playerClass = 0;
 	this->gun_idx = 1;
 	this->curr_gun = Gun();
+
+	this->team = team;
 
 	// Try something
 	//loadModels();
@@ -104,12 +107,12 @@ void Player::updatePlayer(PlayerState ps)
 // loads the model files and sets up shaders
 void Player::loadModels() {
 
-	modelsPistol.push_back(new Model("res/models/finalIdle.dae"));
-	modelsPistol.push_back(new Model("res/models/finalWalk.dae"));
-	modelsPistol.push_back(new Model("res/models/finalShoot.dae"));
-	modelsPistol.push_back(new Model("res/models/finalToxicDab.dae"));
-	modelsPistol.push_back(new Model("res/models/finalDeath200.dae"));
-	modelsPistol.push_back(new Model("res/models/finalReload.dae"));
+	modelsPistol.push_back(new Model("res/models/finalIdle.dae", team));
+	modelsPistol.push_back(new Model("res/models/finalWalk.dae", team));
+	modelsPistol.push_back(new Model("res/models/finalShoot.dae", team));
+	modelsPistol.push_back(new Model("res/models/finalToxicDab.dae", team));
+	modelsPistol.push_back(new Model("res/models/finalDeath200.dae", team));
+	modelsPistol.push_back(new Model("res/models/finalReload.dae", team));
 
 	modelsPistol[0]->setName("res/models/finalIdle.dae");
 	modelsPistol[1]->setName("res/models/finalWalk.dae");
@@ -118,12 +121,12 @@ void Player::loadModels() {
 	modelsPistol[4]->setName("res/models/finalDeath200.dae");
 	modelsPistol[5]->setName("res/models/finalReload.dae");
 
-	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae"));
-	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae"));
-	modelsShotgun.push_back(new Model("res/models/Shotgun-Shoot.dae"));
-	modelsShotgun.push_back(new Model("res/models/Shotgun-OrangeJustice.dae"));
-	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae"));
-	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae"));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Idle.dae", team));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Walk.dae", team));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Shoot.dae", team));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-OrangeJustice.dae", team));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Death.dae", team));
+	modelsShotgun.push_back(new Model("res/models/Shotgun-Reload.dae", team));
 
 	modelsShotgun[0]->setName("res/models/Shotgun-Idle.dae");
 	modelsShotgun[1]->setName("res/models/Shotgun-Walk.dae");
@@ -132,12 +135,12 @@ void Player::loadModels() {
 	modelsShotgun[4]->setName("res/models/Shotgun-Death.dae");
 	modelsShotgun[5]->setName("res/models/Shotgun-Reload.dae");
 
-	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae"));
-	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae"));
-	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae"));
-	modelsRifle.push_back(new Model("res/models/Rifle-Floss.dae"));
-	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae"));
-	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae"));
+	modelsRifle.push_back(new Model("res/models/Rifle-Idle.dae", team));
+	modelsRifle.push_back(new Model("res/models/Rifle-Walk.dae", team));
+	modelsRifle.push_back(new Model("res/models/Rifle-Shoot.dae", team));
+	modelsRifle.push_back(new Model("res/models/Rifle-Floss.dae", team));
+	modelsRifle.push_back(new Model("res/models/Rifle-Death.dae", team));
+	modelsRifle.push_back(new Model("res/models/Rifle-Reload.dae", team));
 
 	modelsRifle[0]->setName("res/models/Rifle-Idle.dae");
 	modelsRifle[1]->setName("res/models/Rifle-Walk.dae");

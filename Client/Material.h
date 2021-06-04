@@ -67,6 +67,7 @@ public:
 	void activate();
 	void release();
 
+	TexturedMaterial(aiMaterial* aiMat, std::string playerType);
 	TexturedMaterial(aiMaterial* aiMat);
 	~TexturedMaterial();
 };

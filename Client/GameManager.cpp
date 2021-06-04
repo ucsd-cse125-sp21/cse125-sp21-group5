@@ -805,14 +805,15 @@ void GameManager::updateGameState(GameState& gs)
 		// Play shooting for player
 		// TODO: change it so that it's at the 3d location
 		if (players[ps.playerId]->isShooting) {
-			AudioManager::get().playSound(SOUND_RIFLE, players[ps.playerId]->transform->translation);
-			/*if (players[ps.playerId]->gun_idx == 2) {
-				
-
+			if (players[ps.playerId]->curr_gun.name == "Pistol") {
+				AudioManager::get().playSound(SOUND_PEW, players[ps.playerId]->transform->translation);
 			}
-			else {
-				//AudioManager::get().playSound(SOUND_PEW, players[ps.playerId]->transform->translation);
-			}*/
+			else if (players[ps.playerId]->curr_gun.name == "Rifle") {
+				AudioManager::get().playSound(SOUND_RIFLE, players[ps.playerId]->transform->translation);
+			}
+			else if (players[ps.playerId]->curr_gun.name == "Shotgun") {
+				AudioManager::get().playSound(SOUND_SHOTGUN, players[ps.playerId]->transform->translation);
+			}
 		}
 
 	}

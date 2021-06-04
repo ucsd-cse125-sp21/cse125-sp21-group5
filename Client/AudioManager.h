@@ -5,13 +5,18 @@
 
 #include <glm/glm.hpp>
 
-#define SOUND_WOOF "./res/sounds/woof.ogg"
-#define SOUND_MEOW "./res/sounds/meow.ogg"
-#define SOUND_STEP "./res/sounds/step.ogg"
-#define SOUND_PEW "./res/sounds/pew.ogg"
-#define SOUND_DEATH "./res/sounds/death.ogg"
-#define SOUND_DUB "./res/sounds/dub.ogg"
-#define SOUND_RIFLE "./res/sounds/rifle.ogg"
+#define SOUND_WOOF "./res/sounds/environmentSounds/woof.ogg"
+#define SOUND_MEOW "./res/sounds/environmentSounds/meow.ogg"
+
+#define SOUND_STEP "./res/sounds/playerSounds/step.ogg"
+#define SOUND_DEATH "./res/sounds/playerSounds/death.ogg"
+
+#define SOUND_PEW "./res/sounds/gunSounds/shoot.ogg"
+#define SOUND_RIFLE "./res/sounds/gunSounds/rifle.ogg"
+#define SOUND_SHOTGUN "./res/sounds/gunSounds/shotgun.ogg"
+
+#define SOUND_DUB "./res/sounds/miscSounds/dub.ogg"
+
 
 class AudioManager
 {

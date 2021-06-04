@@ -25,6 +25,7 @@ void AnimationPlayer::setAnimation(int newAnimationIdx)
 {
 	mCurrentAnimationIdx = newAnimationIdx;
 	mCurrentTime = 0;
+	mStartTime = 0;
 }
 
 void AnimationPlayer::update(float deltaTime) 
@@ -34,7 +35,7 @@ void AnimationPlayer::update(float deltaTime)
 	if (mAnimations.size() > 0 && mCurrentAnimationIdx != NO_ANIMATION) {
 		Animation* currAnimation = mAnimations[mCurrentAnimationIdx];
 
-		mCurrentTime = fmod(Renderer::get().gameTime, currAnimation->getDuration());
+		mCurrentTime = fmod(Renderer::get().gameTime - mStartTime, currAnimation->getDuration());
 
 		calculateBoneTransform(currAnimation->getRootNode(), glm::mat4(1));
 	}

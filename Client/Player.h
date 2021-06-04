@@ -39,6 +39,8 @@ public:
 	// Index 2 - rifle 
 	std::vector<vector<Model*>> gunTypeModels;
 
+	AnimationID previousAnimation = AnimationID::IDLE;
+
 	int playerId;
 
 	float health;

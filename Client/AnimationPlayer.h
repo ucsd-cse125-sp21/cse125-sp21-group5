@@ -24,6 +24,8 @@ public:
 		return mFinalBoneTransformationMatrices;
 	}
 
+	float mStartTime = 0;
+
 private:
 
 	std::vector<glm::mat4> mFinalBoneTransformationMatrices;
@@ -32,6 +34,8 @@ private:
 	int mCurrentAnimationIdx = NO_ANIMATION;
 	float mCurrentTime = 0;
 	float mDeltaTime = 0;
+
+
 	std::vector<Animation*> mAnimations;
 };
 

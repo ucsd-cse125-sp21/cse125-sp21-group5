@@ -74,7 +74,9 @@ GameManager::GameManager(GLFWwindow* window)
 
 	//Renderer::get().addDirectionalLight(DirectionalLight(glm::vec3(1, 2, 0), glm::vec3(0.9)));
 
-	//Renderer::get().addSpotLight(SpotLight(glm::vec3(0, 15, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
+	for (int i = 0; i < NUM_PLAYERS; i++) {
+		Renderer::get().addSpotLight(SpotLight(glm::vec3(0, -100, 0), glm::vec3(0, 0, 1), glm::vec3(1), 30));
+	}
 
 	AudioManager::get().init();
 	//AudioManager::get().playSound(SOUND_WOOF);
@@ -325,6 +327,17 @@ void GameManager::render()
 		Renderer::get().mCamera->front,
 		Renderer::get().mCamera->up
 	);
+
+	for (int i = 0; i < NUM_PLAYERS; i++) {
+		auto it = players.find(i);
+		if (it != players.end()) {
+			Renderer::get().mSpotLights[i].mPosition = players[i]->transform->translation;
+			Renderer::get().mSpotLights[i].mDirection = players[i]->cam->front;
+		}
+		else {
+			Renderer::get().mSpotLights[i].mPosition = glm::vec3(0, -1000, 0);
+		}
+	}
 
 	worldT->draw(glm::mat4(1), Window::projection * players[localPlayerId]->cam->view);
 

@@ -101,6 +101,11 @@ void Player::updatePlayer(PlayerState ps)
 
 	//model = modelsPistol[(int)ps.currentAnimation];
 	model = gunTypeModels[(int)ps.playerClass][(int)ps.currentAnimation];
+	if (ps.currentAnimation != previousAnimation && ps.currentAnimation == AnimationID::DEATH) {
+		model->getAnimationPlayer()->mStartTime = Renderer::get().gameTime - (1.0f / 60.0f);
+	}
+
+	previousAnimation = ps.currentAnimation;
 }
 
 

@@ -110,7 +110,7 @@ public:
 		reload_time = 0;
 		reload_time_reset = 60;
 		bullets_per_shot = 1;
-		damage_per_bullet = 10.0f;
+		damage_per_bullet = 30.0f;
 		x_spread = 0.0f;
 		y_spread = 0.0f;
 		recoil = 1.0f;
@@ -148,7 +148,7 @@ public:
 		reload_time = 0;
 		reload_time_reset = 90;
 		bullets_per_shot = 1;
-		damage_per_bullet = 4.0f;
+		damage_per_bullet = 8.0f;
 		x_spread = 0.01f;
 		y_spread = 0.01f;
 		recoil = 0.5f;

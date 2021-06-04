@@ -323,6 +323,7 @@ void ServerGameManager::handleDeath(ServerPlayer* player)
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
+	animalSoundTimer++;
 	// Get current player
 	ServerPlayer* player = players[playerId];
 
@@ -602,9 +603,12 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->isDisrespecting
 		);
 
-		cout << players[i]->isDisrespecting << endl;
 		gs.addState(ps);
 	}
+
+	// cat and dog makes some noise every 5 seconds 
+	if (animalSoundTimer % 180 == 0) gs.animalSound = true;
+	else gs.animalSound = false;
 
 	// Send back flag locations
 	gs.catLocation = flagCat->cen;

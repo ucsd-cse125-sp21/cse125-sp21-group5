@@ -12,7 +12,7 @@ void AudioManager::init() {
 		std::cerr << "Failed to create FMOD system" << std::endl;
 	}
 
-	result = system->init(2048, FMOD_INIT_NORMAL, 0);
+	result = system->init(2048, FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, 0);
 	if (result != FMOD_OK) {
 		std::cerr << "Failed to initialize FMOD system" << std::endl;
 	}

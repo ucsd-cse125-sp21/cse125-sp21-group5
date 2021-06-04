@@ -250,7 +250,6 @@ Event GameManager::handleInput()
 		dab = true;
 	}
 
-
 	// For shane 
 	isDisrespecting = false;
 	// Code for disrespecting your enemies 
@@ -906,8 +905,14 @@ void GameManager::updateGameState(GameState& gs)
 		if (players[ps.playerId]->isDisrespecting) {
 			AudioManager::get().playSound(SOUND_EASY_GAME, players[ps.playerId]->transform->translation);
 		}
-
 	}
+
+	// make some noises animal 
+	if (gs.animalSound) {
+		AudioManager::get().playSound(SOUND_MEOW, gs.catLocation);
+		AudioManager::get().playSound(SOUND_WOOF, gs.dogLocation);
+	}
+
 	winningTeam = gs.winningTeam;
 	catT->setTranslate(gs.catLocation);
 	dogT->setTranslate(gs.dogLocation);

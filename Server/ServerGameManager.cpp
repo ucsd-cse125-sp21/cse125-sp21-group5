@@ -47,7 +47,7 @@ MapState ServerGameManager::generateMap()
 			}
 
 			// Generate Trees
-			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
+			int numTrees = rand() % (MAX_NUM_TREES_PER_TILE - MIN_NUM_TREES_PER_TILE) + MIN_NUM_TREES_PER_TILE;
 			for (int k = 0; k < numTrees; k++)
 			{
 				// Pick random position within tile

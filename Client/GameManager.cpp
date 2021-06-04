@@ -794,7 +794,7 @@ void GameManager::updateMap(MapState& ms)
 			}
 
 			// Generate Trees
-			int numTrees = rand() % MAX_NUM_TREES_PER_TILE;
+			int numTrees = rand() % (MAX_NUM_TREES_PER_TILE - MIN_NUM_TREES_PER_TILE) + MIN_NUM_TREES_PER_TILE;
 			for (int k = 0; k < numTrees; k++) {
 				// Pick random tree position
 				float x = TILE_SIZE * (rand() / (float)RAND_MAX) - 10.0f;
@@ -862,7 +862,6 @@ void GameManager::updateGameState(GameState& gs)
 		}
 		
 		// Play shooting for player
-		// TODO: change it so that it's at the 3d location
 		if (players[ps.playerId]->isShooting) {
 			if (players[ps.playerId]->curr_gun.name == "Pistol") {
 				AudioManager::get().playSound(SOUND_PEW, players[ps.playerId]->transform->translation);

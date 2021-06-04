@@ -498,6 +498,89 @@ void GameManager::renderUI()
 		ImGui::End();
 	}
 
+	int dogCap = 0;
+	int catCap = 0;
+	for (auto p : players)
+	{
+		if (p.first % 2 == (int)PlayerTeam::DOG_LOVER)
+		{
+			dogCap += p.second->captures;
+		}
+		else
+		{
+			catCap += p.second->captures;
+		}
+	}
+
+	ImGui::Begin("TeamCapturesScoreCard", &showUI, windowFlags);
+	std::string catTeam = "Cat Lovers";
+	std::string dogTeam = "Dog Lovers";
+	std::string catTeamCaptures = (boost::format("%i") % catCap).str();
+	std::string dogTeamCaptures = (boost::format("%i") % dogCap).str();
+
+	ImVec2 catTeamSize = ImGui::CalcTextSize(catTeam.c_str());
+	ImVec2 dogTeamSize = ImGui::CalcTextSize(dogTeam.c_str());
+	ImVec2 catCapturesSize = ImGui::CalcTextSize(catTeamCaptures.c_str());
+	ImVec2 dogCapturesSize = ImGui::CalcTextSize(dogTeamCaptures.c_str());
+
+	ImVec2 boardSize;
+	boardSize.x = max(max(catTeamSize.x, dogTeamSize.x), max(catCapturesSize.x, dogCapturesSize.x) + 250);
+	boardSize.y = max(catTeamSize.y, dogTeamSize.y) + max(catCapturesSize.y, dogCapturesSize.y) + 100;
+
+	ImGui::SetWindowPos(ImVec2(Window::width / 2 - boardSize.x / 2, 50));
+	ImGui::SetWindowSize(boardSize);
+	ImGui::Columns(2, "TeamCaptures");
+	ImGui::SetColumnWidth(0, boardSize.x / 2);
+	ImGui::SetColumnWidth(1, boardSize.x / 2);
+	// Display Cat Team Captures
+	ImGui::TextColored(ImVec4(252.0f /255.0f, 186.0f /255.0f, 3.0f /255.0f, 1), catTeam.c_str());
+	ImGui::Text(catTeamCaptures.c_str());
+	ImGui::NextColumn();
+	// Display Dog Team Captures
+	ImGui::TextColored(ImVec4(252.0f / 255.0f, 186.0f / 255.0f, 3.0f / 255.0f, 1), dogTeam.c_str());
+	ImGui::Text(dogTeamCaptures.c_str());
+	ImGui::End();
+
+	if (players[localPlayerId]->isDead > 0)
+	{
+		ImGui::Begin("DeathMessage", &showUI, windowFlags);
+
+		std::string str = (boost::format("You were killed!!!")).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x * 3 / 2, Window::height / 2 - texSize.y * 3 / 2));
+		ImGui::SetWindowSize(ImVec2(texSize.x * 3 + 20, texSize.y * 3 + 20));
+		ImGui::SetWindowFontScale(3);
+		ImGui::TextColored(ImVec4(255, 0, 0, 1), str.c_str());
+		ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	ImGui::Begin("DeathBoard", &showUI, windowFlags);
+	std::string killBoard = "";
+	for (auto p : players)
+	{
+		if (p.second->isDead > 0)
+		{
+			if ((p.first % 2 == (int)PlayerTeam::DOG_LOVER))
+			{
+				killBoard.append("A Dog Lover was killed\n");
+			}
+			else
+			{
+				killBoard.append("A Cat Lover was killed\n");
+			}
+		}
+	}
+	ImVec2 killBoardTexSize = ImGui::CalcTextSize(killBoard.c_str());
+	ImGui::SetWindowPos(ImVec2(Window::width - killBoardTexSize.x - 200, 200));
+	ImGui::SetWindowSize(ImVec2(killBoardTexSize.x + 20, killBoardTexSize.y + 20));
+	//ImGui::SetWindowFontScale(2);
+	ImGui::TextColored(ImVec4(252.0f / 255.0f, 186.0f / 255.0f, 3.0f / 255.0f, 1), killBoard.c_str());
+	//ImGui::SetWindowFontScale(1);
+	ImGui::End();
+
+	
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(100, Window::height - 250));
@@ -547,6 +630,7 @@ void GameManager::renderUI()
 	//ImGui::SetWindowFontScale(1);
 	ImGui::End();
 
+	// Display if you have captured enemy team flag.
 	if (players[localPlayerId]->isCarryingCatFlag)
 	{
 		ImGui::Begin("CarryingCatFlag", &showUI, windowFlags);
@@ -569,6 +653,33 @@ void GameManager::renderUI()
 		//ImGui::SetWindowFontScale(2);
 		ImGui::Text(flagText.c_str());
 		ImGui::End();
+	}
+
+	// Display if enemy team has captured your flag.
+	for (auto p : players)
+	{
+		if (p.second->isCarryingDogFlag && (localPlayerId % 2 == (int)PlayerTeam::CAT_LOVER))
+		{
+			ImGui::Begin("DogFlagTaken", &showUI, windowFlags);
+			std::string str = "The Dog you stole is being rescued!";
+			ImVec2 flagTakenSize = ImGui::CalcTextSize(str.c_str());
+			ImGui::SetWindowSize(ImVec2(flagTakenSize.x + 20, flagTakenSize.y + 20));
+			ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTakenSize.x / 2, Window::height - flagTakenSize.y - 300));
+			ImGui::Text(str.c_str());
+			ImGui::End();
+			break;
+		}
+		if (p.second->isCarryingCatFlag && (localPlayerId % 2 == (int)PlayerTeam::DOG_LOVER))
+		{
+			ImGui::Begin("CatFlagTaken", &showUI, windowFlags);
+			std::string str = "The Cat you stole is being rescued!";
+			ImVec2 flagTakenSize = ImGui::CalcTextSize(str.c_str());
+			ImGui::SetWindowSize(ImVec2(flagTakenSize.x + 20, flagTakenSize.y + 20));
+			ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTakenSize.x / 2, Window::height - flagTakenSize.y - 300));
+			ImGui::Text(str.c_str());
+			ImGui::End();
+			break;
+		}
 	}
 
 	// Debug UI Information

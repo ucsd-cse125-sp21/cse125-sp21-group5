@@ -105,7 +105,7 @@ void Player::updatePlayer(PlayerState ps)
 
 	// If dabbing then play sound
 	if (ps.currentAnimation != previousAnimation && ps.currentAnimation == AnimationID::DAB) {
-		AudioManager::get().playSound(SOUND_PEW, ps.pos);
+		AudioManager::get().playSound(SOUND_DAB, ps.pos);
 	}
 
 	//model = modelsPistol[(int)ps.currentAnimation];

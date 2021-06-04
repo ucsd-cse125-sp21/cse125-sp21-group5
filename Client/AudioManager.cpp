@@ -30,6 +30,7 @@ void AudioManager::init() {
 	loadSound(SOUND_FLASHBANG);
 	loadSound(SOUND_FREEZE);
 	loadSound(SOUND_EASY_GAME);
+	loadSound(SOUND_DAB);
 }
 
 

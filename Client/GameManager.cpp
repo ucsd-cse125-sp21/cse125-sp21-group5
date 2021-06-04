@@ -41,7 +41,7 @@ GameManager::GameManager(GLFWwindow* window)
 	playerModel->setName("Player Model");
 	tileModel->setName("Tile Model");
 
-	treeModels[0]->setName("res/models/willowTrunk_old.dae");
+	treeModels[0]->setName("res/models/willowTrunk.dae");
 	treeModels[1]->setName("res/models/scragglyTrunk.dae");
 	treeModels[2]->setName("res/models/basicTree.dae");
 	treeModels[3]->setName("res/models/fiboTree.dae");

@@ -351,7 +351,7 @@ void GameManager::renderUI()
 		float yOffset = 200;
 		ImGui::Begin("WaitingForPlayers", &showUI, windowFlags);
 		std::string text = "";
-		
+
 		if (isReady)
 		{
 			text.append("Waiting for other players to ready up...");
@@ -395,7 +395,7 @@ void GameManager::renderUI()
 		ImGui::Text("Secondary Weapon:");
 
 		ImGui::NextColumn();
-		switch(players[localPlayerId]->playerClass) {
+		switch (players[localPlayerId]->playerClass) {
 		case 0:
 			ImGui::Text("Player Class 1");
 			ImGui::Text("Pistol");
@@ -504,8 +504,8 @@ void GameManager::renderUI()
 	//	str.append((boost::format("\n%i") % (players[localPlayerId]->curr_gun.clip_size)).str());
 	//}
 	ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
-	ImGui::SetWindowPos(ImVec2(Window::width - 1000, Window::height - 250));
-	ImGui::SetWindowSize(ImVec2(texSize.x, texSize.y));
+	ImGui::SetWindowPos(ImVec2(Window::width - 700, Window::height - 250));
+	ImGui::SetWindowSize(ImVec2(600, 200));
 	ImGui::SetWindowFontScale(2);
 	ImGui::Text(players[localPlayerId]->curr_gun.name.c_str());
 	if (players[localPlayerId]->curr_gun.reload_time > 0) {
@@ -517,6 +517,30 @@ void GameManager::renderUI()
 	}
 	ImGui::SetWindowFontScale(1);
 	ImGui::End();
+
+	if (players[localPlayerId]->isCarryingCatFlag)
+	{
+		ImGui::Begin("CarryingCatFlag", &showUI, windowFlags);
+		std::string flagText = "You are rescuing a cat!";
+		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
+		ImGui::SetWindowFontScale(2);
+		ImGui::Text(flagText.c_str());
+		ImGui::End();
+	}
+
+	if (players[localPlayerId]->isCarryingDogFlag)
+	{
+		ImGui::Begin("CarryingDogFlag", &showUI, windowFlags);
+		std::string flagText = "You are rescuing a dog!";
+		ImVec2 flagTexSize = ImGui::CalcTextSize(flagText.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - flagTexSize.x, Window::height - flagTexSize.y - 150));
+		ImGui::SetWindowSize(ImVec2(flagTexSize.x * 2, flagTexSize.y * 2));
+		ImGui::SetWindowFontScale(2);
+		ImGui::Text(flagText.c_str());
+		ImGui::End();
+	}
 
 	// Debug UI Information
 	if (Renderer::get().debug)

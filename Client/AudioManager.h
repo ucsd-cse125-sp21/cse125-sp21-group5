@@ -18,7 +18,7 @@
 #define SOUND_FREEZE "./res/sounds/gunSounds/freeze.ogg"
 #define SOUND_FOG "./res/sounds/gunSounds/fog.ogg"
 
-#define SOUND_DUB "./res/sounds/miscSounds/dub2.ogg"
+#define SOUND_DUB "./res/sounds/miscSounds/kidDubMorebassEventually.ogg"
 #define SOUND_EASY_GAME "./res/sounds/miscSounds/easyGame.ogg"
 #define SOUND_DAB "./res/sounds/miscSounds/dab.ogg"
 #define SOUND_FLAG_CAPTURE "./res/sounds/miscSounds/capture.ogg"

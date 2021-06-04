@@ -43,14 +43,14 @@ void AudioManager::playBackgroundMusic()
 
 	// 3rd parameter is true to pause sound on load.
 	FMOD_RESULT result = system->playSound(sound, nullptr, true, &backgroundChannel);
-	result = backgroundChannel->setVolume(this->volume);
+	result = backgroundChannel->setVolume(this->volume / 2.0f);
 	result = backgroundChannel->setPaused(false);
 }
 
 void AudioManager::adjustBackgroundChannelVolume()
 {
 	backgroundChannel->setPaused(true);
-	backgroundChannel->setVolume(this->volume);
+	backgroundChannel->setVolume(this->volume/2.0f);
 	backgroundChannel->setPaused(false);
 }
 

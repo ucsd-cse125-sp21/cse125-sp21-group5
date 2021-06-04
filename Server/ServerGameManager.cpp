@@ -255,13 +255,31 @@ void ServerGameManager::handleMovement(ServerPlayer* player, int playerId, Event
 			continue;
 
 		// Pick up flag
-		if (otherCollider == flagCat && flagCatCarrierId == -1 && player->team == PlayerTeam::CAT_LOVER) {
-			flagCatCarrierId = playerId;
-			flagCat->isActive = false;
+		if (otherCollider == flagCat && flagCatCarrierId == -1){
+			if (player->team == PlayerTeam::CAT_LOVER) {
+				flagCatCarrierId = playerId;
+				flagCat->isActive = false;
+			}
+			else
+			{
+				// Reset Cat Flag
+				flagCatCarrierId = -1;
+				flagCat->set_center(CAT_FLAG_SPAWN);
+				flagCat->isActive = true;
+			}
 		}
-		else if (otherCollider == flagDog && flagDogCarrierId == -1 && player->team == PlayerTeam::DOG_LOVER) {
-			flagDogCarrierId = playerId;
-			flagDog->isActive = false;
+		else if (otherCollider == flagDog && flagDogCarrierId == -1)
+		{
+			if (player->team == PlayerTeam::DOG_LOVER) {
+				flagDogCarrierId = playerId;
+				flagDog->isActive = false;
+			}
+			else {
+				// Reset Dog Flag
+				flagDogCarrierId = -1;
+				flagDog->set_center(DOG_FLAG_SPAWN);
+				flagDog->isActive = true;
+			}
 		}
 	}
 
@@ -480,31 +498,37 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		// TODO: helper function
 		if (flagCatCarrierId == playerId && player->team == PlayerTeam::CAT_LOVER)
 		{
-			glm::vec3 plane = player->hitbox->check_collision(catWinArea);
-			if (plane != glm::vec3(0.0f))
-			{
-				player->captures++;
+			// Can capture flag only if their own flag is in their base.
+			if (flagDog->cen == DOG_FLAG_SPAWN) {
+				glm::vec3 plane = player->hitbox->check_collision(catWinArea);
+				if (plane != glm::vec3(0.0f))
+				{
+					player->captures++;
 
-				// Reset cat flag
-				flagCatCarrierId = -1;
-				flagCat->set_center(CAT_FLAG_SPAWN);
-				flagCat->isActive = true;
-				if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
+					// Reset cat flag
+					flagCatCarrierId = -1;
+					flagCat->set_center(CAT_FLAG_SPAWN);
+					flagCat->isActive = true;
+					if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
+				}
 			}
 		}
 		// Detect score for Dog team
 		else if (flagDogCarrierId == playerId && player->team == PlayerTeam::DOG_LOVER)
 		{
-			glm::vec3 plane = player->hitbox->check_collision(dogWinArea);
-			if (plane != glm::vec3(0.0f))
-			{
-				player->captures++;
+			// Can capture flag only if their own flag is in their base.
+			if (flagCat->cen == CAT_FLAG_SPAWN) {
+				glm::vec3 plane = player->hitbox->check_collision(dogWinArea);
+				if (plane != glm::vec3(0.0f))
+				{
+					player->captures++;
 
-				// Reset dog flag
-				flagDogCarrierId = -1;
-				flagDog->set_center(DOG_FLAG_SPAWN);
-				flagDog->isActive = true;
-				if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
+					// Reset dog flag
+					flagDogCarrierId = -1;
+					flagDog->set_center(DOG_FLAG_SPAWN);
+					flagDog->isActive = true;
+					if (checkWinCondition()) gameStatus = State::GAMEOVER_STATE;
+				}
 			}
 		}
 

@@ -214,6 +214,12 @@ Event GameManager::handleInput()
 		isReady = true;
 	}
 
+	//Code for readying
+	if (glfwGetKey(window, GLFW_KEY_Q))
+	{
+		AudioManager::get().playSound(SOUND_GEOFF);
+	}
+
 	// Class / Weapon 1
 	if (glfwGetKey(window, GLFW_KEY_1))
 	{

@@ -11,6 +11,7 @@ public:
 	float dYaw, dPitch;
 	bool shooting;
 	bool dab;
+	bool isDisrespecting;
 
 	bool jumping;
 	int gun_idx;
@@ -19,7 +20,7 @@ public:
 
 	bool isReady;
 
-	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab, bool isReady);
+	Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab, bool isReady, bool isDisrespecting);
 	Event();
 
 	template <typename Archive>
@@ -35,5 +36,6 @@ public:
 		ar& gun_idx;
 		ar& dab;
 		ar& isReady;
+		ar& isDisrespecting;
 	}
 };

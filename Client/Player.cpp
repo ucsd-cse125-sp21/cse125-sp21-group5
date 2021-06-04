@@ -16,13 +16,14 @@ Player::Player(Transform* transform, int playerId, Transform* teamIndicatorTrans
 	this->isGrounded = false;
 	this->isCarryingCatFlag = false;
 	this->isCarryingDogFlag = false;
+	this->isDisrespecting = false;
 	this->kills = 0;
 	this->deaths = 0;
 	this->captures = 0;
 	this->playerClass = 0;
 	this->gun_idx = 1;
 	this->curr_gun = Gun();
-
+	
 	this->team = team;
 
 	// Try something

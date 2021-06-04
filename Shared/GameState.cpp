@@ -38,7 +38,8 @@ PlayerState::PlayerState(int playerId,
 						unsigned int isFogged,
 						unsigned int isFrozen,
 						unsigned int playerClass,
-						bool isReady)
+						bool isReady,
+						bool isDisrespecting)
 {
 	this->playerId = playerId;
 	this->pos = pos;
@@ -61,6 +62,7 @@ PlayerState::PlayerState(int playerId,
 	this->playerClass = playerClass;
 	this->isShooting = isShooting;
 	this->isReady = isReady;
+	this->isDisrespecting = isDisrespecting;
 }
 
 // Could be reference? 

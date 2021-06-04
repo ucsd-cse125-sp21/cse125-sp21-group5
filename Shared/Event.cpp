@@ -13,7 +13,7 @@ Event::Event() {
 }
 
 // Movement update
-Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab, bool isReady) {
+Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumping, int playerClass, int gun_idx, bool dab, bool isReady, bool isDisrespecting) {
 	this->dPos = dPos;
 	this->dYaw = dYaw;
 	this->dPitch = dPitch;
@@ -23,4 +23,5 @@ Event::Event(glm::vec3 dPos, float dYaw, float dPitch, bool shooting, bool jumpi
 	this->gun_idx = gun_idx;
 	this->dab = dab;
 	this->isReady = isReady;
+	this->isDisrespecting = isDisrespecting;
 }

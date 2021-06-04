@@ -34,6 +34,9 @@ public:
 	int jumping;
 	int isDead;
 
+	// disrespect
+	bool isDisrespecting;
+
 	// Guns
 	int gun_idx;
 	std::vector<Gun*> guns;

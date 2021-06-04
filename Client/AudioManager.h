@@ -18,6 +18,7 @@
 #define SOUND_FREEZE "./res/sounds/gunSounds/freeze.ogg"
 
 #define SOUND_DUB "./res/sounds/miscSounds/dub.ogg"
+#define SOUND_EASY_GAME "./res/sounds/miscSounds/easyGame.ogg"
 
 
 class AudioManager

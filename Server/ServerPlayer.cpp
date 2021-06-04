@@ -20,6 +20,7 @@ ServerPlayer::ServerPlayer(const glm::vec3& initPos,
 	animation = AnimationID::IDLE;
 	jumping = 0;
 	isGrounded = false;
+	isDisrespecting = false;
 	health = 100.0f;
 	isDead = 0;
 	kills = 0;

@@ -376,6 +376,8 @@ void ServerGameManager::handleEvent(Event& e, int playerId)
 		gameStatus = State::PLAY_STATE;
 		break;
 	case State::PLAY_STATE:
+		player->isDisrespecting = e.isDisrespecting;
+
 		// Movement
 
 		// Check if player has fallen off map
@@ -594,7 +596,8 @@ GameState ServerGameManager::getGameState(int playerId)
 						players[i]->isFogged,
 						players[i]->isFrozen,
 						players[i]->playerClass,
-						players[i]->isReady
+						players[i]->isReady,
+						players[i]->isDisrespecting
 		);
 		gs.addState(ps);
 	}

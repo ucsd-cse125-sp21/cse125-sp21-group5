@@ -250,6 +250,15 @@ Event GameManager::handleInput()
 		dab = true;
 	}
 
+
+	// For shane 
+	isDisrespecting = false;
+	// Code for disrespecting your enemies 
+	if (glfwGetKey(window, GLFW_KEY_G))
+	{
+		isDisrespecting = true;
+	}
+
 	// Show scoreboard
 	showScoreboard = glfwGetKey(window, GLFW_KEY_TAB);
 
@@ -274,7 +283,7 @@ Event GameManager::handleInput()
 		AudioManager::get().playSound(SOUND_DEATH, players[localPlayerId]->transform->translation);
 	}
 
-	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady);
+	return Event(dPos, yaw, pitch, shooting, jumping, players[localPlayerId]->playerClass, players[localPlayerId]->gun_idx, dab, isReady, isDisrespecting);
 }
 
 // Use for one-time key presses
@@ -579,6 +588,7 @@ void GameManager::renderUI()
 		ImGui::Text("Player isCarryingFlag: %d", p->isCarryingCatFlag || p->isCarryingDogFlag);
 		ImGui::Text("Game Volume: %f", AudioManager::get().volume);
 		ImGui::Text("Player is shooting %d", p->isShooting);
+		ImGui::Text("Player is Disrespecting %d", p->isDisrespecting);
 		ImGui::End();
 	}
 
@@ -891,6 +901,10 @@ void GameManager::updateGameState(GameState& gs)
 			else if (players[ps.playerId]->curr_gun.name == "Stun Grenade Launcher") {
 				AudioManager::get().playSound(SOUND_FREEZE, players[ps.playerId]->transform->translation);
 			}
+		}
+
+		if (players[ps.playerId]->isDisrespecting) {
+			AudioManager::get().playSound(SOUND_EASY_GAME, players[ps.playerId]->transform->translation);
 		}
 
 	}

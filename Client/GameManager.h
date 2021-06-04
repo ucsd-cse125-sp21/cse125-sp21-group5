@@ -51,6 +51,9 @@ public:
 	unordered_map<int, Player*> players;
 	int localPlayerId;
 
+	// For disrespecting, god damnit shane
+	bool isDisrespecting;
+
 	// Models used in the environment
 	Model* playerModel;
 	Model* tileModel;

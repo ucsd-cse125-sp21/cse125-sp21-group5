@@ -30,6 +30,7 @@ public:
 	bool isGrounded;
 	float health;
 	int isDead;
+	bool isDisrespecting;
 	
 	bool carryingCatFlag;
 	bool carryingDogFlag;	
@@ -64,7 +65,8 @@ public:
 				unsigned int isFogged,
 				unsigned int isFrozen,
 				unsigned int playerClass,
-				bool isReady
+				bool isReady,
+				bool isDisrespecting
 	);
 	
 
@@ -93,6 +95,7 @@ public:
 		ar& isFogged;
 		ar& isFrozen;
 		ar& playerClass;
+		ar& isDisrespecting;
 	}
 };
 

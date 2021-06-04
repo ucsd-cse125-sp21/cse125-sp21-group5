@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include "Renderer.h"
+#include "../Shared/Global_variables.h"
 
 /*
  * TODO: This will need to be changed to support 1st person view
@@ -11,7 +12,7 @@
 Camera::Camera()
 {
 	// Camera movement
-	speed = 10.0f;
+	speed = WALK_SPEED;
 	sensitivity = 0.1f;
 
 	// Camera rotation

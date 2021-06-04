@@ -14,6 +14,8 @@
 #define SOUND_PEW "./res/sounds/gunSounds/shoot.ogg"
 #define SOUND_RIFLE "./res/sounds/gunSounds/rifle.ogg"
 #define SOUND_SHOTGUN "./res/sounds/gunSounds/shotgun.ogg"
+#define SOUND_FLASHBANG "./res/sounds/gunSounds/flashbang.ogg"
+#define SOUND_FREEZE "./res/sounds/gunSounds/freeze.ogg"
 
 #define SOUND_DUB "./res/sounds/miscSounds/dub.ogg"
 

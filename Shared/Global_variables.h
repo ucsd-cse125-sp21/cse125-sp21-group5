@@ -4,7 +4,7 @@
 #define PACKET_SIZE 2048
 
 // Control number of players in game.
-#define NUM_PLAYERS 4
+#define NUM_PLAYERS 2
 
 // Control Map Generation
 #define TILE_SIZE 20
@@ -26,6 +26,8 @@
 #define BIG_FOV -90.0f
 #define DEFAULT_FOG_DENSITY 0.05
 #define BIG_FOG_DENSITY 0.35
+#define WALK_SPEED 6.0f
+#define RUN_SPEED 10.0f
 
 
 // Server properties

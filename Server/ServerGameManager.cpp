@@ -220,7 +220,7 @@ void ServerGameManager::handleMovement(ServerPlayer* player, int playerId, Event
 	// Handle jumping tick by tick
 	if (player->jumping > 0)
 	{
-		player->update(e.dPos + glm::vec3(0.0f, jumpingSquared / 100.0f, 0.0f), e.dYaw, e.dPitch);
+		player->update(e.dPos + glm::vec3(0.0f, jumpingSquared / 200.0f, 0.0f), e.dYaw, e.dPitch);
 		// 5 ticks of jumping in total
 		player->jumping--;
 	}

@@ -4,7 +4,7 @@
 #define PACKET_SIZE 2048
 
 // Control number of players in game.
-#define NUM_PLAYERS 4
+#define NUM_PLAYERS 2
 
 // Control Map Generation
 #define TILE_SIZE 20

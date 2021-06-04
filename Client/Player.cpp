@@ -103,6 +103,11 @@ void Player::updatePlayer(PlayerState ps)
 	// Don't waste time animating
 	if (mustLoadModels) return;
 
+	// If dabbing then play sound
+	if (ps.currentAnimation != previousAnimation && ps.currentAnimation == AnimationID::DAB) {
+		AudioManager::get().playSound(SOUND_DAB, ps.pos);
+	}
+
 	//model = modelsPistol[(int)ps.currentAnimation];
 	model = gunTypeModels[(int)ps.playerClass][(int)ps.currentAnimation];
 	if (ps.currentAnimation != previousAnimation && ps.currentAnimation == AnimationID::DEATH) {

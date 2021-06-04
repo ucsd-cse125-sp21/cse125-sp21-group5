@@ -19,6 +19,7 @@
 
 #define SOUND_DUB "./res/sounds/miscSounds/dub.ogg"
 #define SOUND_EASY_GAME "./res/sounds/miscSounds/easyGame.ogg"
+#define SOUND_DAB "./res/sounds/miscSounds/dab.ogg"
 
 
 class AudioManager

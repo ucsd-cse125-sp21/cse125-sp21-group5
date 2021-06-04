@@ -108,6 +108,8 @@ public:
 
 	PlayerTeam winningTeam;
 
+	bool animalSound; 
+
 	int gameCountdown;
 
 	void addState(PlayerState ps);
@@ -123,6 +125,7 @@ public:
 		ar& dogLocation.z;
 		ar& winningTeam;
 		ar& gameCountdown;
+		ar& animalSound;
 	}
 
 };

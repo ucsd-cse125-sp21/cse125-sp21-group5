@@ -32,6 +32,9 @@ public:
 	int gameCountdown = -1;
 	unsigned int gameOverCountdown = GAMEOVER_TIMER;
 
+	// Meow, woof timer 
+	unsigned int animalSoundTimer = 0;
+
 	State gameStatus;
 
 	// Win condition bools 

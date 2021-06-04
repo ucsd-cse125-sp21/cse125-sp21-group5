@@ -52,7 +52,7 @@ public:
 	int localPlayerId;
 
 	// For disrespecting, god damnit shane
-	bool isDisrespecting;
+	static bool isDisrespecting;
 
 	// Models used in the environment
 	Model* playerModel;

@@ -323,6 +323,7 @@ void ServerGameManager::handleDeath(ServerPlayer* player)
 
 void ServerGameManager::handleEvent(Event& e, int playerId)
 {
+	animalSoundTimer++;
 	// Get current player
 	ServerPlayer* player = players[playerId];
 
@@ -580,31 +581,34 @@ GameState ServerGameManager::getGameState(int playerId)
 	for (int i = 0; i < players.size(); i++)
 	{
 		PlayerState ps(i,
-						players[i]->pos,
-						players[i]->front,
-						players[i]->animation,
-						players[i]->isGrounded,
-						players[i]->health,
-						players[i]->isDead,
-						(flagCatCarrierId == i),
-						(flagDogCarrierId == i),
-						players[i]->kills,
-						players[i]->deaths,
-						players[i]->captures,
-						players[i]->gun_idx,
-						*(players[i]->guns[players[i]->gun_idx]),
-						players[i]->isShooting,
-						players[i]->isLimitFOV,
-						players[i]->isFogged,
-						players[i]->isFrozen,
-						players[i]->playerClass,
-						players[i]->isReady,
-						players[i]->isDisrespecting
+			players[i]->pos,
+			players[i]->front,
+			players[i]->animation,
+			players[i]->isGrounded,
+			players[i]->health,
+			players[i]->isDead,
+			(flagCatCarrierId == i),
+			(flagDogCarrierId == i),
+			players[i]->kills,
+			players[i]->deaths,
+			players[i]->captures,
+			players[i]->gun_idx,
+			*(players[i]->guns[players[i]->gun_idx]),
+			players[i]->isShooting,
+			players[i]->isLimitFOV,
+			players[i]->isFogged,
+			players[i]->isFrozen,
+			players[i]->playerClass,
+			players[i]->isReady,
+			players[i]->isDisrespecting
 		);
 
-		//cout << players[i]->isDisrespecting << endl;
 		gs.addState(ps);
 	}
+
+	// cat and dog makes some noise every 5 seconds 
+	if (animalSoundTimer % 180 == 0) gs.animalSound = true;
+	else gs.animalSound = false;
 
 	// Send back flag locations
 	gs.catLocation = flagCat->cen;

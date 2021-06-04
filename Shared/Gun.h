@@ -148,7 +148,7 @@ public:
 		reload_time = 0;
 		reload_time_reset = 90;
 		bullets_per_shot = 1;
-		damage_per_bullet = 8.0f;
+		damage_per_bullet = 6.0f;
 		x_spread = 0.01f;
 		y_spread = 0.01f;
 		recoil = 0.5f;
@@ -166,7 +166,7 @@ public:
 		clip_size = 1;
 		clip_size_reset = 1;
 		reload_time = 0;
-		reload_time_reset = 600;
+		reload_time_reset = 300;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
 		x_spread = 0.0f;
@@ -186,7 +186,7 @@ public:
 		clip_size = 1;
 		clip_size_reset = 1;
 		reload_time = 0;
-		reload_time_reset = 600;
+		reload_time_reset = 300;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
 		x_spread = 0.0f;
@@ -206,7 +206,7 @@ public:
 		clip_size = 1;
 		clip_size_reset = 1;
 		reload_time = 0;
-		reload_time_reset = 600;
+		reload_time_reset = 480;
 		bullets_per_shot = 1;
 		damage_per_bullet = 0.0f;
 		x_spread = 0.0f;

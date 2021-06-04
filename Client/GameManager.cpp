@@ -968,6 +968,9 @@ void GameManager::updateGameState(GameState& gs)
 			else if (players[ps.playerId]->curr_gun.name == "Stun Grenade Launcher") {
 				AudioManager::get().playSound(SOUND_FREEZE, players[ps.playerId]->transform->translation);
 			}
+			else if (players[ps.playerId]->curr_gun.name == "Smoke Grenade Launcher") {
+				AudioManager::get().playSound(SOUND_FOG, players[ps.playerId]->transform->translation);
+			}
 		}
 
 		if (players[ps.playerId]->isDisrespecting) {

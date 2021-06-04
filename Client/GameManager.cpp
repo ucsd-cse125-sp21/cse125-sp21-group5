@@ -498,6 +498,48 @@ void GameManager::renderUI()
 		ImGui::End();
 	}
 
+	
+
+	if (players[localPlayerId]->isDead > 0)
+	{
+		ImGui::Begin("DeathMessage", &showUI, windowFlags);
+
+		std::string str = (boost::format("You were killed!!!")).str();
+		ImVec2 texSize = ImGui::CalcTextSize(str.c_str());
+		ImGui::SetWindowPos(ImVec2(Window::width / 2 - texSize.x * 3 / 2, Window::height / 2 - texSize.y * 3 / 2));
+		ImGui::SetWindowSize(ImVec2(texSize.x * 3 + 20, texSize.y * 3 + 20));
+		ImGui::SetWindowFontScale(3);
+		ImGui::TextColored(ImVec4(255, 0, 0, 1), str.c_str());
+		ImGui::SetWindowFontScale(1);
+		ImGui::End();
+	}
+
+	ImGui::Begin("DeathBoard", &showUI, windowFlags);
+	std::string killBoard = "";
+	for (auto p : players)
+	{
+		if (p.second->isDead > 0)
+		{
+			if ((p.first % 2 == (int)PlayerTeam::DOG_LOVER))
+			{
+				killBoard.append("A Dog Lover was killed\n");
+			}
+			else
+			{
+				killBoard.append("A Cat Lover was killed\n");
+			}
+		}
+	}
+	ImVec2 killBoardTexSize = ImGui::CalcTextSize(killBoard.c_str());
+	ImGui::SetWindowPos(ImVec2(Window::width - killBoardTexSize.x - 200, 200));
+	ImGui::SetWindowSize(ImVec2(killBoardTexSize.x + 20, killBoardTexSize.y + 20));
+	//ImGui::SetWindowFontScale(2);
+	ImGui::TextColored(ImVec4(252, 186, 3, 1), killBoard.c_str());
+	//ImGui::SetWindowFontScale(1);
+	ImGui::End();
+
+	
+
 	// Health bar for local player's HUD.
 	ImGui::Begin("Health UI", &showUI, windowFlags);
 	ImGui::SetWindowPos(ImVec2(100, Window::height - 250));
